@@ -166,11 +166,11 @@ GSgarchSpec <-
         # if we have a presample check if it has the correct range.       
     if(is.matrix(presample) && !is.null(presample) && !is.null(model$alpha) ){
     	if((dim(presample)[1] != order.max) || (dim(presample)[2] != 3) )
-    	   stop("The presample object should be a matrix with three columns representing the innovations, conditional variance and the time series, respectively. The program expects a matrix of dimensions 3 x l, where l = max(m,n,p,q)")
+    	   stop("The presample object should be a matrix with three columns representing the innovations, conditional variance and the time series, respectively. The program expects a matrix of dimensions l x 3, where l = max(m,n,p,q)")
     } 
     if(is.matrix(presample) && !is.null(presample) && is.null(model$alpha) ){
-    	if((dim(presample)[1] != order.max) || (dim(presample)[2] != 1) )
-    	   stop("The presample object should be an array with the time series. The program expects an array with dimensions 1 x l, where l = max(m,n,p,q)")
+    	if((dim(presample)[1] != order.max) || (dim(presample)[2] != 2) )
+    	   stop("The presample object should be an array with the time series. The program expects an array with dimensions l x 2, where l = max(m,n,p,q)")
     }       
        
        	
@@ -257,10 +257,16 @@ GSgarchSpec <-
 	 presample = cbind(z, h, y)
     }else{	
        if(!is.null(presample))
-          y = presample
+       {
+	     z = presample[, 1]
+	     y = presample[, 2]          
+       }
        else
-          y = rep(0,order.max)
-       presample = y
+       {
+       	 z = rnorm(n = order.max)
+         y = rep(0,order.max)
+       }
+       presample = cbind(z,y)
     }
     
     # Result: 

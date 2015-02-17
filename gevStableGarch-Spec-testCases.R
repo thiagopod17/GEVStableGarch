@@ -115,18 +115,16 @@ pre[1,2] = 0
 spec <- GSgarchSpec(model = list(alpha = c(0.4,3,4), delta = 0.4), 
 presample = pre, cond.dist = c("gev"),rseed = 4)
 # presample for AR(1): expect an error because the dimensions are big
-pre <- matrix(4,nrow = 3,ncol = 1)
+pre <- matrix(4,nrow = 1,ncol = 2)
 pre[1,2] = 0
 spec <- GSgarchSpec(model = list(ar = c(0.4)), 
 presample = pre, cond.dist = c("gev"),rseed = 4)
 # presample for AR(1): OK
-pre <- matrix(-3,nrow = 1,ncol = 1)
+pre <- matrix(-3,nrow = 1,ncol = 2)
 pre[1,1] = 0
 spec <- GSgarchSpec(model = list(ar = c(0.4)), 
 presample = pre, cond.dist = c("gev"),rseed = 4)
 # presample for AR(1): Expect the program generate a correct presample matrix
-pre <- matrix(-3,nrow = 1,ncol = 1)
-pre[1,1] = 0
 spec <- GSgarchSpec(model = list(ar = c(0.4,0,4,5)), 
 presample = NULL, cond.dist = c("gev"),rseed = 4)
 
