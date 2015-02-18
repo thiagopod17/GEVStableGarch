@@ -74,7 +74,49 @@ spec2 <- garchSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)),
 sim2 <- garchSim(spec2, n = 100, n.start = 1, extended = TRUE)
 # These means must be equal
 mean(sim1)
-mean(sim2)                    
+mean(sim2)
+
+# Simulate AR(1) with conditional stable distribution
+spec <- GSgarchSpec(model = list(ar = 0.4), 
+                     presample = NULL,cond.dist = "stable",rseed = 1001)  
+sim <- GSgarch.Sim(spec, n = 100, n.start = 1)
+
+# Simulate an i.i.d sequence of stable random variables. 
+# Notice here that the columns 'series' and 'eps' are the same.
+spec <- GSgarchSpec(model = list(ar = 0), 
+                    presample = NULL,cond.dist = "stable",rseed = 1001)  
+sim <- GSgarch.Sim(spec, n = 100, n.start = 1)
+
+# Simulate an ARMA(0,2) with GEV random variables. 
+spec <- GSgarchSpec(model = list(ar = 0, ma = c(0.3,0.4)), 
+                    presample = NULL,cond.dist = "gev",rseed = 1001)  
+sim <- GSgarch.Sim(spec, n = 100, n.start = 1)
+plot(sim)
+
+# Simulate an ARMA(1,1) with normal innovations and uses 
+# the arima function to estimate the model parameters
+spec <- GSgarchSpec(model = list(ar = 0.9, ma = 0.1), 
+                    presample = NULL,cond.dist = "norm",rseed = 1001)  
+sim <- GSgarch.Sim(spec, n = 100000, n.start = 1)
+arima(sim[,1], order = c(1,0,1))
+
+# Simulate an ARMA(1,1) with normal innovations and uses 
+# the arima function to estimate the model parameters. The estimated
+# parameters must agree with the simulated ones.
+# Here the estimated intercept equals to mu/(1-0.9) = mu/0.1
+spec <- GSgarchSpec(model = list(mu = 3, ar = 0.9, ma = 0.1), 
+                    presample = NULL,cond.dist = "norm",rseed = 1001)  
+sim <- GSgarch.Sim(spec, n = 1000, n.start = 1)
+plot(sim)
+arima(sim[,1], order = c(1,0,1))
+
+# Simulate an ARMA(1,1) with stable innovation
+spec <- GSgarchSpec(model = list(mu = 3, ar = 0.9, ma = 0.1,shape = 1.1, skew = 0), 
+                    presample = NULL,cond.dist = "stable",
+                    rseed = 1003)  
+sim <- GSgarch.Sim(spec, n = 1000, n.start = 1)
+plot(sim)
+arima(sim[,1], order = c(1,0,1))
 
 
                     

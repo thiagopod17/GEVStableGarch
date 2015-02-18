@@ -115,7 +115,7 @@ GSgarch.Sim <-
     order.beta = length(beta)
 
     # Iterate GARCH / APARCH Model and create Sample:
-    if(!is.null(spec@model$alpha)){
+    if(!is.null(spec@model$alpha)){ # Arch, Garch or Aparch model
     	eps = h^deltainv*z   # here the variable 'h' represents the process '(sigma_t)^delta'
     	for (i in (m+1):(n+m)) {
        	 	h[i] =  omega +
@@ -132,7 +132,7 @@ GSgarch.Sim <-
        	 	z = z[(m+1):(n+m)],
         	sigma = h[(m+1):(n+m)]^deltainv,
         	y = y[(m+1):(n+m)])    	
-	} else {
+	} else { # pure ARMA, AR or MA model.
 		eps = z
 		for (i in (m+1):(n+m)) {
         	y[i] = mu  +
