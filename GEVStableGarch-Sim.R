@@ -22,7 +22,6 @@
 #  GSgarch.Sim            Simulates a GARCH/APARCH process with GEV or stable
 #						  conditional distribution
 ################################################################################
-library(stabledist)
 
 
 GSgarch.Sim <-
