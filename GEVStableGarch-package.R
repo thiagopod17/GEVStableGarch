@@ -1,5 +1,4 @@
 
-
 # Copyrights (C) 2014 Thiago do Rego Sousa <thiagoestatistico@gmail.com>
 
 # This library is free software; you can redistribute it and/or
