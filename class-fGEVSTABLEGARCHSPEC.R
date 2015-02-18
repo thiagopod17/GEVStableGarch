@@ -24,14 +24,14 @@
 
 
 # S4 GEVStableGarchSpec Class
-setClass("fGEVSTABLEGARCHSPEC", 
+setClass("fGEVSTABLEGARCHSPEC",
 representation(
-        call = "call",
-        formula = "formula",        
-        model = "list",
-        presample = "matrix",
-        distribution = "character",
-        rseed = "numeric")  
+         call = "call",
+        formula = "formula",
+         model = "list",
+        presample = "matrix",
+        distribution = "character",
+        rseed = "numeric")
 )
 
 
