@@ -66,16 +66,19 @@ GSgarchSpec <-
     #   cond.dist - a character string naming the distribution
     #       function.
     #   rseed - optional random seed. The default seed is '0'.
+     
+    # Return: An object of class fGEVSTABLEGARCHSPEC   
+        # Slots:
+        #   call - the function call.
+        #   formula - a formula object describing the model, e.g.
+        #       ARMA(m,n) + GARCH(p,q). ARMA can be missing or
+        #       specified as AR(m) or MA(n) in the case of pure
+        #       autoregressive or moving average models. GARCH may
+        #       alternatively be specified as ARCH(p) or APARCH(p,q).
+        #   model - as declared in the input.
 
-    # Slots:
-    #   call - the function call.
-    #   formula - a formula object describing the model, e.g.
-    #       ARMA(m,n) + GARCH(p,q). ARMA can be missing or
-    #       specified as AR(m) or MA(n) in the case of pure
-    #       autoregressive or moving average models. GARCH may
-    #       alternatively be specified as ARCH(p) or APARCH(p,q).
-    #   model - as declared in the input.
-
+    # FUNCTION
+      
     # Skewness Parameter Settings:
     skew = list(
         "gev" = NULL,

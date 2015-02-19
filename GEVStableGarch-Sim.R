@@ -53,8 +53,11 @@ GSgarch.Sim <-
     #   n - an integer, the length of the series
     #   n.start - the length of the warm-up sequence to reduce the
     #       effect of initial conditions.
-
-    # FUNCTION:
+     
+    # Return:
+    #   Asdf - The asdf 
+    
+    # FUNCTION: 
 
 	# Error treatment of input parameters
 	if(n < 2)

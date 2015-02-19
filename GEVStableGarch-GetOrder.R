@@ -28,29 +28,42 @@
 GSgarch.GetOrder <- 
     function(m,n,p,q)
 {
-  # Description:
-  #    error treatment on input parameters
-  if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
-       any (c(m,n,p,q) < 0) || (p == 0 && q != 0) ||
-       any (c(m,n,p,q) > 10) ) 
-    stop ("Invalid ARMA-GARCH order. We allow pure GARCH or APARCH. AR/MA/ARMA-GARCH/APARCH models.
-	          The order of the parameters could be set up to 10.")
-  arma.garch.order <- c()
-  for(i1 in 0:m)
-  {
-    for(i2 in 0:n)
+      
+    # Description:
+    #   Iterates over the parameters to create a vector with parameter
+    #   orders (like (1,1,0,1)) to use inside function GSgarch.FitAIC
+    
+    # Arguments:
+    #   nMAX, mMAX, pMAX, qMAX - maximum order to be estimated
+    
+    # Return:
+    #   arma.garch.order - A matrix with several model orders in the 
+    #   format [m,n,p,q] 
+    
+    # FUNCTION:            
+      
+    # error treatment on input parameters
+    if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
+        any (c(m,n,p,q) < 0) || (p == 0 && q != 0) ||
+        any (c(m,n,p,q) > 10) ) 
+        stop ("Invalid ARMA-GARCH order. We allow pure GARCH or APARCH. AR/MA/ARMA-GARCH/APARCH models.
+              The order of the parameters could be set up to 10.")
+    arma.garch.order <- c()
+    for(i1 in 0:m)
     {
-      for(i3 in 1:p)
-      {
-        for(i4 in 0:q)
-        { 
-          ord <- c(i1,i2,i3,i4)
-          arma.garch.order <- rbind(arma.garch.order,c(i1,i2,i3,i4))
+        for(i2 in 0:n)
+        {
+            for(i3 in 1:p)
+            {
+                for(i4 in 0:q)
+                { 
+                    ord <- c(i1,i2,i3,i4)
+                    arma.garch.order <- rbind(arma.garch.order,c(i1,i2,i3,i4))
+                }
+            }
         }
-      }
     }
-  }
-  return(arma.garch.order)
+    return(arma.garch.order)
 }
 
 
