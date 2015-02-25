@@ -25,9 +25,16 @@
 
 
 GSgarch.Fit <-
-    function(data, m,n,p,q, intercept = TRUE, printRes = FALSE, 
-    cond.dist = "norm", APARCH = FALSE, algorithm = "sqp",
-    get.res = FALSE, control = NULL, GSstable.tol = 1e-2, GStol = 1e-8)
+function(
+    formula = ~ garch(1,1), 
+    data, 
+    m,n,p,q, 
+    intercept = TRUE, 
+    printRes = TRUE, 
+    cond.dist = c("norm", "std", "sstd", "gev", "stable"), 
+    APARCH = FALSE, 
+    algorithm = c("sqp","sqp.restriction","nlminb"),
+    control = NULL)
 {  
     # Description:
     #     This functions reads the univariate time series and fits
@@ -62,13 +69,14 @@ GSgarch.Fit <-
     #         better in these situations.        
          
     # Arguments:
+    #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
     #   data - vector of data
     #   m, n, p, q - model order as in ARMA(m,n)-GARCH/APARCH(p,q)
     #   intercept - a logical, should the mean value be estimated ? 
     #   algorithm - 
     #   cond.dist - name of the conditional distribution, one of
     #       norm, snorm, ged, sged, std, sstd, snig, QMLE   
-    #   include.mean - a logical, should the mean value be estimated ?
+    #   intercept - a logical, should the mean value be estimated ?
     #   GStol.b - upper and lower bounds tolerance. Should be greater than tol
     #   GStol - General tolerance for arma-garch parameters. In the beggining it was set to 1e-5    
     
@@ -77,15 +85,20 @@ GSgarch.Fit <-
       
     # FUNCTION:  
 
-    # Error Control: Stop if some conditions are not met
-    #if (!is.numeric(data) || is.NA(data) || is.NULL(data) || is.Inf(data))
-    #stop("Invalid 'data' input. It may be contain NA, NULL or Inf.")
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable")
-    algoritm.list <- c("sqp","sqp.rest","nlminb")
-    if( !any(cond.dist.list == cond.dist) )   
-        stop ("Invalid Distribution. Choose: norm,std,sstd,gev or stable")
-    if( !any(algoritm.list == algorithm) )   
-        stop ("Invalid Algorithm. Choose: sqp, sqp.rest or nlminb")
+    # Error Treatment on input parameters
+    cond.dist = match.arg(cond.dist)
+    algorithm = match.arg(algorithm)
+    if (!is.numeric(data) || any(is.na(data)) || any(is.null(data)) || any(!is.finite(data)))
+        stop("Invalid 'data' input. It may be contain NA, NULL or Inf.")     
+      
+    # Call:
+    CALL = match.call()  
+  
+    # Configuring Tolerance
+    GSstable.tol = 1e-2 
+    GStol = 1e-8
+
+    # Checking if model order was specified correctly
     if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
         any (c(m,n,p,q) < 0) || (p == 0 && q != 0) || (p == 0 && APARCH) ||
         any (c(m,n,p,q) > 10) ) 
@@ -208,8 +221,8 @@ GSgarch.Fit <-
             hh <- abs(h)^(1/delta)
         }
         
-        # get output Residuals ?
-        if (optim.finished & get.res)
+        # get output Residuals
+        if (optim.finished)
         {
             out$ARMA.res <<- z
             out$GARCH.sig <<- hh
@@ -254,7 +267,7 @@ GSgarch.Fit <-
     if (algorithm == "sqp")
         fit1 <- solnp(pars = start[1,], fun = garchLLH, 
                     LB = start[2,], UB = start[3,], control = control)
-    if (algorithm == "sqp.rest")
+    if (algorithm == "sqp.restriction")
         fit1 <- solnp(pars = start[1,], fun = garchLLH, ineqfun = rest, ineqLB = 0,
                     ineqUB = 1, LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "nlminb")
@@ -267,7 +280,7 @@ GSgarch.Fit <-
         out$hessian <- optim(par = fit1$par, fn = garchLLH, 
                              method = "Nelder-Mead", hessian = TRUE)$hessian 
     }
-    if (any(c("sqp", "sqp.rest") == algorithm))
+    if (any(c("sqp", "sqp.restriction") == algorithm))
     {
         out$llh <- fit1$values[length(fit1$values)]
         out$par <- fit1$pars
@@ -276,8 +289,12 @@ GSgarch.Fit <-
     
     # Organizing the output of the program
     optim.finished = TRUE
-    if(get.res)
-        garchLLH(out$par)
+    
+    # Call garchLLH function to update the values of the ARMA residuals 
+    # and the GARCH/APARCH volatility.
+    garchLLH(out$par)
+    
+    # Creating index to create a vector with the estimated parameters.
     outindex <-   c(if(intercept) 1, 
                     if(AR == FALSE) (1+1):(2+m-1),
                     if(MA == FALSE) (1+m+1):(2+m+n-1),
@@ -289,6 +306,7 @@ GSgarch.Fit <-
                     if(any(c("sstd","stable")  == cond.dist)) (3+m+n+2*p+q+1),
                     if(any(c("std","gev","stable","sstd")  == cond.dist)) 
                       (4+m+n+2*p+q+1))
+    
     outnames <- c(if(intercept) "mu", if( AR == FALSE) paste("ar", 1:m, sep = ""),
                   if(MA == FALSE) paste("ma", 1:n, sep = ""),
                   "omega",
@@ -299,6 +317,7 @@ GSgarch.Fit <-
                   if(any(c("sstd","stable")  == cond.dist)) "skew",
                   if(any(c("std","gev","stable","sstd")  == cond.dist)) 
                     "shape")
+    
     out$par <- out$par[outindex]
     names(out$par) <- outnames
     out$hessian <- out$hessian[outindex,outindex]

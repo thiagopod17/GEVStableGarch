@@ -21,8 +21,8 @@
 ################################################################################
 # TEST CASES FOF FUNCTION:               SPECIFICATION:
 #  GSgarchSpec               Useful for finding erros. Please add the expected 
-#							 output of the test case whenever possible. 
-#							 This will help to trace erros during debugging.
+#							               output of the test case whenever possible. 
+#							               This will help to trace erros during debugging.
 ################################################################################
 
 
