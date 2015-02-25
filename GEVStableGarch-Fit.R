@@ -23,17 +23,15 @@
 #  GSgarch.Fit             Fits ARMA-GARCH or ARMA-APARCH model  
 ################################################################################
 
-
+garchFit
 GSgarch.Fit <-
 function(
     formula = ~ garch(1,1), 
-    data, 
-    m,n,p,q, 
-    intercept = TRUE, 
-    printRes = TRUE, 
-    cond.dist = c("norm", "std", "sstd", "gev", "stable"), 
-    APARCH = FALSE, 
+    data,  
+    cond.dist = c("norm", "std", "sstd", "gev", "stable"),
+    include.mean = TRUE, 
     algorithm = c("sqp","sqp.restriction","nlminb"),
+    printRes = TRUE,
     control = NULL)
 {  
     # Description:
@@ -72,11 +70,10 @@ function(
     #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
     #   data - vector of data
     #   m, n, p, q - model order as in ARMA(m,n)-GARCH/APARCH(p,q)
-    #   intercept - a logical, should the mean value be estimated ? 
+    #   include.mean - a logical, should the mean value be estimated ? 
     #   algorithm - 
     #   cond.dist - name of the conditional distribution, one of
-    #       norm, snorm, ged, sged, std, sstd, snig, QMLE   
-    #   intercept - a logical, should the mean value be estimated ?
+    #       gev, stable, norm, std, sstd   
     #   GStol.b - upper and lower bounds tolerance. Should be greater than tol
     #   GStol - General tolerance for arma-garch parameters. In the beggining it was set to 1e-5    
     
@@ -98,28 +95,41 @@ function(
     GSstable.tol = 1e-2 
     GStol = 1e-8
 
-    # Checking if model order was specified correctly
-    if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
-        any (c(m,n,p,q) < 0) || (p == 0 && q != 0) || (p == 0 && APARCH) ||
-        any (c(m,n,p,q) > 10) ) 
-        stop ("Invalid ARMA-GARCH order. We allow pure GARCH or APARCH. AR/MA/ARMA-GARCH/APARCH models.
-            The order of the parameters could be set up to 10.")
+    # Getting order model from object formula
+    formula <- .getFormula(formula)
+    m <- formula$formula.order[1]
+    n <- formula$formula.order[2]    
+    p <- formula$formula.order[3]
+    q <- formula$formula.order[4]
+    APARCH <- formula$isAPARCH
+    
+#     # Checking if model order was specified correctly
+#     if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
+#         any (c(m,n,p,q) < 0) || (p == 0 && q != 0) || (p == 0 && APARCH) ||
+#         any (c(m,n,p,q) > 10) ) 
+#         stop ("Invalid ARMA-GARCH order. We allow pure GARCH or APARCH. AR/MA/ARMA-GARCH/APARCH models.
+#             The order of the parameters could be set up to 10.")
 
     # Initial configurations
     data <- data; N <- length(data)
     out <- NULL # output of the GSgarch.Fit function
-    out$order <- c(m,n,p,q,intercept,APARCH)
+    out$order <- c(m,n,p,q,include.mean,APARCH)
     TMPvector <- c(if(m != 0 || n != 0) c("arma(",m,",",n,")-"),
                    if(APARCH==FALSE)c("garch(",p,",",q,")"),
                    if(APARCH==TRUE)c("aparch(",p,",",q,")"))
     TMPorder <- paste(TMPvector, collapse="")
-    TMPvectorintercept <- c("Intercept:",if(intercept==TRUE)"TRUE", 
-                            if(intercept==FALSE)"FALSE")
+    TMPvectorintercept <- c("include.mean:",if(include.mean==TRUE)"TRUE", 
+                            if(include.mean==FALSE)"FALSE")
     TMPintercept <- paste(TMPvectorintercept, collapse="")
     out$model <- paste(TMPorder,"##",TMPintercept, collapse="")
     out$cond.dist <- cond.dist
     out$data <- data
     ARMAonly <- FALSE
+    if( (p == 0) && (q == 0))
+    {
+        ARMAonly = TRUE
+        p = 1
+    }
     optim.finished <- FALSE
     
     # Configuring model order
@@ -161,7 +171,7 @@ function(
             b <- 0
         if( GARCH == TRUE) 
             beta <- 0
-        if (intercept == FALSE)
+        if (include.mean == FALSE)
             mu <- 0
         
         # Avoid being out of parameter space
@@ -295,7 +305,7 @@ function(
     garchLLH(out$par)
     
     # Creating index to create a vector with the estimated parameters.
-    outindex <-   c(if(intercept) 1, 
+    outindex <-   c(if(include.mean) 1, 
                     if(AR == FALSE) (1+1):(2+m-1),
                     if(MA == FALSE) (1+m+1):(2+m+n-1),
                     (1+m+n+1),
@@ -307,7 +317,7 @@ function(
                     if(any(c("std","gev","stable","sstd")  == cond.dist)) 
                       (4+m+n+2*p+q+1))
     
-    outnames <- c(if(intercept) "mu", if( AR == FALSE) paste("ar", 1:m, sep = ""),
+    outnames <- c(if(include.mean) "mu", if( AR == FALSE) paste("ar", 1:m, sep = ""),
                   if(MA == FALSE) paste("ma", 1:n, sep = ""),
                   "omega",
                   if(!ARMAonly) paste("alpha", 1:p, sep = ""),
@@ -361,4 +371,141 @@ function(
 
 
 ################################################################################
+
+
+
+
+
+
+
+################################################################################
+#  FUNCTION:               DESCRIPTION:
+#
+#  .getFormula             Gets the formula.mean and formula.variance from
+#                          the object formula.
+################################################################################
+
+
+.getFormula <-
+function(
+    formula)
+{
+    # Description:
+    #   This functions reads formula object and converts it into a list 
+    #   containing the separeted mean and variance arguments.
+    #   Examples from output:
+    #     ~arma(1,1)+garch(1,1): formula.mean = ~arma(1,1); formula.variance = ~garch(1,1)
+    #     ~aparch(1,1): formula.mean = ~arma(0,0); formula.variance = ~aparch(1,1)
+    #     ~arch(1): formula.mean = ~arma(0,0); formula.variance = ~arch(1)
+    #     ~arma(1,1): formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
+    #     ~ar(1): formula.mean = ~ar(1); formula.variance = ~garch(0,0) 
+    #     ~ma(1): formula.mean = ~ma(1); formula.variance = ~garch(0,0) 
+  
+    # Arguments:
+    #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
+    
+    # Return:
+    #   A list containing two elements, formula.mean and formula.variance     
+    
+    # FUNCTION: 
+  
+    # Initial variable declaration
+    allLabels = attr(terms(formula), "term.labels")
+    formulas.mean.allowed = c("arma")
+    formulas.variance.allowed = c("garch","aparch")
+    formulaOK <- TRUE
+    checkFormulaMean <- ""
+    checkFormulaVariance <- ""
+    isAPARCH = FALSE
+    
+    # Error treatment of input parameters 
+    if( (length(allLabels) != 1 ) && (length(allLabels) != 2 ) )
+        formulaOK <- FALSE
+    
+    # Formula of type: ~ formula1 + formula2
+    else if (length(allLabels) == 2)
+    {
+        formula.mean = as.formula(paste("~", allLabels[1]))
+        formula.var = as.formula(paste("~", allLabels[2]))
+        checkFormulaMean = rev(all.names(formula.mean))[1]
+        checkFormulaVariance = rev(all.names(formula.var))[1]
+        if( !any(formulas.mean.allowed == checkFormulaMean) || 
+            !any(formulas.variance.allowed == checkFormulaVariance))   
+            formulaOK <- FALSE
+    }
+    # Formula of type: ~formula1
+    else if (length(allLabels) == 1) 
+    {
+      
+        # pure 'garch' or 'aparch'
+        if(grepl("arch", attr(terms(formula), "term.labels"))) 
+        {
+            formula.mean = as.formula("~ arma(0, 0)")
+            formula.var = as.formula(paste("~", allLabels[1]))
+            checkFormulaVariance = rev(all.names(formula.var))[1]
+            if(!any(formulas.variance.allowed == checkFormulaVariance))   
+                formulaOK <- FALSE
+        }
+        else # pure 'ar', 'ma' or 'arma' model.
+        {
+            formula.mean = as.formula(paste("~", allLabels[1]))  
+            formula.var = as.formula("~ garch(0, 0)") 
+            checkFormulaMean = rev(all.names(formula.mean))[1]
+            if(!any(formulas.mean.allowed == checkFormulaMean))   
+                formulaOK <- FALSE
+        }    
+    }
+
+    # Check if we are fitting "aparch" model 
+    if(checkFormulaVariance == "aparch")
+        isAPARCH = TRUE
+    
+    # Get model order and check if they were specified correctly
+    if(formulaOK == TRUE)
+    {
+        model.order.mean = 
+            as.numeric(strsplit(strsplit(strsplit(as.character(formula.mean), 
+            "\\(")[[2]][2], "\\)")[[1]], ",")[[1]])
+        model.order.var = 
+            as.numeric(strsplit(strsplit(strsplit(as.character(formula.var), 
+            "\\(")[[2]][2], "\\)")[[1]], ",")[[1]])
+        if( (length(model.order.mean) != 2) || (length(model.order.mean) != 2))
+          formulaOK <- FALSE 
+    }
+    
+    # Check if model order was specified correctly.
+    if(formulaOK == TRUE)
+    {
+        m = model.order.mean[1]
+        n = model.order.mean[2]
+        p = model.order.var[1]
+        q = model.order.var[2]        
+        if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
+            any (c(m,n,p,q) < 0) || (p == 0 && q != 0))
+            formulaOK <- FALSE            
+    }
+    
+    
+    # Stop if formula was not specified correctly
+    if(formulaOK == FALSE)
+        stop ("Invalid Formula especification. 
+            Formula mean must be 'arma' and 
+            Formula Variance must be one of: garch or aparch
+            For example:
+                ARMA(1,1)-GARCH(1,1):  ~arma(1,1)+garch(1,1),
+                AR(1)-GARCH(1,1):      ~arma(1,0)+garch(1,1),
+                MA(1)-APARCH(1,0):     ~arma(0,1)+aparch(1,0),
+                ARMA(1,1):             ~arma(1,1),
+                ARCH(2):               ~garch(1,0),
+            For more details just type: ?GSgarch.Fit")
+    
+    # Return
+    list(formula.mean = formula.mean,formula.var = formula.var, 
+         formula.order = c(m,n,p,q), isAPARCH = isAPARCH)
+}
+
+
+
+
+
 

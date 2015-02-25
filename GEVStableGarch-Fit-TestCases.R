@@ -20,16 +20,18 @@
 
 ################################################################################
 # TEST CASES FOF FUNCTION:               SPECIFICATION:
-#  GSgarch.Fit               Useful for finding erros. Please add the expected 
-#  						               output of the test case whenever possible. 
-#							               This will help to trace erros during debugging.
+#  GSgarch.Fit                Test on input parameters and on numerical 
+#                             stability of parameter estimation 
+#  						                							               
 ################################################################################
 
-
+# Historical Notes.
 # We will make the interface of this function more similar to the garchFit function
 # from package fGarch to make its use easier. 
 # The input parameters for this version (march/2015) are:
 
+# 25 Feb, 2015.
+# Parameter input modification
   # OK. algorithm: a string parameter that determines the algorithm used for maximum likelihood estimation.
   # OK. cond.dist: name of the conditional distribution, one of gev, stable, norm, std, sstd
   # OK. control: control parameters, the same as used for the functions from nlminb, and 'bfgs' and 'Nelder-Mead' from optim.
@@ -40,176 +42,161 @@
   # OK. get.res: (NAO VAMOS TER MAIS ESSA VARIAVEL)
   # OK. GSstable.tol e GStol: (CONFIGURAR NO INICIO DA FUNCAO, NAO MAIS NECESSARIA AQUI)
   # APARCH: Vamos tirar pois usaremos da formula.
+# 25 feb, 2015, right before commiting on Github
+  # We saw that the estimated parameters from both GEVStableGarch package from CRAN
+  # and from our current version are the same. On the other hand, we saw that the 
+  # estimated parameters from macbook differ slightly from the windows version.
+  # our goal now is to investigate the filtering process inside the GSGarch.Fit 
+  # function to make the estimated parameters more similar to the ones from package
+  # fGarch. 
 
 
-?garchFit
 
-library(GEVStableGarch)
-?GSgarch.Fit
-
-# General Testing of invalid input parameters with cond.dist, algorithm and data (with NA,
-# inf, NULL or character)
-library(fGarch)
-data(dem2gbp)
-x = dem2gbp[, 1]
-gF.new = GSgarch.Fit(data = x , m = 1,n = 1,p = 1,q = 1,
-                     cond.dist = "gev", intercept = TRUE, APARCH = TRUE, 
-                     algorithm = "sqp.restriction")
-
+############
 # Testing different type of datasets as input
 x <- c("asdf",rnorm(1000))
 x <- c(rnorm(100),NA,rnorm(200))
 x <- c(rnorm(100),-Inf)
 x <- c(NULL)
 x <- rnorm(100)
+GSgarch.Fit(data = x , formula = ~arma(1,1)+garch(1,1),
+            cond.dist = "norm", include.mean = TRUE, 
+            algorithm = "sqp")
 
-GSgarch.Fit(data = x , m = 1,n = 1,p = 1,q = 1,
-            cond.dist = "gev", intercept = TRUE, APARCH = FALSE, 
-            algorithm = "sqp.restriction")
+############
+# Comparison with package GEVStableGarch from CRAN
+# with dem2gbp[, 1] dataset
+# Instructions: Load the packages and run 'model1', 2 and so on.
+# Then load functions from the new version of the package 
+# and run 'fit1', 2 and so on. Finally, compare the estimated
+# parameters. 
+library(fGarch)
+library(GEVStableGarch)
+data(dem2gbp)
+x = dem2gbp[,1]
 
-# ARMA(1,1)-GARCH(1,1) with and without intercept 
-  data = eval(parse(text = data))
+# garch(1,1)-norm-intercept
+model1 = GSgarch.Fit(data = x, 0,0,1,1, cond.dist = "norm", 
+                     intercept = TRUE, algorithm = "nlminb")
+
+fit1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+# garch(1,1)-std-intercept
+model2 = GSgarch.Fit(data = x, 0,0,1,1, cond.dist = "std", 
+                     intercept = TRUE, algorithm = "nlminb")
+
+fit2 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+# garch(1,1)-gev-intercept
+model3 = GSgarch.Fit(data = x, 0,0,1,1, cond.dist = "gev", 
+                     intercept = TRUE, algorithm = "nlminb")
+
+fit3 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                    cond.dist = "gev", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+# arma(1,1)-aparch(1,1)-std-intercept
+model4 = GSgarch.Fit(data = x, 1,1,1,1, cond.dist = "std", 
+                     intercept = TRUE, algorithm = "nlminb",APARCH = TRUE)
+
+fit4 <- GSgarch.Fit(data = x , formula = ~arma(1,1)+aparch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1$par
+fit1$par
+model2$par
+fit2$par
+model3$par
+fit3$par
+model4$par
+fit4$par
+
+
+############
+# Comparison between GEVStableGarch and fGarch fit functions
+# with dem2gbp[, 1] dataset
+
+library(fGarch)
+data(dem2gbp)
 x = dem2gbp[, 1]
-gF.new <- GSgarch.Fit(data = x[1:200] , m = 1,n = 1,p = 1,q = 1,
-            cond.dist = "gev", intercept = FALSE, APARCH = FALSE, 
-            algorithm = "sqp.restriction")
-
-# GARCH(1,1) with and without intercept 
-x = dem2gbp[, 1]
-gF.new <- GSgarch.Fit(data = x , m = 0,n = 0,p = 1,q = 1,
-                      cond.dist = "norm", intercept = FALSE, APARCH = FALSE, 
-                      algorithm = "sqp")
-
-# Understanding the 'forumla' objects
-formula = arma(2,1)~garch(4,1)
-# length 3
-length(formula)
-formula = ~arma(1,1)
-formula = ~ar(1)
-formula = ~aparch(1,1)
-formula = ~garch(1,1)
-formula = ~arch(1)
-length(formula)
-# length 2
-
-################
-# Debugging function '.garchArgsParser' from package fGarch
-data = dem2gbp[, 1]
-formula = arma(2,1)~garch(4,1)
-
-# Commands before calling this function
-# Parse formula and data for garchFit ...
-#   Note in the new version we are working with timeSeries ...
-
-TESTE1 <- function(formula, data)
-{
-    Name = capture.output(substitute(data))
-    if(is.character(data)) {
-      eval(parse(text = paste("data(", data, ")")))
-    }
-    # data <- if (inherits(data, "timeSeries") data else as.timeSeries(data)
-    data <- as.data.frame(data)
-    
-    # Column Names:
-    if (isUnivariate(data)) {
-      colnames(data) <- "data"
-    } else {
-      # Check unique column Names:
-      uniqueNames = unique(sort(colnames(data)))
-      if (is.null(colnames(data))) {
-        stop("Column names of data are missing.")
-      }
-      if (length(colnames(data)) != length(uniqueNames)) {
-        stop("Column names of data are not unique.")
-      }
-    }
-    
-    # Handle if we have no left-hand-side for the formula ...
-    #   Note in this case the length of the formula is 2 (else 3):
-    if (length(formula) == 3 && isUnivariate(data) ) formula[2] <- NULL
-    if (length(formula) == 2) {
-      if (isUnivariate(data)) {
-        # Missing lhs -- we substitute the data file name as lhs ...
-        formula = as.formula(paste("data", paste(formula, collapse = " ")))
-      } else {
-        stop("Multivariate data inputs require lhs for the formula.")
-      }
-    }
-    garchArgsParser2(formula = formula, data = data, trace = TRUE)
-}
-garchFit(formula = ~arma(1,1)+garch(1,1))
-garchArgsParser2 <- 
-?garchFit
-function (formula, data, trace = FALSE) 
-{
-  allVars = unique(sort(all.vars(formula)))
-  allVarsTest = mean(allVars %in% colnames(data))
-  if (allVarsTest != 1) {
-    print(allVars)
-    print(colnames(data))
-    stop("Formula and data units do not match.")
-  }
-  formula.lhs = as.character(formula)[2]
-  mf = match.call(expand.dots = FALSE)
-  if (trace) {
-    cat("\nMatched Function Call:\n ")
-    print(mf)
-  }
-  m = match(c("formula", "data"), names(mf), 0)
-  mf = mf[c(1, m)]
-  mf[[1]] = as.name(".garchModelSeries")
-  mf$fake = FALSE
-  mf$lhs = TRUE
-  if (trace) {
-    cat("\nModelSeries Call:\n ")
-    print(mf)
-  }
-  x = eval(mf, parent.frame())
-  if (trace) 
-    print(x)
-  x = as.vector(x[, 1])
-  names(x) = rownames(data)
-  if (trace) 
-    print(x)
-  allLabels = attr(terms(formula), "term.labels")
-  if (trace) {
-    cat("\nAll Term Labels:\n ")
-    print(allLabels)
-  }
-  if (length(allLabels) == 2) {
-    formula.mean = as.formula(paste("~", allLabels[1]))
-    formula.var = as.formula(paste("~", allLabels[2]))
-  }
-  else if (length(allLabels) == 1) {
-    formula.mean = as.formula("~ arma(0, 0)")
-    formula.var = as.formula(paste("~", allLabels[1]))
-  }
-  if (trace) {
-    cat("\nMean Formula:\n ")
-    print(formula.mean)
-    cat("\nVariance Formula:\n ")
-    print(formula.var)
-  }
-  ans <- list(formula.mean = formula.mean, formula.var = formula.var, 
-              formula.lhs = formula.lhs, series = x)
-  ans
-}
-
-TESTE1(formula = formula, data = data)
 
 
-##########
-allVars = unique(sort(all.vars(formula)))
-formula.lhs = as.character(formula)[2]
-allLabels = attr(terms(formula), "term.labels")
+fit2 <- garchFit(data = x, formula = ~garch(1,1),
+                      cond.dist = "norm", include.mean = TRUE,
+                      algorithm = "nlminb")
+
+
+fit3 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+################################################################################
 
 
 
-if (length(allLabels) == 2) {
-  formula.mean = as.formula(paste("~", allLabels[1]))
-  formula.var = as.formula(paste("~", allLabels[2]))
-}
-if (length(allLabels) == 1) {
-  formula.mean = as.formula("~ arma(0, 0)")
-  formula.var = as.formula(paste("~", allLabels[1]))
-}
+
+
+
+
+
+
+################################################################################
+# TEST CASES FOF FUNCTION:               SPECIFICATION:
+#  .getFormula                Tests on different types of formulas as input. 
+#                                 					                							               
+################################################################################
+
+
+# Test Cases for function 
+
+# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(2,2)
+.getFormula(~arma(1,1)+garch(2,2)) 
+
+# expects: formula.mean = ~arma(5,5); formula.variance = ~garch(1,1)
+.getFormula(~arma(5,5)+aparch(1,1))
+
+# expects: formula.mean = ~arma(0,0); formula.variance = ~aparch(1,1)
+.getFormula(~aparch(1,1))
+
+# expects: formula.mean = ~arma(0,0); formula.variance = ~garch(1,1)
+.getFormula(~garch(1,1))
+
+# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
+.getFormula(~arma(1,1))
+
+# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
+.getFormula(~arma(0,1))
+
+# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
+.getFormula(~arma(1,0))
+
+# expects: error
+.getFormula(~ar(1))
+
+# expects: error
+.getFormula(~ma(1))
+
+# expects: error
+.getFormula(~arch(1))
+
+# expects: error
+.getFormula(~garch(1,1)+arma(1,1))
+
+# expects: error
+.getFormula(~arma(5,5)+aparch(1,1)+arma(2,2))
+
+# expects: error
+.getFormula(~aparch(0,1))
+
+# expects: error
+.getFormula(~garch(0,1))
+####################################################################
+
+
+
+
