@@ -23,7 +23,6 @@
 #  GSgarch.Fit             Fits ARMA-GARCH or ARMA-APARCH model  
 ################################################################################
 
-garchFit
 GSgarch.Fit <-
 function(
     formula = ~ garch(1,1), 
@@ -66,7 +65,15 @@ function(
     #         alpha near to 2 and beta > 0. The bad performance on the ARMA-GARCH model was
     #         similar to the single llh estimation of i.i.d samples of stable distribution. 
     #         In our simulations, the param = 2 was chosen to be the ones that performs
-    #         better in these situations.        
+    #         better in these situations.
+    #     IMPORTANT DETAILS FOR USING THIS FUNCTION:
+    #         Some care must be taken when using this function to estimate the parameters
+    #         of some models. 
+    #         For pure GARCH(p,q) with p,q >= 1 we need to make sure that the 'gamma' variable
+    #         is a vector of length 'p' and with all entries equal to zero.
+    #         For pure ARCH(p) = GARCH(p,0) we set the variable GARCH equal to TRUE to indicate
+    #         that the model has order q = 0. Then, we make q = 1 we estimate the parameters 
+    #         of a GARCH(p,1) with beta = 0 and gamma = 0. 
          
     # Arguments:
     #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
@@ -148,6 +155,8 @@ function(
         q <- 1
     mn <- max(m,n); pq <- max(p,q)
     garchLLH = function(parm){
+        
+      
       
         # check if some parameters are NAN
         if(sum(is.nan(parm)) != 0) {return(1e99)}
@@ -164,6 +173,9 @@ function(
         skew <- parm[3+m+n+2*p+q+1]
         shape <- parm[4+m+n+2*p+q+1]
         
+        
+        if(DEBUG) 
+          print(c("gm",gm))
         # Configuring delta and gamma for Garch estimation
         if( !APARCH ) 
         { 
@@ -243,7 +255,7 @@ function(
 #             h <- c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
 #                                         method = "recursive", init = h[q:1]-c))
 #             hh <- abs(h)^(1/delta)
-        }
+        
         
         ######
         # Test of another filtering, only for garch11 process.
@@ -280,21 +292,37 @@ function(
 #                     method = "recursive", init = mean(z^2))       
 #         hh <- abs(h)^(1/delta)
 
-       # Try to correct with my function in Tmp file.
-      Mean.z <- mean(z^delta)
-      for( i in 1:p)
-      {
-        edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
-        edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
-      }
-      edeltat = omega + edeltat
-      
-      h <- filter(edeltat, filter = beta,
-                  method = "recursive", init = rep(Mean.z,q))
-      hh <- abs(h)^(1/delta)
-
-
+        # Try to correct with my function in Tmp file.
         
+        # if only garch(p,0) or aparch(p,0)
+        if(GARCH == TRUE)
+          beta = 0
+        Mean.z <- mean(abs(z)^delta)
+        for( i in 1:p)
+        {
+          edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
+          edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
+        }
+        edeltat = omega + edeltat
+        
+        h <- filter(edeltat, filter = beta,
+                    method = "recursive", init = rep(Mean.z,q))
+        hh <- abs(h)^(1/delta)
+
+        if(DEBUG)
+        {
+            print(c("edelta[1:10]", edelta[1:10]))
+            print(c("edeltat[1:10]", edeltat[1:10]))
+            print(c("beta", beta))
+            print(c("rep(Mean.z,q)", rep(Mean.z,q)))
+            print(c("length(z)-length(hh)",length(z),length(h)))
+            print(c("sum(z)-sum(hh)",sum(z),sum(h)))
+            print(c("h[1:10]",h[1:10]))
+        }
+      }
+
+
+
         # get output Residuals
         if (optim.finished)
         {
@@ -314,8 +342,13 @@ function(
     }
     
     # Performing optimization
-    start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR, mu = mu
+    start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
                               MA = MA, cond.dist = cond.dist)
+    if(DEBUG)
+    {
+        print("start")
+        print(start)
+    }
     
     # Function that evaluate stationarity conditions to guide parameter estimation.
     rest <- function(parm)

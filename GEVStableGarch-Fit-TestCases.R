@@ -71,7 +71,7 @@
   # commit to github.
 
 
-
+?nlminb
 ############
 # Testing different type of datasets as input
 x <- c("asdf",rnorm(1000))
@@ -146,16 +146,57 @@ library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
 
-
-fit2 <- garchFit(data = x, formula = ~garch(1,1),
+# garch(1,1)-std-intercept
+fit1 <- garchFit(data = x, formula = ~garch(1,1),
                       cond.dist = "std", include.mean = TRUE,
                       algorithm = "nlminb")
-
-
-fit3 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "nlminb")
 
+# garch(2,2)-norm-intercept
+fit1 <- garchFit(data = x, formula = ~garch(2,2),
+                 cond.dist = "std", include.mean = TRUE,
+                 algorithm = "nlminb")
+
+
+model1 <- GSgarch.Fit(data = x , formula = ~garch(2,2),
+                      cond.dist = "std", include.mean = TRUE, 
+                      algorithm = "nlminb")
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
+
+# garch(1,0)-norm-intercept
+fit1 <- garchFit(data = x, formula = ~garch(1,0),
+                 cond.dist = "norm", include.mean = TRUE,
+                 algorithm = "nlminb")
+
+
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,0),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "nlminb")
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
+
+# aparch(1,1)-norm-intercept
+fit1 <- garchFit(data = x, formula = ~aparch(1,1),
+                 cond.dist = "norm", include.mean = TRUE,
+                 algorithm = "nlminb")
+
+
+model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "nlminb", DEBUG = TRUE, control = list(trace = 3))
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
+
+# aparch(1,0)-norm-intercept
+fit1 <- garchFit(data = x, formula = ~aparch(1,0),
+                 cond.dist = "norm", include.mean = TRUE,
+                 algorithm = "nlminb")
+
+
+model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,0),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "nlminb", DEBUG = FALSE)
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
 
 
 ################################################################################

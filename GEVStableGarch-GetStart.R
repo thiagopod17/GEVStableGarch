@@ -25,7 +25,7 @@
 ################################################################################
 
 
-GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, mu = 0,
+GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
                              cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)
 {    
     # Description:
@@ -46,7 +46,6 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, mu = 0,
     # Arguments:
     #   data - vector of data
     #   m, n, p, q - model order as in ARMA(m,n)-GARCH/APARCH(p,q)
-    #   mu - location parameter of ARMA model
     #   AR - boolean value that indicates whether we have a model
     #   with th Autoregressive part included
     #   MA - boolean value that indicates whether we have a model
