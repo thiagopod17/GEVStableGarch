@@ -32,7 +32,8 @@ function(
     include.mean = TRUE, 
     algorithm = c("sqp","sqp.restriction","nlminb"),
     printRes = TRUE,
-    control = NULL)
+    control = NULL,
+    DEBUG = FALSE)
 {  
     # Description:
     #     This functions reads the univariate time series and fits
@@ -46,6 +47,7 @@ function(
     #         sigmat^2 = omega + sum(alphai(e(t-i))^2) + sum(betaj*sigmat-j^2)
     #     REMARKS:
     #     et for ARMA(m,n), n > 1 will be initiated as 0, i.e, e[-n+1:0] = 0.
+    #     zt will be initiated as 0.
     #     ht will be initiated as 0.1 (see eq. (22) of Wurtz, 2006).   
     #     VARIABLE NOTATION USED INSIDE THIS FUNCTION:
     #         N: sample size
@@ -74,8 +76,6 @@ function(
     #   algorithm - 
     #   cond.dist - name of the conditional distribution, one of
     #       gev, stable, norm, std, sstd   
-    #   GStol.b - upper and lower bounds tolerance. Should be greater than tol
-    #   GStol - General tolerance for arma-garch parameters. In the beggining it was set to 1e-5    
     
     # Return:
     #   Asdf - The asdf     
@@ -92,8 +92,9 @@ function(
     CALL = match.call()  
   
     # Configuring Tolerance
-    GSstable.tol = 1e-2 
-    GStol = 1e-8
+    GSstable.tol = 1e-2 # upper and lower bounds tolerance. Should be greater than tol
+    GStol = 1e-8 # General tolerance for arma-garch parameters. 
+    # In the beggining it was set to 1e-5
 
     # Getting order model from object formula
     formula <- .getFormula(formula)
@@ -125,11 +126,11 @@ function(
     out$cond.dist <- cond.dist
     out$data <- data
     ARMAonly <- FALSE
-    if( (p == 0) && (q == 0))
-    {
-        ARMAonly = TRUE
-        p = 1
-    }
+#     if( (p == 0) && (q == 0))
+#     {
+#         ARMAonly = TRUE
+#         p = 1
+#     }
     optim.finished <- FALSE
     
     # Configuring model order
@@ -148,15 +149,22 @@ function(
     mn <- max(m,n); pq <- max(p,q)
     garchLLH = function(parm){
       
-        # model parameters
+        # check if some parameters are NAN
         if(sum(is.nan(parm)) != 0) {return(1e99)}
+        
+        # Getting parameters from parm vector 
         mu <- parm[1];
-        a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
-        omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
+        a <- parm[(1+1):(2+m-1)]
+        b <- parm[(1+m+1):(2+m+n-1)]
+        omega <- parm[1+m+n+1]
+        alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
         gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
         beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
-        delta <- parm[2+m+n+2*p+q+1]; 
-        skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
+        delta <- parm[2+m+n+2*p+q+1] 
+        skew <- parm[3+m+n+2*p+q+1]
+        shape <- parm[4+m+n+2*p+q+1]
+        
+        # Configuring delta and gamma for Garch estimation
         if( !APARCH ) 
         { 
             gm = rep(0,p);
@@ -193,9 +201,10 @@ function(
             }
             tau <- skew*tan(shape*pi/2)
             kdelta <- pi/2
-            if(abs(delta-1) > GStol) kdelta <- gamma(1 - delta)*cos(pi*delta/2)
-            lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
-              cos(delta/shape*atan(tau))
+            if(abs(delta-1) > GStol) 
+                kdelta <- gamma(1 - delta)*cos(pi*delta/2)
+                lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
+                    cos(delta/shape*atan(tau))
             cond.stable <- FALSE
         }
 
@@ -211,25 +220,80 @@ function(
         e.res <- c( e.init, filter(e.parc[-(1:mn)], filter = -b,
                                    method = "recursive", init = e.init[1:n]))     
         
+        
         # find i.i.d sequence z
         z <- e.res - mu
         if(ARMAonly)
             hh <- rep(omega,N)
         else
         {
-            h <- rep(0.1, pq)
+            #h <- rep(0.1, pq)
+            h <- rep(min(0.1,var(data)),pq)
             edeltat = 0
-            for( i in 1:p)
-            {
-              edelta <- alpha[i]*(abs(z)-gm[i]*z)^delta
-              edeltat = edeltat +  edelta[(p-(i-1)):(N-i)]
-            }
-            edeltat = c(h[1:p],edeltat)
-            c <- omega/(1-sum(beta))
-            h <- c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
-                                        method = "recursive", init = h[q:1]-c))
-            hh <- abs(h)^(1/delta)
+            
+#             # Current filtering function working quite good
+#             for( i in 1:p)
+#             {
+#               edelta <- alpha[i]*(abs(z)-gm[i]*z)^delta
+#               edeltat = edeltat +  edelta[(p-(i-1)):(N-i)]
+#             }
+#             edeltat = c(h[1:p],edeltat)
+# 
+#             c <- omega/(1-sum(beta))
+#             h <- c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
+#                                         method = "recursive", init = h[q:1]-c))
+#             hh <- abs(h)^(1/delta)
         }
+        
+        ######
+        # Test of another filtering, only for garch11 process.
+        # We dont need filtering of the arma part when we are dealing 
+        # with a pure garh or arch model.
+#         z = data - mu
+# 
+#         h <- rep(var(data), pq)
+#         edelta = (abs(z)-gm*z)^delta
+#         edeltat = filter(edelta, filter = c(0, alpha), sides = 1)
+#         c = omega/(1-sum(beta))
+#         h = c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
+#                                    method = "recursive", init = h[pq:1]-c))
+#        
+        
+        
+#         ##  filter from wuertz - the perfect one
+#         Mean = mean(z^2)
+#         z = data - mu
+#         e = omega + alpha * c(Mean, z[-length(data)]^2)
+#         h = filter(e, beta, "r", init = Mean)  
+        
+        #hh <- abs(h)^(1/delta)
+        #####
+
+        # Try to correct the filtering function. It is working much better than before.
+#         for( i in 1:p)
+#         {
+#           edelta <- c(rep(0,p), (alpha[i]*(abs(z)-gm[i]*z)^delta)[1:(N-1)])
+#           edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
+#         }
+#         edeltat = omega + edeltat
+#         h <- filter(edeltat, filter = beta,
+#                     method = "recursive", init = mean(z^2))       
+#         hh <- abs(h)^(1/delta)
+
+       # Try to correct with my function in Tmp file.
+      Mean.z <- mean(z^delta)
+      for( i in 1:p)
+      {
+        edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
+        edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
+      }
+      edeltat = omega + edeltat
+      
+      h <- filter(edeltat, filter = beta,
+                  method = "recursive", init = rep(Mean.z,q))
+      hh <- abs(h)^(1/delta)
+
+
         
         # get output Residuals
         if (optim.finished)
@@ -250,7 +314,7 @@ function(
     }
     
     # Performing optimization
-    start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
+    start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR, mu = mu
                               MA = MA, cond.dist = cond.dist)
     
     # Function that evaluate stationarity conditions to guide parameter estimation.

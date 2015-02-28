@@ -49,6 +49,26 @@
   # our goal now is to investigate the filtering process inside the GSGarch.Fit 
   # function to make the estimated parameters more similar to the ones from package
   # fGarch. 
+# 27 feb, 2015, right before commiting to Github
+  # Using garch11Fit function from Wurtz (2006) to estimate
+  # pure garch(1,1) model with conditional normal distribution
+  # This function estimate the
+  # garch(1,1)-include.mean-norm-dem2gbp
+  # The results are exactly the same as in the Code Snippet 2
+  # presented in the papper Wurtz et al. (2006)
+  # The function garch11Fit works better if start the conditional 
+  # variance with 'var(x)'.
+  # Mehoramos muito minha funcao quando para a estimacao do garch(1,1). Fiz
+  # isso retirando o filtro do aparch e recolocando o filtro do wuertz, que funcionava
+  # para o garch11.
+  # When I put the filter from garch11Fit function inside my GSgarch.Fit the 
+  # results were exactly the same. Therefore, thats is our starting pointing.
+  # Now, I am almost done because my filter function for pure APARCH model is 
+  # is matching exactly the filter function from garch11Fit. 
+  # The next step is to test it considerably well and develop the other filtering 
+  # for other process. This function needs to be documented a lot. Also, 
+  # remember to take pictures of the matrix representation I did on paper to 
+  # commit to github.
 
 
 
@@ -66,7 +86,8 @@ GSgarch.Fit(data = x , formula = ~arma(1,1)+garch(1,1),
 ############
 # Comparison with package GEVStableGarch from CRAN
 # with dem2gbp[, 1] dataset
-# Instructions: Load the packages and run 'model1', 2 and so on.
+# Instructions: Clear the Workspace, 
+# Load the packages and run 'model1', 2 and so on.
 # Then load functions from the new version of the package 
 # and run 'fit1', 2 and so on. Finally, compare the estimated
 # parameters. 
@@ -127,13 +148,15 @@ x = dem2gbp[, 1]
 
 
 fit2 <- garchFit(data = x, formula = ~garch(1,1),
-                      cond.dist = "norm", include.mean = TRUE,
+                      cond.dist = "std", include.mean = TRUE,
                       algorithm = "nlminb")
 
 
 fit3 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "nlminb")
+
+
 
 ################################################################################
 

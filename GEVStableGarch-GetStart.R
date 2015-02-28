@@ -25,7 +25,7 @@
 ################################################################################
 
 
-GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, 
+GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, mu = 0,
                              cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)
 {    
     # Description:
@@ -46,6 +46,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     # Arguments:
     #   data - vector of data
     #   m, n, p, q - model order as in ARMA(m,n)-GARCH/APARCH(p,q)
+    #   mu - location parameter of ARMA model
     #   AR - boolean value that indicates whether we have a model
     #   with th Autoregressive part included
     #   MA - boolean value that indicates whether we have a model
@@ -128,7 +129,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     }
     
     # Initial APARCH and Density parameters
-    omega.init <- 0.1
+    omega.init <- min(0.1,0.1*var(data))
     alpha.init <- rep(0.1/p,p)
     beta.init <- rep(0.8/q,q)
     shape.init <- 1
@@ -137,7 +138,8 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     delta.init <- 1.5
     
     # Lower Bound
-    mean.lower <- mean.init - 3*abs(mean.init)
+    #mean.lower <- mean.init - 3*abs(mean.init)
+    mean.lower <- -10*abs(mean.init)
     arma.lower <- rep(-10+GStol.b,m+n)
     omega.lower <- rep(GStol.b,1)
     alpha.lower <- rep(GStol.b,p)
@@ -148,9 +150,11 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     delta.lower <- GStol.b
     
     # Upper Bound	
-    mean.upper <- mean.init + 3*abs(mean.init)
+    #mean.upper <- mean.init + 3*abs(mean.init)
+    mean.upper <- 10*abs(mean.init)
     arma.upper <- rep(10-GStol.b,m+n)
     omega.upper <- rep(1-GStol.b,1)
+    #omega.upper <- 100*var(data)
     alpha.upper <- rep(1-GStol.b,p)
     beta.upper <- rep(1-GStol.b,q)
     shape.upper <- 4
