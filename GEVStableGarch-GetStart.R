@@ -25,7 +25,7 @@
 ################################################################################
 
 
-GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
+GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FALSE,
                              cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)
 {    
     # Description:
@@ -50,6 +50,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     #   with th Autoregressive part included
     #   MA - boolean value that indicates whether we have a model
     #   with the Moving Average part included
+    #   ARMAonly - Indicates whether we have a pure ARMA model
     #   cond.dist - name of the conditional distribution, one of
     #       gev, stable, norm, std, sstd
     #   GSstable.tol.b - boundary tolerance. Should be greater than GSstable.tol
@@ -87,44 +88,51 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
         arima.m <- 0
     if(MA == TRUE) # we don't have the MA part 
         arima.n <- 0
-    
-    # try arima fit with correct order depending on AR and MA
-    try(arima.fit.try <- as.vector(arima(data,order = c(arima.m, 0, arima.n))$coef), silent = TRUE)
-    if( is.numeric(arima.fit.try) )
-        arima.fit <- arima.fit.try
-    else
-        arima.failed <- TRUE
-    
-    # Configuring initial ar,ma and mean parameters returned by 'arima' function.
-    if (arima.failed == FALSE) 
+
+    if(ARMAonly == FALSE) # try 'arima' function only if we are not in a pure 'arma' model
     {
-        if(AR == FALSE && MA == FALSE)
+        # try arima fit with correct order depending on AR and MA
+        try(arima.fit.try <- as.vector(arima(data,order = c(arima.m, 0, arima.n))$coef), silent = TRUE)
+        if( is.numeric(arima.fit.try) )
+            arima.fit <- arima.fit.try
+        else
+            arima.failed <- TRUE
+        
+        # Configuring initial ar,ma and mean parameters returned by 'arima' function.
+        if (arima.failed == FALSE) 
         {
-            ar.init <- arima.fit[1:arima.m]
-            ma.init <- arima.fit[(arima.m+1):(arima.m+arima.n)]
+            if(AR == FALSE && MA == FALSE)
+            {
+                ar.init <- arima.fit[1:arima.m]
+                ma.init <- arima.fit[(arima.m+1):(arima.m+arima.n)]
+            }
+            if(AR == TRUE && MA == FALSE)
+            {
+                ar.init <- 0
+                ma.init <- arima.fit[(arima.m+1):(arima.m+arima.n)]
+            }
+            if(AR == FALSE && MA == TRUE)
+            {
+                ar.init <- arima.fit[1:arima.m]
+                ma.init <- 0
+            }
+            if(AR == TRUE && MA == TRUE)
+            {
+                ar.init <- 0
+                ma.init <- 0
+            }
+            mean.init <- arima.fit[arima.m+arima.n+1]
         }
-        if(AR == TRUE && MA == FALSE)
+        else # arima function failed
         {
-            ar.init <- 0
-            ma.init <- arima.fit[(arima.m+1):(arima.m+arima.n)]
+          mean.init <- mean(data)
+          ar.init <- rep(0,m)
+          ma.init <- rep(0,n)
         }
-        if(AR == FALSE && MA == TRUE)
-        {
-            ar.init <- arima.fit[1:arima.m]
-            ma.init <- 0
-        }
-        if(AR == TRUE && MA == TRUE)
-        {
-            ar.init <- 0
-            ma.init <- 0
-        }
-        mean.init <- arima.fit[arima.m+arima.n+1]
-    }
-    else # arima function failed
-    {
-      mean.init <- mean(data)
-      ar.init <- rep(0,m)
-      ma.init <- rep(0,n)
+    } else {
+        mean.init <- mean(data)
+        ar.init <- rep(0,m)
+        ma.init <- rep(0,n)        
     }
     
     # Initial APARCH and Density parameters
@@ -190,12 +198,20 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
     
     # Constructing the initial, lower and upper bound vectors
     arma.init <- c(ar.init,ma.init)
-    init <- c(mean.init,arma.init,omega.init,alpha.init,gm.init,
-              beta.init,delta.init,skew.init,shape.init)
-    lower <- c(mean.lower,arma.lower,omega.lower,alpha.lower,gm.lower,
-               beta.lower,delta.lower,skew.lower,shape.lower)
-    upper <- c(mean.upper,arma.upper,omega.upper,alpha.upper,gm.upper,
+    if(!ARMAonly)
+    {
+        init <- c(mean.init,arma.init,omega.init,alpha.init,gm.init,
+                beta.init,delta.init,skew.init,shape.init)
+        lower <- c(mean.lower,arma.lower,omega.lower,alpha.lower,gm.lower,
+                 beta.lower,delta.lower,skew.lower,shape.lower)
+        upper <- c(mean.upper,arma.upper,omega.upper,alpha.upper,gm.upper,
                beta.upper,delta.upper,skew.upper,shape.upper)
+    } else {
+      init <- c(mean.init,arma.init,skew.init,shape.init)
+      lower <- c(mean.lower,arma.lower,skew.lower,shape.lower)
+      upper <- c(mean.upper,arma.upper,skew.upper,shape.upper)      
+    }
+      
     if(arima.failed == TRUE)
         warning("arima function from package stats failed to get initial AR and MA coefficients")
     

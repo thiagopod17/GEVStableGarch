@@ -71,7 +71,6 @@
   # commit to github.
 
 
-?nlminb
 ############
 # Testing different type of datasets as input
 x <- c("asdf",rnorm(1000))
@@ -153,6 +152,7 @@ fit1 <- garchFit(data = x, formula = ~garch(1,1),
 model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "nlminb")
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
 
 # garch(2,2)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~garch(2,2),
@@ -199,68 +199,64 @@ model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,0),
 fit1@fit$matcoef[,1]-model1$matcoef[,1]
 
 
+############
+# Fitting ARMA-GARCH or ARMA-APARCH process
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1]
+
+# arma(1,1)-garch(1,1)-std-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+garch(1,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(1,1)+garch(1,1),
+                    cond.dist = "norm", include.mean = TRUE)
+model1@fit$matcoef[,1]-fit1$matcoef[,1]
+
+
+# arma(1,1)-aparch(1,1)-std-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                   cond.dist = "std", include.mean = TRUE)
+model1@fit$matcoef[,1]-fit1$matcoef[,1]
+
+
+# arma(0,1)-garch(1,1)-norm-intercept
+data(sp500dge)
+x = 100*sp500dge[, 1]
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "sqp")
+model1 <- garchFit(data = x, formula = ~arma(0,1)+aparch(1,1),
+                   cond.dist = "norm", include.mean = TRUE, 
+                   algorithm = "nlminb")
+model1@fit$matcoef[,1]-fit1$matcoef[,1]
+
+############
+# Fitting pure ARMA process 
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1]
+
+# arma(1,1)-norm-intercept-nlminb
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb", DEBUG = FALSE)
+model1 <- arima(x, order = c(1, 0, 1))
+absoluteError <- abs((fit1$par-model1$coef[c(3,1,2)])/fit1$par)
+absoluteError
+
+# arma(2,2)-norm-intercept-nlminb
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(2,2),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb", DEBUG = FALSE)
+model1 <- arima(x, order = c(2, 0, 2), include.mean = TRUE)
+absoluteError <- abs((fit1$par-model1$coef[c(5,1:4)])/fit1$par)
+absoluteError
+
 ################################################################################
-
-
-
-
-
-
-
-
-
-################################################################################
-# TEST CASES FOF FUNCTION:               SPECIFICATION:
-#  .getFormula                Tests on different types of formulas as input. 
-#                                 					                							               
-################################################################################
-
-
-# Test Cases for function 
-
-# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(2,2)
-.getFormula(~arma(1,1)+garch(2,2)) 
-
-# expects: formula.mean = ~arma(5,5); formula.variance = ~garch(1,1)
-.getFormula(~arma(5,5)+aparch(1,1))
-
-# expects: formula.mean = ~arma(0,0); formula.variance = ~aparch(1,1)
-.getFormula(~aparch(1,1))
-
-# expects: formula.mean = ~arma(0,0); formula.variance = ~garch(1,1)
-.getFormula(~garch(1,1))
-
-# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
-.getFormula(~arma(1,1))
-
-# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
-.getFormula(~arma(0,1))
-
-# expects: formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
-.getFormula(~arma(1,0))
-
-# expects: error
-.getFormula(~ar(1))
-
-# expects: error
-.getFormula(~ma(1))
-
-# expects: error
-.getFormula(~arch(1))
-
-# expects: error
-.getFormula(~garch(1,1)+arma(1,1))
-
-# expects: error
-.getFormula(~arma(5,5)+aparch(1,1)+arma(2,2))
-
-# expects: error
-.getFormula(~aparch(0,1))
-
-# expects: error
-.getFormula(~garch(0,1))
-####################################################################
-
-
-
 

@@ -72,7 +72,7 @@ function(
     #         For pure GARCH(p,q) with p,q >= 1 we need to make sure that the 'gamma' variable
     #         is a vector of length 'p' and with all entries equal to zero.
     #         For pure ARCH(p) = GARCH(p,0) we set the variable GARCH equal to TRUE to indicate
-    #         that the model has order q = 0. Then, we make q = 1 we estimate the parameters 
+    #         that the model has order q = 0. Then, we make q = 1 to estimate the parameters 
     #         of a GARCH(p,1) with beta = 0 and gamma = 0. 
          
     # Arguments:
@@ -110,16 +110,28 @@ function(
     p <- formula$formula.order[3]
     q <- formula$formula.order[4]
     APARCH <- formula$isAPARCH
+        
+    # Configuring model order
+    ARMAonly <- FALSE
+    AR <- FALSE 
+    MA <- FALSE 
+    GARCH <- FALSE
+    if( m == 0) AR <- TRUE
+    if( n == 0) MA <- TRUE
+    if( q == 0) GARCH <- TRUE
+    optim.finished <- FALSE
+    if (AR == TRUE)
+        m <- 1
+    if( MA == TRUE) 
+        n <- 1
+    if( (p == 0) && (q == 0))
+        ARMAonly = TRUE
+    if (GARCH == TRUE && !ARMAonly)
+        q <- 1
     
-#     # Checking if model order was specified correctly
-#     if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
-#         any (c(m,n,p,q) < 0) || (p == 0 && q != 0) || (p == 0 && APARCH) ||
-#         any (c(m,n,p,q) > 10) ) 
-#         stop ("Invalid ARMA-GARCH order. We allow pure GARCH or APARCH. AR/MA/ARMA-GARCH/APARCH models.
-#             The order of the parameters could be set up to 10.")
-
     # Initial configurations
-    data <- data; N <- length(data)
+    data <- data; 
+    N <- length(data)
     out <- NULL # output of the GSgarch.Fit function
     out$order <- c(m,n,p,q,include.mean,APARCH)
     TMPvector <- c(if(m != 0 || n != 0) c("arma(",m,",",n,")-"),
@@ -132,32 +144,79 @@ function(
     out$model <- paste(TMPorder,"##",TMPintercept, collapse="")
     out$cond.dist <- cond.dist
     out$data <- data
-    ARMAonly <- FALSE
-#     if( (p == 0) && (q == 0))
-#     {
-#         ARMAonly = TRUE
-#         p = 1
-#     }
     optim.finished <- FALSE
     
-    # Configuring model order
-    AR = FALSE; MA <- FALSE; GARCH <- FALSE
-    if( m == 0) AR <- TRUE
-    if( n == 0) MA <- TRUE
-    if( q == 0) GARCH <- TRUE
-    if( (p == 0) && (q == 0) ) {ARMAonly = TRUE}
-    optim.finished <- FALSE
-    if (AR == TRUE)
-        m <- 1
-    if( MA == TRUE) 
-        n <- 1
-    if (GARCH == TRUE)
-        q <- 1
-    mn <- max(m,n); pq <- max(p,q)
+
+    
+    # BEGIN: Log Likelihood for pure ARMA process
+    #############################################
+    armaLLH <- function(parm)
+    {      
+        if(DEBUG)
+            print(parm)
+        # check if some parameters are NAN
+        if(sum(is.nan(parm)) != 0) {return(1e99)}
+        
+        # Getting parameters from parm vector 
+        mu <- parm[1];
+        a <- parm[(1+1):(2+m-1)]
+        b <- parm[(1+m+1):(2+m+n-1)]
+        skew <- parm[1+m+n+1]
+        shape <- parm[2+m+n+1]
+        
+        # Setting parameters to accept tapper off MA, AR or GARCH coefficients
+        if( AR == TRUE) 
+          a <- 0
+        if( MA == TRUE) 
+          b <- 0
+        if (include.mean == FALSE)
+          mu <- 0
+         
+        if( cond.dist == "stable")
+        {
+          if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
+                !(abs(skew) < 1) || !((shape - 2) < 0) )
+          {
+            return(1e99)
+          }
+        }
+        
+        # Filters the Time series to obtain the i.i.d. sequence of 
+        # 'innovations' to evaluate the Log-likelihood function
+        z <- filter.Arma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+        
+        if(DEBUG)
+        {
+            print(c("length(z)",length(z)))
+            print(c("N",N))
+        }
+        
+        
+        # get output Residuals
+        if (optim.finished)
+        {
+          out$ARMA.res <<- z
+          out$GARCH.sig <<- 1
+        }
+        
+        # Return llh function        
+        llh.dens <- GSgarch.Dist(z = z, hh = 1, shape = shape, 
+                                 skew = skew, cond.dist = cond.dist)
+        llh <- llh.dens
+        if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
+        {
+          llh <- 1e99
+        }
+        llh
+    }
+    # END: Log Likelihood for pure ARMA process
+    #############################################
+
+
+    # BEGIN: garch Likelihood ARMA-APARCH or pure GARCH process
+    ###########################################################
     garchLLH = function(parm){
         
-      
-      
         # check if some parameters are NAN
         if(sum(is.nan(parm)) != 0) {return(1e99)}
         
@@ -174,10 +233,8 @@ function(
         shape <- parm[4+m+n+2*p+q+1]
         
         
-        if(DEBUG) 
-          print(c("gm",gm))
         # Configuring delta and gamma for Garch estimation
-        if( !APARCH ) 
+        if( !APARCH) 
         { 
             gm = rep(0,p);
             delta = 2; 
@@ -195,12 +252,13 @@ function(
             mu <- 0
         
         # Avoid being out of parameter space
-        parset <- c(omega,alpha,if(!GARCH) beta,delta)
-        cond.general <- any(parset < GStol) 
+        cond.general <- FALSE
         cond.normal <- FALSE
         cond.student <- FALSE
         cond.gev <- FALSE
         cond.stable <- FALSE
+        parset <- c(omega,alpha,if(!GARCH) beta,delta)
+        cond.general <- any(parset < GStol) 
         if( cond.dist == "norm")
             cond.normal <- ( sum(alpha) + sum(beta) > 1 - GStol )
         
@@ -226,100 +284,40 @@ function(
             return(1e99)
         }
         
-        # tapper off the mean equation 2
-        e.init <- rep(0,mn)
-        e.parc <- c(e.init,filter(data, filter = c(1, -a), sides = 1)[(mn+1):N])
-        e.res <- c( e.init, filter(e.parc[-(1:mn)], filter = -b,
-                                   method = "recursive", init = e.init[1:n]))     
-        
-        
-        # find i.i.d sequence z
-        z <- e.res - mu
-        if(ARMAonly)
-            hh <- rep(omega,N)
-        else
+        # Filters the Time series to obtain the i.i.d. sequence of 
+        # 'innovations' to evaluate the Log-likelihood function
+        if(AR == TRUE && MA  == TRUE)
         {
-            #h <- rep(0.1, pq)
-            h <- rep(min(0.1,var(data)),pq)
-            edeltat = 0
-            
-#             # Current filtering function working quite good
-#             for( i in 1:p)
-#             {
-#               edelta <- alpha[i]*(abs(z)-gm[i]*z)^delta
-#               edeltat = edeltat +  edelta[(p-(i-1)):(N-i)]
-#             }
-#             edeltat = c(h[1:p],edeltat)
-# 
-#             c <- omega/(1-sum(beta))
-#             h <- c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
-#                                         method = "recursive", init = h[q:1]-c))
-#             hh <- abs(h)^(1/delta)
+            filteredSeries <- filter.Aparch(data = data,p = p,q = q, 
+              mu = mu, omega = omega, alpha = alpha, beta = beta, gamma = gm, delta = delta)
+            z <- filteredSeries[,1]
+            hh <- filteredSeries[,2]          
+        }
+        if(AR == FALSE || MA == FALSE)
+        {
+            filteredArma <- filter.Arma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+            filteredSeries <- filter.Aparch(data = filteredArma,p = p,q = q, 
+                              mu = 0, omega = omega, alpha = alpha, beta = beta, gamma = gm, delta = delta)
+            z <- filteredSeries[,1]
+            hh <- filteredSeries[,2]          
+          
+        }
+          # CURRENT FILTERING THAT WORKS REALLY GOOD FOR PURE APARCH PROCESS
         
-        
-        ######
-        # Test of another filtering, only for garch11 process.
-        # We dont need filtering of the arma part when we are dealing 
-        # with a pure garh or arch model.
-#         z = data - mu
-# 
-#         h <- rep(var(data), pq)
-#         edelta = (abs(z)-gm*z)^delta
-#         edeltat = filter(edelta, filter = c(0, alpha), sides = 1)
-#         c = omega/(1-sum(beta))
-#         h = c( h[1:pq], c + filter(edeltat[-(1:pq)], filter = beta,
-#                                    method = "recursive", init = h[pq:1]-c))
-#        
-        
-        
-#         ##  filter from wuertz - the perfect one
-#         Mean = mean(z^2)
-#         z = data - mu
-#         e = omega + alpha * c(Mean, z[-length(data)]^2)
-#         h = filter(e, beta, "r", init = Mean)  
-        
-        #hh <- abs(h)^(1/delta)
-        #####
-
-        # Try to correct the filtering function. It is working much better than before.
+#         # if only garch(p,0) or aparch(p,0)
+#         if(GARCH == TRUE)
+#           beta = 0
+#         Mean.z <- mean(abs(z)^delta)
 #         for( i in 1:p)
 #         {
-#           edelta <- c(rep(0,p), (alpha[i]*(abs(z)-gm[i]*z)^delta)[1:(N-1)])
+#           edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
 #           edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
 #         }
 #         edeltat = omega + edeltat
+#         
 #         h <- filter(edeltat, filter = beta,
-#                     method = "recursive", init = mean(z^2))       
+#                     method = "recursive", init = rep(Mean.z,q))
 #         hh <- abs(h)^(1/delta)
-
-        # Try to correct with my function in Tmp file.
-        
-        # if only garch(p,0) or aparch(p,0)
-        if(GARCH == TRUE)
-          beta = 0
-        Mean.z <- mean(abs(z)^delta)
-        for( i in 1:p)
-        {
-          edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
-          edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
-        }
-        edeltat = omega + edeltat
-        
-        h <- filter(edeltat, filter = beta,
-                    method = "recursive", init = rep(Mean.z,q))
-        hh <- abs(h)^(1/delta)
-
-        if(DEBUG)
-        {
-            print(c("edelta[1:10]", edelta[1:10]))
-            print(c("edeltat[1:10]", edeltat[1:10]))
-            print(c("beta", beta))
-            print(c("rep(Mean.z,q)", rep(Mean.z,q)))
-            print(c("length(z)-length(hh)",length(z),length(h)))
-            print(c("sum(z)-sum(hh)",sum(z),sum(h)))
-            print(c("h[1:10]",h[1:10]))
-        }
-      }
 
 
 
@@ -340,10 +338,13 @@ function(
         }
         llh
     }
-    
-    # Performing optimization
+    # END: garch Likelihood ARMA-APARCH or pure GARCH process
+    ###########################################################
+
+
+    # Getting start, lower and upper bound for parameters to perform optimization
     start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
-                              MA = MA, cond.dist = cond.dist)
+                              MA = MA, ARMAonly = ARMAonly, cond.dist = cond.dist)
     if(DEBUG)
     {
         print("start")
@@ -378,14 +379,26 @@ function(
         fit1 <- solnp(pars = start[1,], fun = garchLLH, ineqfun = rest, ineqLB = 0,
                     ineqUB = 1, LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "nlminb")
-    {
-        fit1 <- nlminb(start[1,], objective = garchLLH,
+    {      
+        if(ARMAonly)
+        {            
+          fit1 <- nlminb(start[1,], objective = armaLLH,
                        lower = start[2,], upper = start[3,], 
                        control = control)
-        out$llh <- fit1$objective
-        out$par <- fit1$par
-        out$hessian <- optim(par = fit1$par, fn = garchLLH, 
-                             method = "Nelder-Mead", hessian = TRUE)$hessian 
+          out$llh <- fit1$objective
+          out$par <- fit1$par
+          out$hessian <- optim(par = fit1$par, fn = armaLLH, 
+                               method = "Nelder-Mead", hessian = TRUE)$hessian
+        }
+        else{
+            fit1 <- nlminb(start[1,], objective = garchLLH,
+                       lower = start[2,], upper = start[3,], 
+                       control = control)
+            out$llh <- fit1$objective
+            out$par <- fit1$par
+            out$hessian <- optim(par = fit1$par, fn = garchLLH, 
+                                 method = "Nelder-Mead", hessian = TRUE)$hessian 
+        }
     }
     if (any(c("sqp", "sqp.restriction") == algorithm))
     {
@@ -394,18 +407,26 @@ function(
         out$hessian <- fit1$hessian
     } 
     
+    if(DEBUG)
+      print(fit1)
+
     # Organizing the output of the program
     optim.finished = TRUE
     
     # Call garchLLH function to update the values of the ARMA residuals 
     # and the GARCH/APARCH volatility.
-    garchLLH(out$par)
+    if(ARMAonly)        
+        armaLLH(out$par)
+    else 
+        garchLLH(out$par)
     
     # Creating index to create a vector with the estimated parameters.
-    outindex <-   c(if(include.mean) 1, 
+    if(!ARMAonly)
+    {
+        outindex <- c(if(include.mean) 1, 
                     if(AR == FALSE) (1+1):(2+m-1),
                     if(MA == FALSE) (1+m+1):(2+m+n-1),
-                    (1+m+n+1),
+                    if(!ARMAonly) (1+m+n+1),
                     if(!ARMAonly) (2+m+n+1):(3+m+n+p-1),
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
@@ -413,10 +434,24 @@ function(
                     if(any(c("sstd","stable")  == cond.dist)) (3+m+n+2*p+q+1),
                     if(any(c("std","gev","stable","sstd")  == cond.dist)) 
                       (4+m+n+2*p+q+1))
+    } else {
+        outindex <- c(if(include.mean) 1, 
+                    if(AR == FALSE) (1+1):(2+m-1),
+                    if(MA == FALSE) (1+m+1):(2+m+n-1),
+                    if(!ARMAonly) (1+m+n+1),
+                    if(!ARMAonly) (2+m+n+1):(3+m+n+p-1),
+                    if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
+                    if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
+                    if(APARCH) (2+m+n+2*p+q+1),
+                    if(any(c("sstd","stable")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd")  == cond.dist)) 
+                      (2+m+n+2*p+q+1))  
+    }
     
-    outnames <- c(if(include.mean) "mu", if( AR == FALSE) paste("ar", 1:m, sep = ""),
+    outnames <- c(if(include.mean) "mu", 
+                  if( AR == FALSE) paste("ar", 1:m, sep = ""),
                   if(MA == FALSE) paste("ma", 1:n, sep = ""),
-                  "omega",
+                  if(!ARMAonly) "omega",
                   if(!ARMAonly) paste("alpha", 1:p, sep = ""),
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
@@ -425,6 +460,12 @@ function(
                   if(any(c("std","gev","stable","sstd")  == cond.dist)) 
                     "shape")
     
+    if(DEBUG)
+    {
+        print(c("out",out))
+        print(c("outindex",outindex))
+    }
+      
     out$par <- out$par[outindex]
     names(out$par) <- outnames
     out$hessian <- out$hessian[outindex,outindex]
@@ -468,141 +509,4 @@ function(
 
 
 ################################################################################
-
-
-
-
-
-
-
-################################################################################
-#  FUNCTION:               DESCRIPTION:
-#
-#  .getFormula             Gets the formula.mean and formula.variance from
-#                          the object formula.
-################################################################################
-
-
-.getFormula <-
-function(
-    formula)
-{
-    # Description:
-    #   This functions reads formula object and converts it into a list 
-    #   containing the separeted mean and variance arguments.
-    #   Examples from output:
-    #     ~arma(1,1)+garch(1,1): formula.mean = ~arma(1,1); formula.variance = ~garch(1,1)
-    #     ~aparch(1,1): formula.mean = ~arma(0,0); formula.variance = ~aparch(1,1)
-    #     ~arch(1): formula.mean = ~arma(0,0); formula.variance = ~arch(1)
-    #     ~arma(1,1): formula.mean = ~arma(1,1); formula.variance = ~garch(0,0)
-    #     ~ar(1): formula.mean = ~ar(1); formula.variance = ~garch(0,0) 
-    #     ~ma(1): formula.mean = ~ma(1); formula.variance = ~garch(0,0) 
-  
-    # Arguments:
-    #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
-    
-    # Return:
-    #   A list containing two elements, formula.mean and formula.variance     
-    
-    # FUNCTION: 
-  
-    # Initial variable declaration
-    allLabels = attr(terms(formula), "term.labels")
-    formulas.mean.allowed = c("arma")
-    formulas.variance.allowed = c("garch","aparch")
-    formulaOK <- TRUE
-    checkFormulaMean <- ""
-    checkFormulaVariance <- ""
-    isAPARCH = FALSE
-    
-    # Error treatment of input parameters 
-    if( (length(allLabels) != 1 ) && (length(allLabels) != 2 ) )
-        formulaOK <- FALSE
-    
-    # Formula of type: ~ formula1 + formula2
-    else if (length(allLabels) == 2)
-    {
-        formula.mean = as.formula(paste("~", allLabels[1]))
-        formula.var = as.formula(paste("~", allLabels[2]))
-        checkFormulaMean = rev(all.names(formula.mean))[1]
-        checkFormulaVariance = rev(all.names(formula.var))[1]
-        if( !any(formulas.mean.allowed == checkFormulaMean) || 
-            !any(formulas.variance.allowed == checkFormulaVariance))   
-            formulaOK <- FALSE
-    }
-    # Formula of type: ~formula1
-    else if (length(allLabels) == 1) 
-    {
-      
-        # pure 'garch' or 'aparch'
-        if(grepl("arch", attr(terms(formula), "term.labels"))) 
-        {
-            formula.mean = as.formula("~ arma(0, 0)")
-            formula.var = as.formula(paste("~", allLabels[1]))
-            checkFormulaVariance = rev(all.names(formula.var))[1]
-            if(!any(formulas.variance.allowed == checkFormulaVariance))   
-                formulaOK <- FALSE
-        }
-        else # pure 'ar', 'ma' or 'arma' model.
-        {
-            formula.mean = as.formula(paste("~", allLabels[1]))  
-            formula.var = as.formula("~ garch(0, 0)") 
-            checkFormulaMean = rev(all.names(formula.mean))[1]
-            if(!any(formulas.mean.allowed == checkFormulaMean))   
-                formulaOK <- FALSE
-        }    
-    }
-
-    # Check if we are fitting "aparch" model 
-    if(checkFormulaVariance == "aparch")
-        isAPARCH = TRUE
-    
-    # Get model order and check if they were specified correctly
-    if(formulaOK == TRUE)
-    {
-        model.order.mean = 
-            as.numeric(strsplit(strsplit(strsplit(as.character(formula.mean), 
-            "\\(")[[2]][2], "\\)")[[1]], ",")[[1]])
-        model.order.var = 
-            as.numeric(strsplit(strsplit(strsplit(as.character(formula.var), 
-            "\\(")[[2]][2], "\\)")[[1]], ",")[[1]])
-        if( (length(model.order.mean) != 2) || (length(model.order.mean) != 2))
-          formulaOK <- FALSE 
-    }
-    
-    # Check if model order was specified correctly.
-    if(formulaOK == TRUE)
-    {
-        m = model.order.mean[1]
-        n = model.order.mean[2]
-        p = model.order.var[1]
-        q = model.order.var[2]        
-        if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
-            any (c(m,n,p,q) < 0) || (p == 0 && q != 0))
-            formulaOK <- FALSE            
-    }
-    
-    
-    # Stop if formula was not specified correctly
-    if(formulaOK == FALSE)
-        stop ("Invalid Formula especification. 
-            Formula mean must be 'arma' and 
-            Formula Variance must be one of: garch or aparch
-            For example:
-                ARMA(1,1)-GARCH(1,1):  ~arma(1,1)+garch(1,1),
-                AR(1)-GARCH(1,1):      ~arma(1,0)+garch(1,1),
-                MA(1)-APARCH(1,0):     ~arma(0,1)+aparch(1,0),
-                ARMA(1,1):             ~arma(1,1),
-                ARCH(2):               ~garch(1,0),
-            For more details just type: ?GSgarch.Fit")
-    
-    # Return
-    list(formula.mean = formula.mean,formula.var = formula.var, 
-         formula.order = c(m,n,p,q), isAPARCH = isAPARCH)
-}
-
-
-
-
-
 

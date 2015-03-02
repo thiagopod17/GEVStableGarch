@@ -73,7 +73,11 @@ GSgarch.Dist <-
     if(cond.dist == "sstd")
     {
         if(!(shape > 2) || !(skew > 0))
-          stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
+        {
+            #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
+            return(1e99)
+        }
+          
         gm = skew
         xi = gm
         nu = shape
