@@ -82,13 +82,13 @@ spec <- GSgarchSpec(model = list(mu = 3,ar = c(1,2),alpha = c(3,3),
 gamma = c(0,0.4),beta = 3,delta = 2), 
 presample = NULL,cond.dist = c("norm"),rseed = 3)
 # ARMA(2,3)-APARCH(2,2)
-spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3), alpha = c(3,3),
+spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
 gamma = c(0,0.4),beta = c(3,3),delta = 2), 
 presample = NULL,cond.dist = c("norm"),rseed = 3)
 # ARCH(1): expects to have an arch(1) model with delta = 2.
 spec <- GSgarchSpec(model = list(alpha = c(3), delta = 2), 
 presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARCH(1): expects an aparch(1) model with delta = 0.4.
+# APARCH(1): expects an aparch(1) model with delta = 0.4.
 spec <- GSgarchSpec(model = list(alpha = c(3), delta = 0.4), 
 presample = NULL,cond.dist = c("gev"),rseed = 3)    
 

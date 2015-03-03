@@ -182,20 +182,27 @@ GSgarchSpec <-
     if (order.ar == 0 && order.ma == 0) {
         formula.mean = ""
     }
-    if (order.ar > 0 && order.ma == 0) {
-        formula.mean = paste ("ar(", as.character(order.ar), ")", sep = "")
-    }
-    if (order.ar == 0 && order.ma > 0) {
-        formula.mean = paste ("ma(", as.character(order.ma), ")",  sep = "")
-    }
-    if (order.ar > 0 && order.ma > 0) {
+    else {
         formula.mean = paste ("arma(", as.character(order.ar), ", ",
             as.character(order.ma), ")", sep = "")
     }
+    
+    
+#     if (order.ar > 0 && order.ma == 0) {
+#         formula.mean = paste ("ar(", as.character(order.ar), ")", sep = "")
+#     }
+#     if (order.ar == 0 && order.ma > 0) {
+#         formula.mean = paste ("ma(", as.character(order.ma), ")",  sep = "")
+#     }
+#     if (order.ar > 0 && order.ma > 0) {
+#         formula.mean = paste ("arma(", as.character(order.ar), ", ",
+#             as.character(order.ma), ")", sep = "")
+#     }
 
     # Compose Variance Formula Object:
     formula.var = ""
-    if (order.alpha > 0 && order.beta == 0) formula.var = "arch"
+    #if (order.alpha > 0 && order.beta == 0) formula.var = "arch"
+    if (order.alpha > 0 && order.beta == 0) formula.var = "garch"
     if (order.alpha > 0 && order.beta > 0) formula.var = "garch"   
     if(!is.null(model$alpha)){
     	if (!is.null(model$gamma)){
@@ -208,14 +215,18 @@ GSgarchSpec <-
     if (order.alpha == 0 && order.beta == 0) {
         formula.var = formula.var
     }
-    if (order.alpha > 0 && order.beta == 0) {
-        formula.var = paste(formula.var, "(", as.character(order.alpha), ")",
-            sep = "")
-    } 
-    if (order.alpha > 0 && order.beta > 0) {
+#     if (order.alpha > 0 && order.beta == 0) {
+#         formula.var = paste(formula.var, "(", as.character(order.alpha), ")",
+#             sep = "")
+#     } 
+#     if (order.alpha > 0 && order.beta > 0) {
+#         formula.var = paste(formula.var, "(", as.character(order.alpha),
+#             ", ", as.character(order.beta), ")", sep = "")
+#     }
+      if (order.alpha > 0) {
         formula.var = paste(formula.var, "(", as.character(order.alpha),
-            ", ", as.character(order.beta), ")", sep = "")
-    }
+                            ", ", as.character(order.beta), ")", sep = "")
+      }
 
     # Compose Mean-Variance Formula Object:
     if (formula.mean == "") {

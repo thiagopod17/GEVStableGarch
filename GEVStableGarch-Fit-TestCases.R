@@ -145,6 +145,15 @@ library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
 
+# garch(1,1)-norm-intercept
+fit1 <- garchFit(data = x, formula = ~garch(1,1),
+                 cond.dist = "norm", include.mean = TRUE,
+                 algorithm = "nlminb")
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "sqp")
+fit1@fit$matcoef[,1]-model1$matcoef[,1]
+
 # garch(1,1)-std-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),
                       cond.dist = "std", include.mean = TRUE,
@@ -258,5 +267,67 @@ model1 <- arima(x, order = c(2, 0, 2), include.mean = TRUE)
 absoluteError <- abs((fit1$par-model1$coef[c(5,1:4)])/fit1$par)
 absoluteError
 
+
+############
+# Fitting models using different Algorithms ('nlminb' and 'sqp')
+
+# arma(1,1)-aparch(1,1)-std
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "sqp")
+abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+
+# arma(1,1)-std
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
+                      cond.dist = "std", include.mean = TRUE, 
+                      algorithm = "sqp")
+
+abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+
+# aparch(2,2)-std
+fit1 <- GSgarch.Fit(data = x, formula = ~aparch(2,2),
+                    cond.dist = "std", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- GSgarch.Fit(data = x, formula = ~aparch(2,2),
+                      cond.dist = "std", include.mean = TRUE, 
+                      algorithm = "sqp")
+
+model2 <- garchFit(data = x, formula = ~aparch(2,2),
+                      cond.dist = "std", include.mean = TRUE, 
+                      algorithm = "nlminb")
+
+abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+abs((model2@fit$matcoef[,1]-model1$matcoef[,1])/model1$matcoef[,1])
+
+# arma(0,1)-norm
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- GSgarch.Fit(data = x, formula = ~arma(0,1),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "sqp")
+
+abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+
+# arma(1,0)-aparch(1,0)-norm
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,0),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,0),
+                      cond.dist = "norm", include.mean = TRUE, 
+                      algorithm = "sqp")
+
+abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
 ################################################################################
 

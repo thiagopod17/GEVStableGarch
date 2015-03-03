@@ -258,31 +258,33 @@ function(
         cond.gev <- FALSE
         cond.stable <- FALSE
         parset <- c(omega,alpha,if(!GARCH) beta,delta)
-        cond.general <- any(parset < GStol) 
-        if( cond.dist == "norm")
-            cond.normal <- ( sum(alpha) + sum(beta) > 1 - GStol )
+        cond.general <- any(parset < GStol)
         
-        if( cond.dist == "stable")
-        {
-            if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
-                  !(abs(skew) < 1) || !((shape - 2) < 0) )
-            {
-              return(1e99)
-            }
-            tau <- skew*tan(shape*pi/2)
-            kdelta <- pi/2
-            if(abs(delta-1) > GStol) 
-                kdelta <- gamma(1 - delta)*cos(pi*delta/2)
-                lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
-                    cos(delta/shape*atan(tau))
-            cond.stable <- FALSE
-        }
-
-        # out of parameter space
+#         if( cond.dist == "norm")
+#             cond.normal <- ( sum(alpha) + sum(beta) > 1 - GStol )
+#         
+#         if( cond.dist == "stable")
+#         {
+#             if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
+#                   !(abs(skew) < 1) || !((shape - 2) < 0) )
+#             {
+#               return(1e99)
+#             }
+#             tau <- skew*tan(shape*pi/2)
+#             kdelta <- pi/2
+#             if(abs(delta-1) > GStol) 
+#                 kdelta <- gamma(1 - delta)*cos(pi*delta/2)
+#                 lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
+#                     cos(delta/shape*atan(tau))
+#             cond.stable <- FALSE
+#         }
         if (cond.general || cond.student || cond.gev || cond.stable)
         {
             return(1e99)
         }
+
+
+
         
         # Filters the Time series to obtain the i.i.d. sequence of 
         # 'innovations' to evaluate the Log-likelihood function
@@ -372,33 +374,28 @@ function(
         }
         return(sum(alpha) + sum(beta))
     }
+
+    # Optimization procedure using selected algorithms
+    if(ARMAonly)
+        modelLLH <- armaLLH
+    else 
+        modelLLH <- garchLLH
+
     if (algorithm == "sqp")
-        fit1 <- solnp(pars = start[1,], fun = garchLLH, 
+        fit1 <- solnp(pars = start[1,], fun = modelLLH, 
                     LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "sqp.restriction")
-        fit1 <- solnp(pars = start[1,], fun = garchLLH, ineqfun = rest, ineqLB = 0,
+        fit1 <- solnp(pars = start[1,], fun = modelLLH, ineqfun = rest, ineqLB = 0,
                     ineqUB = 1, LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "nlminb")
-    {      
-        if(ARMAonly)
-        {            
-          fit1 <- nlminb(start[1,], objective = armaLLH,
+    {              
+          fit1 <- nlminb(start[1,], objective = modelLLH,
                        lower = start[2,], upper = start[3,], 
                        control = control)
           out$llh <- fit1$objective
           out$par <- fit1$par
-          out$hessian <- optim(par = fit1$par, fn = armaLLH, 
+          out$hessian <- optim(par = fit1$par, fn = modelLLH, 
                                method = "Nelder-Mead", hessian = TRUE)$hessian
-        }
-        else{
-            fit1 <- nlminb(start[1,], objective = garchLLH,
-                       lower = start[2,], upper = start[3,], 
-                       control = control)
-            out$llh <- fit1$objective
-            out$par <- fit1$par
-            out$hessian <- optim(par = fit1$par, fn = garchLLH, 
-                                 method = "Nelder-Mead", hessian = TRUE)$hessian 
-        }
     }
     if (any(c("sqp", "sqp.restriction") == algorithm))
     {
@@ -415,10 +412,7 @@ function(
     
     # Call garchLLH function to update the values of the ARMA residuals 
     # and the GARCH/APARCH volatility.
-    if(ARMAonly)        
-        armaLLH(out$par)
-    else 
-        garchLLH(out$par)
+    modelLLH(out$par)
     
     # Creating index to create a vector with the estimated parameters.
     if(!ARMAonly)
@@ -508,5 +502,144 @@ function(
 
 
 
+
+
+#####################
+
+# Function that evaluate stationarity conditions to guide parameter estimation.
+
+
+# GSgarchSpec function
+Stationarity.Condition.Aparch <-
+  function (model = list(), 
+            formula,
+            cond.dist = c("gev","stable","norm", "std", "sstd"))
+{
+
+    # Arguments:
+    #   formula - an object returned by function .getFormula
+    #   parm - a list with the model parameters as entries
+    #     alpha - a vector of autoregressive coefficients
+    #       of length p for the GARCH/APARCH specification,
+    #     gamma - a vector of leverage coefficients of
+    #       length p for the APARCH specification,
+    #     beta - a vector of moving average coefficients of
+    #       length q for the GARCH/APARCH specification,
+    #     delta - the exponent value used in the variance equation.
+    #     skew - a numeric value listing the distributional
+    #        skewness parameter.
+    #     shape - a numeric value listing the distributional
+    #        shape parameter.
+    #   cond.dist - a character string naming the distribution
+    #       function.   
+        
+    # make sure we have a garch or aparch with p > 0.
+ 
+    # get parameters
+    alpha <- model$alpha
+    beta <- model$beta
+    delta <- model$delta
+    gamma <- model$gamma
+    skew <- model$skew
+    shape <- model$shape
+    
+    # Conditional distribution
+    cond.dist = match.arg(cond.dist)
+    
+    if(length(alpha) == 0  || length(alpha) != length(gamma) || length(delta) != 1)
+        stop("Failed to verify conditions:
+           if(length(alpha) == 0  || length(alpha) != length(gamma) || length(delta) != 1)")
+    
+    # We must have a model with a non zero garch/aparch order
+    if(formula$formula.order[3] == 0)
+        stop("Invalid model")
+    
+    # garch model
+    if(formula$isAPARCH == FALSE) 
+        return(sum(alpha) + sum(beta))
+    
+    # aparch model
+    kappa = rep(0,length(alpha))
+    if(cond.dist == "norm")
+        kappa <- 1/sqrt(2*pi)*( (1+gamma)^delta + (1-gamma)^delta )*2^((delta-1)/2)*
+        gamma((delta+1)/2)
+    if(cond.dist == "stable")
+    {
+        if(shape <= 1 || abs(skew) >= 1)
+            stop("In a model with conditional stable distribution we expect 'shape' > 1")
+        sigma.til <- (1 + (skew*tan(shape*pi/2))^2)^(1/2/shape)
+        k.shape <- shape - 2
+        beta.til <- 2/pi/(shape-2)*atan(beta*tan((shape-2)*pi/2))
+        g1 <- gamma((1/2 + beta.til*k.shape/2/shape)*(-delta))
+        g2 <- gamma(1/2 - beta.til*k.shape/2/shape + (1/2 + beta.til*k.shape/2/shape))
+        g3 <- gamma((1/2 - beta.til*k.shape/2/shape)*(-delta))
+        g4 <- gamma(1/2 + beta.til*k.shape/2/shape + (1/2 - beta.til*k.shape/2/shape))
+        kappa <- 1/shape/sigma.til*sigma.til^(delta+1)*gamma(delta+1)*gamma(-delta/shape)*
+                 1/g1/g2*((1+gamma)^delta + 1/g3/g4*(1-gamma)^delta)
+    }
+    if(cond.dist == "gev")
+    {
+      kappa <- 0  
+    }
+    
+    return(sum(kappa*alpha) + sum(beta))    
+}
+
+
+
+stable.moment.aparch <- function(skew,shape,delta,gamma)
+{  
+    sigma.til <- (1 + (skew*tan(shape*pi/2))^2)^(1/2/shape)
+    k.shape <- shape - 2
+    beta.til <- 2/pi/(shape-2)*atan(beta*tan((shape-2)*pi/2))
+    g1 <- gamma((1/2 + beta.til*k.shape/2/shape)*(-delta))
+    g2 <- gamma(1/2 - beta.til*k.shape/2/shape + (1/2 + beta.til*k.shape/2/shape))
+    g3 <- gamma((1/2 - beta.til*k.shape/2/shape)*(-delta))
+    g4 <- gamma(1/2 + beta.til*k.shape/2/shape + (1/2 - beta.til*k.shape/2/shape))
+    kappa <- 1/shape/sigma.til*sigma.til^(delta+1)*gamma(delta+1)*gamma(-delta/shape)*
+      1/g1/g2*((1+gamma)^delta + 1/g3/g4*(1-gamma)^delta)
+    return(kappa)
+}
+stable.moment.aparch(0,1.9,1.1,0)
+gamma()
+
+# MA(2)-APARCH(1)-norm
+spec <- GSgarchSpec(model = list(mu = 3,ma = c(1,2),alpha = 0.3,beta = 0.3, delta = 1), 
+                    presample = NULL,cond.dist = c("norm"),rseed = 3)
+# ARCH(1)-norm
+spec <- GSgarchSpec(model = list(alpha = c(0.03), delta = 2), 
+                    presample = NULL,cond.dist = c("stable"),rseed = 3)
+# ARMA(2,3)-APARCH(2,2)-norm
+spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
+                                 gamma = c(0,0.4),beta = c(3,3),delta = 2), 
+                    presample = NULL,cond.dist = c("norm"),rseed = 3)
+# ARMA(2,3)-APARCH(2,2)-stable
+spec <- GSgarchSpec(model = list(ar = c(0.1,0.04),ma = c(3,3,3), alpha = c(0.1,0.1),
+                                 gamma = c(0.3,0),beta = c(0.1,0.1),delta = 1.4, shape = 1.5, skew = 0), 
+                    presample = NULL,cond.dist = c("stable"),rseed = 3)
+Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gamma = spec@model$gamma, 
+                              delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
+                              formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+
+rest <- function(parm)
+{
+  mu <- parm[1];
+  a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
+  omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
+  gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
+  beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
+  delta <- parm[2+m+n+2*p+q+1]; 
+  skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
+  if(cond.dist == "stable")
+  {
+    tau <- skew*tan(shape*pi/2)
+    kdelta <- pi/2
+    if(abs(delta-1) > GStol) kdelta <- gamma(1 - delta)*cos(pi*delta/2)
+    lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
+      cos(delta/shape*atan(tau))
+    return(lamb*sum(alpha) + sum(beta))
+  }
+  return(sum(alpha) + sum(beta))
+}
 ################################################################################
 
