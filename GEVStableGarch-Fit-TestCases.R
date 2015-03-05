@@ -19,57 +19,19 @@
 
 
 ################################################################################
-# TEST CASES FOF FUNCTION:               SPECIFICATION:
-#  GSgarch.Fit                Test on input parameters and on numerical 
-#                             stability of parameter estimation 
-#  						                							               
+# TEST CASES FOF FUNCTIONS: 
+# 
+#  GSgarch.Fit                
+#  Stationarity.Condition.Aparch
+#  norm.moment.aparch
+#  stable.moment.aparch
 ################################################################################
 
-# Historical Notes.
-# We will make the interface of this function more similar to the garchFit function
-# from package fGarch to make its use easier. 
-# The input parameters for this version (march/2015) are:
 
-# 25 Feb, 2015.
-# Parameter input modification
-  # OK. algorithm: a string parameter that determines the algorithm used for maximum likelihood estimation.
-  # OK. cond.dist: name of the conditional distribution, one of gev, stable, norm, std, sstd
-  # OK. control: control parameters, the same as used for the functions from nlminb, and 'bfgs' and 'Nelder-Mead' from optim.
-  # OK. data: The dataset to be estimated.
-  # formula: formula object describing the mean and variance equation of the ARMA-GARCH/APARCH model.
-  # OK. intercept: this flag determines if the parameter for the mean will be estimated or not
-  # OK. print.Result (Padrao eh TRUE): A boolean variable specifying whether or not the user wants to print the results after the function calling.
-  # OK. get.res: (NAO VAMOS TER MAIS ESSA VARIAVEL)
-  # OK. GSstable.tol e GStol: (CONFIGURAR NO INICIO DA FUNCAO, NAO MAIS NECESSARIA AQUI)
-  # APARCH: Vamos tirar pois usaremos da formula.
-# 25 feb, 2015, right before commiting on Github
-  # We saw that the estimated parameters from both GEVStableGarch package from CRAN
-  # and from our current version are the same. On the other hand, we saw that the 
-  # estimated parameters from macbook differ slightly from the windows version.
-  # our goal now is to investigate the filtering process inside the GSGarch.Fit 
-  # function to make the estimated parameters more similar to the ones from package
-  # fGarch. 
-# 27 feb, 2015, right before commiting to Github
-  # Using garch11Fit function from Wurtz (2006) to estimate
-  # pure garch(1,1) model with conditional normal distribution
-  # This function estimate the
-  # garch(1,1)-include.mean-norm-dem2gbp
-  # The results are exactly the same as in the Code Snippet 2
-  # presented in the papper Wurtz et al. (2006)
-  # The function garch11Fit works better if start the conditional 
-  # variance with 'var(x)'.
-  # Mehoramos muito minha funcao quando para a estimacao do garch(1,1). Fiz
-  # isso retirando o filtro do aparch e recolocando o filtro do wuertz, que funcionava
-  # para o garch11.
-  # When I put the filter from garch11Fit function inside my GSgarch.Fit the 
-  # results were exactly the same. Therefore, thats is our starting pointing.
-  # Now, I am almost done because my filter function for pure APARCH model is 
-  # is matching exactly the filter function from garch11Fit. 
-  # The next step is to test it considerably well and develop the other filtering 
-  # for other process. This function needs to be documented a lot. Also, 
-  # remember to take pictures of the matrix representation I did on paper to 
-  # commit to github.
 
+# ------------------------------------------------------------------------------
+# Test Cases for functions GSgarch.Fit
+# ------------------------------------------------------------------------------
 
 ############
 # Testing different type of datasets as input
@@ -329,5 +291,61 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,0),
                       algorithm = "sqp")
 
 abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+
+
+# Testing the output object of class fGEVSTABLEGARCH
+
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1][1:20]
+class(c(0))
+# garch(1,1)-norm-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~garch(1,1),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+model1 <- garchFit(data = x, formula = ~garch(1,1),
+                   cond.dist = "norm", include.mean = TRUE, 
+                   algorithm = "nlminb")
+
+model1@h.t
+fit1@h.t
+# ------------------------------------------------------------------------------
+# Test Cases for functions norm.moment.aparch and stable.moment.aparch
+# ------------------------------------------------------------------------------
+
+
+
+# E(z^2) = Var(z) = 1
+norm.moment.aparch(delta = 2, gamma = 0)
+stable.moment.aparch(2,0.5,3,0)
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for function Stationarity.Condition.Aparch
+# ------------------------------------------------------------------------------
+
+
+
+# MA(2)-APARCH(1)-norm
+spec <- GSgarchSpec(model = list(mu = 3,ma = c(1,2),alpha = 0.3,beta = 0.3, delta = 1), 
+                    presample = NULL,cond.dist = c("norm"),rseed = 3)
+# ARCH(1)-norm
+spec <- GSgarchSpec(model = list(alpha = c(0.03), delta = 2), 
+                    presample = NULL,cond.dist = c("norm"),rseed = 3)
+# ARMA(2,3)-APARCH(2,2)-norm
+spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
+                                 gamma = c(0,0.4),beta = c(3,3),delta = 2), 
+                    presample = NULL,cond.dist = c("norm"),rseed = 3)
+# ARMA(2,3)-APARCH(2,2)-stable
+spec <- GSgarchSpec(model = list(ar = c(0.1,0.04),ma = c(3,3,3), alpha = c(0.1,0.1),
+                                 gamma = c(0.3,0),beta = c(0.1,0.1),delta = 1.4, shape = 1.5, skew = 0), 
+                    presample = NULL,cond.dist = c("stable"),rseed = 3)
+Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gamma = spec@model$gamma, 
+                                           delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
+                              formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+
+
+
 ################################################################################
 

@@ -32,6 +32,8 @@ function(
     algorithm = c("sqp","sqp.restriction","nlminb"),
     printRes = TRUE,
     control = NULL,
+    title = NULL,
+    description = NULL,
     DEBUG = FALSE)
 {  
     # Description:
@@ -83,6 +85,8 @@ function(
     #   algorithm - 
     #   cond.dist - name of the conditional distribution, one of
     #       gev, stable, norm, std, sstd   
+    #   title - a character string which allows for a project title
+    #   description - a character string which allows for a project description
     
     # Return:
     #   Asdf - The asdf     
@@ -110,6 +114,16 @@ function(
     p <- formula$formula.order[3]
     q <- formula$formula.order[4]
     APARCH <- formula$isAPARCH
+    formula.mean <- ""
+    formula.var <- ""
+    if(m > 0 || n > 0)
+        formula.mean <- formula$formula.mean
+    else
+        formula.mean <- ""
+    if(p > 0)
+      formula.var <- formula$formula.var
+    else
+      formula.var <- ""
         
     # Configuring model order
     ARMAonly <- FALSE
@@ -195,8 +209,9 @@ function(
         # get output Residuals
         if (optim.finished)
         {
-          out$ARMA.res <<- z
-          out$GARCH.sig <<- 1
+            out$residuals <<- as.numeric(z)
+            out$sigma.t <<- c()
+            out$h.t <<- c()
         }
         
         # Return llh function        
@@ -326,8 +341,9 @@ function(
         # get output Residuals
         if (optim.finished)
         {
-            out$ARMA.res <<- z
-            out$GARCH.sig <<- hh
+            out$residuals <<- as.numeric(z)
+            out$sigma.t <<- as.numeric(hh)
+            out$h.t <<- as.numeric(hh^delta)           
         }
         
         # Return llh function        
@@ -497,25 +513,38 @@ function(
         cat("\nCoefficient(s):\n")
         printCoefmat(round(out$matcoef,digits=6), digits = 6, signif.stars = TRUE)
     }
-    return(out)
+
+
+######################           
+## creating the output object as in fGarch package...
+    fit <- c()
+    fitted.values <- c() # Still dont know what it means.
+    new("fGEVSTABLEGARCH", call = as.call(match.call()), formula = as.formula(paste("~", 
+    formula.mean, "+", formula.var)), method = "Max Log-Likelihood Estimation", 
+    data = data, fit = list(), residuals = out$residuals, fitted = c(3,3,4), 
+    h.t = out$h.t, sigma.t = as.vector(out$sigma.t), title = as.character(title), 
+    description = as.character(description))
+
+
+    #return(out)
 }
 
+as.numeric(c(3,4,4))
+
+# ------------------------------------------------------------------------------
 
 
 
-
-#####################
-
-# Function that evaluate stationarity conditions to guide parameter estimation.
-
-
-# GSgarchSpec function
 Stationarity.Condition.Aparch <-
   function (model = list(), 
             formula,
             cond.dist = c("gev","stable","norm", "std", "sstd"))
 {
-
+    
+    # Description: 
+    #   A function that evaluate stationarity conditions 
+    #   to guide parameter estimation in GARCH/APARCH models
+    
     # Arguments:
     #   formula - an object returned by function .getFormula
     #   parm - a list with the model parameters as entries
@@ -531,10 +560,12 @@ Stationarity.Condition.Aparch <-
     #     shape - a numeric value listing the distributional
     #        shape parameter.
     #   cond.dist - a character string naming the distribution
-    #       function.   
-        
+    #       function.           
     # make sure we have a garch or aparch with p > 0.
- 
+
+    
+    # FUNCTION:
+    
     # get parameters
     alpha <- model$alpha
     beta <- model$beta
@@ -561,34 +592,66 @@ Stationarity.Condition.Aparch <-
     # aparch model
     kappa = rep(0,length(alpha))
     if(cond.dist == "norm")
-        kappa <- 1/sqrt(2*pi)*( (1+gamma)^delta + (1-gamma)^delta )*2^((delta-1)/2)*
-        gamma((delta+1)/2)
+        kappa <- norm.moment.aparch(delta = delta, gamma = gamma)
     if(cond.dist == "stable")
     {
-        if(shape <= 1 || abs(skew) >= 1)
-            stop("In a model with conditional stable distribution we expect 'shape' > 1")
-        sigma.til <- (1 + (skew*tan(shape*pi/2))^2)^(1/2/shape)
-        k.shape <- shape - 2
-        beta.til <- 2/pi/(shape-2)*atan(beta*tan((shape-2)*pi/2))
-        g1 <- gamma((1/2 + beta.til*k.shape/2/shape)*(-delta))
-        g2 <- gamma(1/2 - beta.til*k.shape/2/shape + (1/2 + beta.til*k.shape/2/shape))
-        g3 <- gamma((1/2 - beta.til*k.shape/2/shape)*(-delta))
-        g4 <- gamma(1/2 + beta.til*k.shape/2/shape + (1/2 - beta.til*k.shape/2/shape))
-        kappa <- 1/shape/sigma.til*sigma.til^(delta+1)*gamma(delta+1)*gamma(-delta/shape)*
-                 1/g1/g2*((1+gamma)^delta + 1/g3/g4*(1-gamma)^delta)
+        kappa <- stable.moment.aparch(shape = shape, skew = skew, 
+                                      delta = delta, gamma = gamma)
     }
-    if(cond.dist == "gev")
-    {
-      kappa <- 0  
-    }
+    # Distribution not implemented yet
+    if( any(c("gev","std","sstd") == cond.dist) )   
+        stop ("Stationarity.Condition.Aparch can not handle 
+              this conditional distribution yet.")
     
     return(sum(kappa*alpha) + sum(beta))    
 }
 
 
 
-stable.moment.aparch <- function(skew,shape,delta,gamma)
-{  
+# ------------------------------------------------------------------------------
+
+
+
+norm.moment.aparch <- function(delta = 1.2, gamma = 0)
+{
+    # Description:
+    #   Returns the following Expectation for a standard normal distribution
+    #   E[ (|z|-gamma*z)^delta.
+    #   Reference: A long memory property of stock market returns and a 
+    #   new model. Ding, Granger and Engle (1993), Appendix B. 
+  
+    # Error treatment of input parameters
+    if( (abs(gamma) >= 1) || (delta <= 0) )
+        stop("Invalid parameters to calculate the expression E[ (|z|-gamma*z)^delta ].
+            The following conditions cannot be true
+            (abs(gamma) >= 1) || (delta <= 0)")
+    1/sqrt(2*pi)*( (1+gamma)^delta + (1-gamma)^delta )*
+    2^((delta-1)/2)*gamma((delta+1)/2)
+}
+
+
+
+# ------------------------------------------------------------------------------
+
+
+
+stable.moment.aparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gamma = 0)
+{
+    # Description: 
+    #   Returns the following Expectation for a standard normal distribution
+    #   E[ (|z|-gamma*z)^delta.
+    #   Reference: The GEVStableGarch papper. 
+  
+    # Error treatment of input parameters
+    if( (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gamma) >= 1) || 
+        (delta <= 1) || (delta >= shape))
+        stop("Invalid parameters to calculate the expression E[ (|z|-gamma*z)^delta ].
+             The following conditions cannot be true.
+             (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gamma) >= 1) || 
+             (delta <= 1) || (delta >= shape)
+             Note: This function do not accept the normal case, i.e, alpha = 2")
+    
+    # Calculate the expression
     sigma.til <- (1 + (skew*tan(shape*pi/2))^2)^(1/2/shape)
     k.shape <- shape - 2
     beta.til <- 2/pi/(shape-2)*atan(beta*tan((shape-2)*pi/2))
@@ -600,29 +663,17 @@ stable.moment.aparch <- function(skew,shape,delta,gamma)
       1/g1/g2*((1+gamma)^delta + 1/g3/g4*(1-gamma)^delta)
     return(kappa)
 }
-stable.moment.aparch(0,1.9,1.1,0)
-gamma()
 
-# MA(2)-APARCH(1)-norm
-spec <- GSgarchSpec(model = list(mu = 3,ma = c(1,2),alpha = 0.3,beta = 0.3, delta = 1), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARCH(1)-norm
-spec <- GSgarchSpec(model = list(alpha = c(0.03), delta = 2), 
-                    presample = NULL,cond.dist = c("stable"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-norm
-spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
-                                 gamma = c(0,0.4),beta = c(3,3),delta = 2), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-stable
-spec <- GSgarchSpec(model = list(ar = c(0.1,0.04),ma = c(3,3,3), alpha = c(0.1,0.1),
-                                 gamma = c(0.3,0),beta = c(0.1,0.1),delta = 1.4, shape = 1.5, skew = 0), 
-                    presample = NULL,cond.dist = c("stable"),rseed = 3)
-Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gamma = spec@model$gamma, 
-                              delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
-                              formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+
+
+# ------------------------------------------------------------------------------
+
+
 
 rest <- function(parm)
 {
+  # Description: Old and incomplete implementation of restriction of stationarity
+  #   for aparch models
   mu <- parm[1];
   a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
   omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
@@ -641,5 +692,8 @@ rest <- function(parm)
   }
   return(sum(alpha) + sum(beta))
 }
+
+
+
 ################################################################################
 
