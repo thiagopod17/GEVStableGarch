@@ -5,6 +5,7 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
 #   Things to do
     
     - Include the gev restriction of stationarity into the model and test it.
+    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation.
     - Install the package "stable" from Nolan, J.P. and test the function GSgarch.Fit.
     - Test the estimation using the "sqp.restriction" algorithm.
     - Test my arma.filter function more deeply.
@@ -18,7 +19,7 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
 #   Important notes about the modifications
 
     We will make the interface of this function more similar to the garchFit function
-    from package fGarch to make its use easier. 
+    from package fGarch to make it more user friendly. 
     The input parameters for this version (march/2015) are:
 
     - 25 Feb, 2015.
@@ -38,8 +39,8 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
     - 27 feb, 2015, right before commiting to Github
     Using garch11Fit function from Wurtz (2006) to estimate pure garch(1,1) model with conditional normal distribution This function estimate the garch(1,1)-include.mean-norm-dem2gbp
     
- The results are exactly the same as in the Code Snippet 2 presented in the papper Wurtz et al. (2006) The function garch11Fit works better if start the conditional  variance with 'var(x)'. Mehoramos muito minha funcao quando para a estimacao do garch(1,1). Fiz isso retirando o filtro do aparch e recolocando o filtro do wuertz, que funciona para o garch11.
+    - The results are exactly the same as in the Code Snippet 2 presented in the papper Wurtz et al. (2006) The function garch11Fit works better if start the conditional  variance with 'var(x)'. Mehoramos muito minha funcao quando para a estimacao do garch(1,1). Fiz isso retirando o filtro do aparch e recolocando o filtro do wuertz, que funciona para o garch11.
  
-    When I put the filter from garch11Fit function inside my GSgarch.Fit the results were exactly the same. Therefore, thats is our starting pointing. Now, I am almost done because my filter function for pure APARCH model is matching exactly the filter function from garch11Fit. 
+    - When I put the filter from garch11Fit function inside my GSgarch.Fit the results were exactly the same. Therefore, thats is our starting pointing. Now, I am almost done because my filter function for pure APARCH model is matching exactly the filter function from garch11Fit. 
     
-    The next step is to test it considerably well and develop the other filtering  for other process. This function needs to be documented a lot. Also,  remember to take pictures of the matrix representation I did on paper to  commit to github.
+    - The next step is to test it considerably well and develop the other filtering  for other process. This function needs to be documented a lot. Also,  remember to take pictures of the matrix representation I did on paper to  commit to github.

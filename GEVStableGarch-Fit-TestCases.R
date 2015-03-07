@@ -89,14 +89,14 @@ fit4 <- GSgarch.Fit(data = x , formula = ~arma(1,1)+aparch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "nlminb")
 
-model1$par
-fit1$par
-model2$par
-fit2$par
-model3$par
-fit3$par
-model4$par
-fit4$par
+model1@fit$par
+fit1@fit$par
+model2@fit$par
+fit2@fit$par
+model3@fit$par
+fit3@fit$par
+model4@fit$par
+fit4@fit$par
 
 
 ############
@@ -114,8 +114,9 @@ fit1 <- garchFit(data = x, formula = ~garch(1,1),
 model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "sqp")
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
-
+fit1@fit$par-model1@fit$par
+fit1@fit$llh
+model1@fit$llh
 # garch(1,1)-std-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),
                       cond.dist = "std", include.mean = TRUE,
@@ -123,7 +124,7 @@ fit1 <- garchFit(data = x, formula = ~garch(1,1),
 model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "nlminb")
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
+fit1@fit$par-model1@fit$par
 
 # garch(2,2)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~garch(2,2),
@@ -134,7 +135,7 @@ fit1 <- garchFit(data = x, formula = ~garch(2,2),
 model1 <- GSgarch.Fit(data = x , formula = ~garch(2,2),
                       cond.dist = "std", include.mean = TRUE, 
                       algorithm = "nlminb")
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
+fit1@fit$par-model1@fit$par
 
 # garch(1,0)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,0),
@@ -145,7 +146,7 @@ fit1 <- garchFit(data = x, formula = ~garch(1,0),
 model1 <- GSgarch.Fit(data = x , formula = ~garch(1,0),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "nlminb")
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
+fit1@fit$par-model1@fit$par
 
 # aparch(1,1)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~aparch(1,1),
@@ -156,7 +157,7 @@ fit1 <- garchFit(data = x, formula = ~aparch(1,1),
 model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "nlminb", DEBUG = TRUE, control = list(trace = 3))
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
+fit1@fit$par-model1@fit$par
 
 # aparch(1,0)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~aparch(1,0),
@@ -167,33 +168,71 @@ fit1 <- garchFit(data = x, formula = ~aparch(1,0),
 model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,0),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "nlminb", DEBUG = FALSE)
-fit1@fit$matcoef[,1]-model1$matcoef[,1]
-
+fit1@fit$par-model1@fit$par
 
 ############
 # Fitting ARMA-GARCH or ARMA-APARCH process
 library(fGarch)
 data(dem2gbp)
-x = dem2gbp[, 1]
+x = dem2gbp[, 1]+100
 
 # arma(1,1)-garch(1,1)-std-intercept
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+garch(1,1),
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+garch(1,0),
                     cond.dist = "norm", include.mean = TRUE, 
                     algorithm = "nlminb")
 
-model1 <- garchFit(data = x, formula = ~arma(1,1)+garch(1,1),
+model1 <- garchFit(data = x, formula = ~arma(1,1)+garch(1,0),
                     cond.dist = "norm", include.mean = TRUE)
-model1@fit$matcoef[,1]-fit1$matcoef[,1]
+model1@fit$par
+fit1@fit$par
+model1@fit$par-fit1@fit$par
+
+# arma(5,0)-garch(1,0)-std-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(5,0)+garch(1,0),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(5,0)+garch(1,0),
+                   cond.dist = "norm", include.mean = TRUE)
+model1@fit$par
+fit1@fit$par
+model1@fit$par-fit1@fit$par
+
+# arma(0,5)-garch(1,0)-std-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,5)+garch(1,0),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(0,5)+garch(1,0),
+                   cond.dist = "norm", include.mean = TRUE)
+model1@fit$par
+fit1@fit$par
+model1@fit$par-fit1@fit$par
+
+# Fitting ARMA-GARCH or ARMA-APARCH process
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1]
+
+# arma(1,1)-garch(1,0)-norm-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+garch(1,0),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(1,1)+garch(1,0),
+                   cond.dist = "norm", include.mean = TRUE)
+model1@fit$par-fit1@fit$par
 
 
 # arma(1,1)-aparch(1,1)-std-intercept
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
-                    algorithm = "nlminb")
+                    algorithm = "sqp")
 
 model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
                    cond.dist = "std", include.mean = TRUE)
-model1@fit$matcoef[,1]-fit1$matcoef[,1]
+(model1@fit$par-fit1@fit$par)/fit1@fit$par
+
 
 
 # arma(0,1)-garch(1,1)-norm-intercept
@@ -205,30 +244,7 @@ fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,1),
 model1 <- garchFit(data = x, formula = ~arma(0,1)+aparch(1,1),
                    cond.dist = "norm", include.mean = TRUE, 
                    algorithm = "nlminb")
-model1@fit$matcoef[,1]-fit1$matcoef[,1]
-
-############
-# Fitting pure ARMA process 
-library(fGarch)
-data(dem2gbp)
-x = dem2gbp[, 1]
-
-# arma(1,1)-norm-intercept-nlminb
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
-                    cond.dist = "norm", include.mean = TRUE, 
-                    algorithm = "nlminb", DEBUG = FALSE)
-model1 <- arima(x, order = c(1, 0, 1))
-absoluteError <- abs((fit1$par-model1$coef[c(3,1,2)])/fit1$par)
-absoluteError
-
-# arma(2,2)-norm-intercept-nlminb
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(2,2),
-                    cond.dist = "norm", include.mean = TRUE, 
-                    algorithm = "nlminb", DEBUG = FALSE)
-model1 <- arima(x, order = c(2, 0, 2), include.mean = TRUE)
-absoluteError <- abs((fit1$par-model1$coef[c(5,1:4)])/fit1$par)
-absoluteError
-
+model1@fit$par-fit1@fit$par
 
 ############
 # Fitting models using different Algorithms ('nlminb' and 'sqp')
@@ -241,7 +257,7 @@ fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
 model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "sqp")
-abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 
 # arma(1,1)-std
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
@@ -252,7 +268,7 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
                       cond.dist = "std", include.mean = TRUE, 
                       algorithm = "sqp")
 
-abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+abs((model1model1@fit@par-fit1@fit$par)/fit1@fit$par)
 
 # aparch(2,2)-std
 fit1 <- GSgarch.Fit(data = x, formula = ~aparch(2,2),
@@ -267,8 +283,8 @@ model2 <- garchFit(data = x, formula = ~aparch(2,2),
                       cond.dist = "std", include.mean = TRUE, 
                       algorithm = "nlminb")
 
-abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
-abs((model2@fit$matcoef[,1]-model1$matcoef[,1])/model1$matcoef[,1])
+abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
+abs((model2@fit$par-model1@fit$par)/model1@fit$par)
 
 # arma(0,1)-norm
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1),
@@ -279,7 +295,7 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(0,1),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "sqp")
 
-abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 
 # arma(1,0)-aparch(1,0)-norm
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,0),
@@ -290,15 +306,46 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(0,1)+aparch(1,0),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "sqp")
 
-abs((model1$matcoef[,1]-fit1$matcoef[,1])/fit1$matcoef[,1])
+abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 
+############
+# Fitting pure ARMA process 
+# Notes:
+# The arma(m,0) or arma(0,n) are perfectly fitted by our algorithm. This 
+# happens with both ARMA-GARCH models and ARMA only models.
+# There is still a problem with the ARMA filter function for ARMA(1,1) and 
+# other combinations.
+# The "sigma" parameter is the square root of the sigma2 parameter estimated
+# by function "arima".
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1]+30
+# arma(1,1)-norm-intercept-nlminb
+m <- 4
+n <- 0
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(4,0),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb", DEBUG = FALSE, control = list(trace = 3))
+model1 <- arima(x, order = c(m, 0, n))
+fit1@fit$par
+model1$coef[c(m+n+1,1:(m+n))]
+absoluteError <- abs((fit1@fit$par[1:(1+m+n)]-model1$coef[c(m+n+1,1:(m+n))])/fit1@fit$par[1:(1+m+n)])
+absoluteError
+fit1@fit$llh
+model1$loglik
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(2,2),
+                    cond.dist = "norm", include.mean = TRUE, 
+                    algorithm = "nlminb", DEBUG = FALSE)
+model1 <- arima(x, order = c(2, 0, 2), include.mean = TRUE)
+absoluteError <- abs((fit1$par-model1$coef[c(5,1:4)])/fit1$par)
+absoluteError
 
+############
 # Testing the output object of class fGEVSTABLEGARCH
 
 library(fGarch)
 data(dem2gbp)
-x = dem2gbp[, 1][1:20]
-class(c(0))
+x = dem2gbp[, 1]
 # garch(1,1)-norm-intercept
 fit1 <- GSgarch.Fit(data = x, formula = ~garch(1,1),
                     cond.dist = "norm", include.mean = TRUE, 
@@ -306,9 +353,21 @@ fit1 <- GSgarch.Fit(data = x, formula = ~garch(1,1),
 model1 <- garchFit(data = x, formula = ~garch(1,1),
                    cond.dist = "norm", include.mean = TRUE, 
                    algorithm = "nlminb")
+model1@fit
+fit1@fit
 
-model1@h.t
-fit1@h.t
+#########
+# Studying the ARMA stationarity
+# The arCheck function says TRUE if the ARMA model is stationary.
+arCheck <- function(ar) {
+  p <- max(which(c(1, -ar) != 0)) - 1
+  if (!p) 
+    return(TRUE)
+  all(Mod(polyroot(c(1, -ar[1L:p]))) > 1)
+}
+arCheck(c(-0.61))
+# antes do arCheck -0.02665051 -0.62383081  0.64553619 
+# Depois do arCheck -0.02665051 -0.62383081  0.64553619 
 # ------------------------------------------------------------------------------
 # Test Cases for functions norm.moment.aparch and stable.moment.aparch
 # ------------------------------------------------------------------------------

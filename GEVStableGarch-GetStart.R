@@ -79,6 +79,8 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         stop("data set must be a numerical one dimensional vector")
     
     # Initial ARMA parameters
+    Mean <- mean(data)
+    Var <- var(data)
     arima.fit <- c()
     arima.failed <- FALSE
     arima.fit.try <- "empty"  
@@ -125,24 +127,25 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         }
         else # arima function failed
         {
-          mean.init <- mean(data)
+          mean.init <- Mean
           ar.init <- rep(0,m)
           ma.init <- rep(0,n)
         }
     } else {
-        mean.init <- mean(data)
+        mean.init <- Mean
         ar.init <- rep(0,m)
         ma.init <- rep(0,n)        
     }
     
     # Initial APARCH and Density parameters
-    omega.init <- min(0.1,0.1*var(data))
+    omega.init <- min(0.1,0.1*Var)
     alpha.init <- rep(0.1/p,p)
     beta.init <- rep(0.8/q,q)
     shape.init <- 1
     skew.init <- 1
     gm.init <- rep(0,p)
     delta.init <- 1.5
+    sigma.init <- Var
     
     # Lower Bound
     #mean.lower <- mean.init - 3*abs(mean.init)
@@ -155,6 +158,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
     skew.lower <- 0
     gm.lower <- rep(-1 + GStol.b,p)
     delta.lower <- GStol.b
+    sigma.lower <- 0
     
     # Upper Bound	
     #mean.upper <- mean.init + 3*abs(mean.init)
@@ -168,6 +172,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
     skew.upper <- 4
     gm.upper <- rep(1 - GStol.b,p)
     delta.upper <- 3 + GStol.b
+    sigma.upper <- 10*Var
     
     # Setting skew and shape for other conditional Distributions
     if (cond.dist == "std")
@@ -207,9 +212,9 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         upper <- c(mean.upper,arma.upper,omega.upper,alpha.upper,gm.upper,
                beta.upper,delta.upper,skew.upper,shape.upper)
     } else {
-      init <- c(mean.init,arma.init,skew.init,shape.init)
-      lower <- c(mean.lower,arma.lower,skew.lower,shape.lower)
-      upper <- c(mean.upper,arma.upper,skew.upper,shape.upper)      
+      init <- c(mean.init,arma.init,skew.init,shape.init,sigma.init)
+      lower <- c(mean.lower,arma.lower,skew.lower,shape.lower,sigma.lower)
+      upper <- c(mean.upper,arma.upper,skew.upper,shape.upper,sigma.upper)      
     }
       
     if(arima.failed == TRUE)

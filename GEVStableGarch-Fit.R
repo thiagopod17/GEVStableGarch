@@ -57,6 +57,9 @@ function(
     #         mu, a, b: ARMA parameters
     #         omega, alpha, gamma, beta: APARCH vector parameters
     #         garchLLH: Log Likelihood for the ARMA(m,n)-GARCH(p,q) model
+    #         armaLLH: Log Likelihood for the ARMA(m,n) model
+    #         sigma: The scale parameter in a pure ARMA(m,n) model with innovations 
+    #         D(shape,skew,sigma,location = 0).
     #         parm: ARMA-GARCH parameters concatenated as c(mu,a,b,omega,alpha,gamma,beta)
     #         h: conditional variance. It was referenced as sigmat in model equations
     #         x: data set. It is the time series that will be modelled as ARMA-GARCH
@@ -108,6 +111,7 @@ function(
     # In the beggining it was set to 1e-5
 
     # Getting order model from object formula
+    formula.input <- formula
     formula <- .getFormula(formula)
     m <- formula$formula.order[1]
     n <- formula$formula.order[2]    
@@ -159,7 +163,13 @@ function(
     out$cond.dist <- cond.dist
     out$data <- data
     optim.finished <- FALSE
-    
+    # This function checks if the model is an stationary ARMA process.   
+    arCheck <- function(ar) {
+        p <- max(which(c(1, -ar) != 0)) - 1
+        if (!p) 
+          return(TRUE)
+        all(Mod(polyroot(c(1, -ar[1L:p]))) > 1)
+    }
 
     
     # BEGIN: Log Likelihood for pure ARMA process
@@ -177,6 +187,7 @@ function(
         b <- parm[(1+m+1):(2+m+n-1)]
         skew <- parm[1+m+n+1]
         shape <- parm[2+m+n+1]
+        sigma <- parm[3+m+n+1]
         
         # Setting parameters to accept tapper off MA, AR or GARCH coefficients
         if( AR == TRUE) 
@@ -188,12 +199,20 @@ function(
          
         if( cond.dist == "stable")
         {
-          if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
-                !(abs(skew) < 1) || !((shape - 2) < 0) )
-          {
-            return(1e99)
-          }
+            if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
+                  !(abs(skew) < 1) || !((shape - 2) < 0) )
+            {
+              return(1e99)
+            }
         }
+        
+        # ARMA stationarity condition check
+        if(!arCheck(a))
+            return(1e99)
+        
+        # Stop if parametr is not > 0
+        if(sigma <= 0)
+           return(1e99)
         
         # Filters the Time series to obtain the i.i.d. sequence of 
         # 'innovations' to evaluate the Log-likelihood function
@@ -210,12 +229,12 @@ function(
         if (optim.finished)
         {
             out$residuals <<- as.numeric(z)
-            out$sigma.t <<- c()
-            out$h.t <<- c()
+            out$sigma.t <<- sigma
+            out$h.t <<- sigma
         }
         
         # Return llh function        
-        llh.dens <- GSgarch.Dist(z = z, hh = 1, shape = shape, 
+        llh.dens <- GSgarch.Dist(z = z, hh = sigma, shape = shape, 
                                  skew = skew, cond.dist = cond.dist)
         llh <- llh.dens
         if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
@@ -298,7 +317,9 @@ function(
             return(1e99)
         }
 
-
+        # ARMA stationarity condition check
+        if(!arCheck(a))
+            return(1e99)
 
         
         # Filters the Time series to obtain the i.i.d. sequence of 
@@ -455,7 +476,8 @@ function(
                     if(APARCH) (2+m+n+2*p+q+1),
                     if(any(c("sstd","stable")  == cond.dist)) (1+m+n+2*p+q+1),
                     if(any(c("std","gev","stable","sstd")  == cond.dist)) 
-                      (2+m+n+2*p+q+1))  
+                      (2+m+n+2*p+q+1),
+                    length(out$par))  
     }
     
     outnames <- c(if(include.mean) "mu", 
@@ -468,7 +490,8 @@ function(
                   if(APARCH) "delta",
                   if(any(c("sstd","stable")  == cond.dist)) "skew",
                   if(any(c("std","gev","stable","sstd")  == cond.dist)) 
-                    "shape")
+                    "shape",
+                  if(ARMAonly) "sigma")
     
     if(DEBUG)
     {
@@ -483,6 +506,8 @@ function(
     out$aic  = 2*out$llh + 2*nParam 
     out$aicc = 2*out$llh + 2*nParam*N/(N - nParam - 1)
     out$bic =  2*out$llh + nParam*log(N)
+    out$ics = list(out$aic,out$aicc,out$bic)
+    names(out$ics) <- c("AIC","AICc","BIC")
     
     # Print Summary
     if ( printRes ) 
@@ -514,26 +539,21 @@ function(
         printCoefmat(round(out$matcoef,digits=6), digits = 6, signif.stars = TRUE)
     }
 
+    out$order <- c(formula$formula.order[1],formula$formula.order[2],
+                   formula$formula.order[3],formula$formula.order[4])
+    names(out$order) <- c("m","n","p","q")
+    fit <- list(par = out$par, llh = out$llh, hessian = out$hessian, ics = out$ics,
+                order = out$order, cond.dist = cond.dist, se.coef = out$se.coef,
+                tval = out$tval, matcoef = out$matcoef)
 
-######################           
-## creating the output object as in fGarch package...
-    fit <- c()
-    fitted.values <- c() # Still dont know what it means.
-    new("fGEVSTABLEGARCH", call = as.call(match.call()), formula = as.formula(paste("~", 
-    formula.mean, "+", formula.var)), method = "Max Log-Likelihood Estimation", 
-    data = data, fit = list(), residuals = out$residuals, fitted = c(3,3,4), 
+    # creating the output object as in fGarch package...
+    new("fGEVSTABLEGARCH", call = as.call(match.call()), formula = formula.input, 
+    method = "Max Log-Likelihood Estimation", 
+    data = data, fit = fit, residuals = out$residuals,
     h.t = out$h.t, sigma.t = as.vector(out$sigma.t), title = as.character(title), 
     description = as.character(description))
-
-
-    #return(out)
 }
-
-as.numeric(c(3,4,4))
-
 # ------------------------------------------------------------------------------
-
-
 
 Stationarity.Condition.Aparch <-
   function (model = list(), 

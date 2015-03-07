@@ -193,8 +193,8 @@ x - 1 - result
 
 # Create a random arma(1,1) process with random residuals and try 
 # to rebuild the residuals vector with function filter.Arma 
-
-N = 1000; mu = 0.3; a = 0.5; b = 0.3; z = rnorm(N); x.init = 0; z.init = 0;
+N = 10000; mu = 100; a = 0.3; b = 0.3; x.init = 0; z.init = 0;
+z = rnorm(N)
 x = rep(NA,N)
 x[1] = mu + a*x.init + b*z.init + z[1]
 for (t in 2:N)
@@ -202,8 +202,18 @@ for (t in 2:N)
 
 result <- filter.Arma(data = x,m = 1,n = 1,mu = mu,a = a,b = b)
 cbind(result,z)
+summary((result-z)/result)
 
-
+# Filter a time series and then try to reconstruct the original
+# time series with the result obtained from filter.Arma function
+data = dem2gbp[, 1]
+z = filter.Arma(data = data,m = 1,n = 1,mu = mu,a = a,b = b)
+N = length(x); mu = 100; a = 0.3; b = 0.3; x.init = 0; z.init = 0;
+x = rep(NA,N)
+x[1] = mu + a*x.init + b*z.init + z[1]
+for (t in 2:N)
+  x[t] = mu + a*x[t-1] + b*z[t-1] + z[t]
+cbind(data,x)
 
 
 
