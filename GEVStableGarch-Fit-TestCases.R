@@ -156,7 +156,7 @@ fit1 <- garchFit(data = x, formula = ~aparch(1,1),
 
 model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
                       cond.dist = "norm", include.mean = TRUE, 
-                      algorithm = "nlminb", DEBUG = TRUE, control = list(trace = 3))
+                      algorithm = "sqp", DEBUG = TRUE, control = list(trace = 3))
 fit1@fit$par-model1@fit$par
 
 # aparch(1,0)-norm-intercept
@@ -268,7 +268,7 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
                       cond.dist = "std", include.mean = TRUE, 
                       algorithm = "sqp")
 
-abs((model1model1@fit@par-fit1@fit$par)/fit1@fit$par)
+abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 
 # aparch(2,2)-std
 fit1 <- GSgarch.Fit(data = x, formula = ~aparch(2,2),
@@ -311,34 +311,29 @@ abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 ############
 # Fitting pure ARMA process 
 # Notes:
-# The arma(m,0) or arma(0,n) are perfectly fitted by our algorithm. This 
-# happens with both ARMA-GARCH models and ARMA only models.
-# There is still a problem with the ARMA filter function for ARMA(1,1) and 
-# other combinations.
 # The "sigma" parameter is the square root of the sigma2 parameter estimated
 # by function "arima".
 library(fGarch)
+library(FitARMA)
 data(dem2gbp)
-x = dem2gbp[, 1]+30
+x = dem2gbp[, 1]-1000
 # arma(1,1)-norm-intercept-nlminb
-m <- 4
-n <- 0
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(4,0),
+m <- 5
+n <- 5
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(5,5),
                     cond.dist = "norm", include.mean = TRUE, 
                     algorithm = "nlminb", DEBUG = FALSE, control = list(trace = 3))
 model1 <- arima(x, order = c(m, 0, n))
-fit1@fit$par
-model1$coef[c(m+n+1,1:(m+n))]
+model2 <- FitARMA(x, order = c(m,0,n))
+
+par.result <- cbind(model1$coef[c(m+n+1,1:(m+n))],model1$coef[c(m+n+1,1:(m+n))],fit1@fit$par[1:(1+m+n)])
+colnames(par.result) = c("arima","FitARMA","GSgarch.Fit")
+par.result
+
 absoluteError <- abs((fit1@fit$par[1:(1+m+n)]-model1$coef[c(m+n+1,1:(m+n))])/fit1@fit$par[1:(1+m+n)])
 absoluteError
 fit1@fit$llh
 model1$loglik
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(2,2),
-                    cond.dist = "norm", include.mean = TRUE, 
-                    algorithm = "nlminb", DEBUG = FALSE)
-model1 <- arima(x, order = c(2, 0, 2), include.mean = TRUE)
-absoluteError <- abs((fit1$par-model1$coef[c(5,1:4)])/fit1$par)
-absoluteError
 
 ############
 # Testing the output object of class fGEVSTABLEGARCH

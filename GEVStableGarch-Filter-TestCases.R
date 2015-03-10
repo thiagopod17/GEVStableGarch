@@ -298,3 +298,65 @@ garch11Fit = function(x, start.h = 0.1)
   printCoefmat(matcoef, digits = 6, signif.stars = TRUE)
   fit$par
 }
+
+
+
+
+
+###############
+###############
+# ARMA(1,1) function.
+
+arma11Fit = function(x)
+{
+    # Step 1: Initialize Time Series Globally:
+    x <<- x
+    
+    # Step 2: Initialize Model Parameters and Bounds: 
+    Mean = mean(x); Var = var(x); S = 1e-6  
+    params = c(mu = Mean, a = 0, b = 0, sigma = sqrt(Var))
+    lowerBounds = c(mu = -10*abs(Mean), a = -10, b = -10, sigma = S)
+    upperBounds = c(mu =  10*abs(Mean), a =  10, b =  10, 20*Var)
+    
+    # Step 3: Set Conditional Distribution Function:
+    armaDist = function(z, hh) { dnorm(x = z/hh)/hh }
+    
+    # Step 4: Compose log-Likelihood Function:
+    armaLLH = function(parm) {
+      
+      mu = parm[1]; a = parm[2]; b = parm[3]; sigma = parm[4]
+      z = (x-mu);
+      
+      # Use Filter Representation:
+      e = z - a*c(0, z[-length(x)])
+      h = filter(e, -b, "r", init = 0)
+      
+      llh = -sum(log(armaDist(h, sigma)))
+      
+      llh 
+    }
+  
+    #Step 5: Estimate Parameters and Compute Numerically Hessian:
+    fit = nlminb(start = params, objective = armaLLH,
+                lower = lowerBounds, upper = upperBounds, control = 
+                  list(trace=3))
+    
+    
+    fit$par
+    -sum(log(armaDist(h, fit$par[4])))
+    fit$residuals = filter.Arma(x,1,1,mu = fit$par[1], a = fit$par[2],b = fit$par[3])
+    fit
+
+}
+
+library(FitARMA)
+library(fGarch)
+data(dem2gbp)
+x = (dem2gbp[, 1]+30)
+fitMeu <- arma11Fit(x) 
+?arima
+fitArima <- arima(x, order = c(1,0,1), optim.control = list(trace = 0))
+cbind(fitMeu$residuals,fitArima$residuals)
+cbind(fitMeu$par[1:3],fitArima$coef[c(3,1,2)])
+
+filter.Arma(x,1,1,mu = 29.9836, a = -0.6229,b = 0.6446)

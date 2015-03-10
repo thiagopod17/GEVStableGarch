@@ -57,25 +57,28 @@ filter.Arma <- function(
            n < 1 || n < 1 || length(a) != m || length(b) != n")
     
     # Initial declaration of variables
-    Mean <- mean(data)
-    N = length(data)
-    
-    # initializing the time series
-    x.init <- rep(Mean,m)
-    z.init <- rep(0,n)    
-    
+    x.init <- rep(0,m)
+    z.init <- rep(0,n) 
+        
     # Build the residuals by making matrices operations.
+    # ARMA(1,1) model: data[t] = mu + X[t] and
+    #                  X[t] = a1*X[t-1] + b1*z[t-1] + z[t]
+    # Then, define x.ZeroMean[t] = data[t] - mu and calculate z[t] recursivelly by
+    # z[t] = X[t] - a1*X[t-1] - b1*z[t-1]
+    # See the program documentation for more details.
+    
+    x.ZeroMean <- data - mu
     x2 = 0
-    V <- c(x.init,data[1:(N-1)])
+    V <- c(x.init,x.ZeroMean[1:(N-1)])
     for( i in 1:m)
     {
-        x1 <- -a[i]*V
-        x2 = x2 +  x1[(m-(i-1)):(m+N-i)]
+      x1 <- -a[i]*V
+      x2 = x2 +  x1[(m-(i-1)):(m+N-i)]
     }
-    x2 <- data - mu + x2
+    x2 <- x.ZeroMean + x2
     
     z <- filter(x2, filter = -b,
-        method = "recursive", init = z.init)
+                method = "recursive", init = z.init)        
     
     if(length(z) != N)
         stop("Error in filtering function. length(z) != N")    
