@@ -22,9 +22,6 @@
 # TEST CASES FOF FUNCTIONS: 
 # 
 #  GSgarch.Fit                
-#  Stationarity.Condition.Aparch
-#  norm.moment.aparch
-#  stable.moment.aparch
 ################################################################################
 
 
@@ -363,43 +360,6 @@ arCheck <- function(ar) {
 arCheck(c(-0.61))
 # antes do arCheck -0.02665051 -0.62383081  0.64553619 
 # Depois do arCheck -0.02665051 -0.62383081  0.64553619 
-# ------------------------------------------------------------------------------
-# Test Cases for functions norm.moment.aparch and stable.moment.aparch
-# ------------------------------------------------------------------------------
-
-
-
-# E(z^2) = Var(z) = 1
-norm.moment.aparch(delta = 2, gamma = 0)
-stable.moment.aparch(2,0.5,3,0)
-
-
-
-# ------------------------------------------------------------------------------
-# Test Cases for function Stationarity.Condition.Aparch
-# ------------------------------------------------------------------------------
-
-
-
-# MA(2)-APARCH(1)-norm
-spec <- GSgarchSpec(model = list(mu = 3,ma = c(1,2),alpha = 0.3,beta = 0.3, delta = 1), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARCH(1)-norm
-spec <- GSgarchSpec(model = list(alpha = c(0.03), delta = 2), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-norm
-spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
-                                 gamma = c(0,0.4),beta = c(3,3),delta = 2), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-stable
-spec <- GSgarchSpec(model = list(ar = c(0.1,0.04),ma = c(3,3,3), alpha = c(0.1,0.1),
-                                 gamma = c(0.3,0),beta = c(0.1,0.1),delta = 1.4, shape = 1.5, skew = 0), 
-                    presample = NULL,cond.dist = c("stable"),rseed = 3)
-Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gamma = spec@model$gamma, 
-                                           delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
-                              formula = .getFormula(spec@formula), cond.dist = spec@distribution)
-
-
 
 ################################################################################
 

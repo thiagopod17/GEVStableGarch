@@ -3,17 +3,30 @@
 R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme Value) or Stable distributions
 
 #   Things to do
-
+    - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
+    - Change name of variables that are functions or objects in R, such as: gamma, data, etc.
+    gamma need to be changed in function GSgarch.Fit
+    - Test the 0-parametrization indicated from Nolan to see if it performs better. Then,
+    make sure the definition of the stable distribution is correct on the paper.
+    - How to cite the code I used from package fGarch: Sim and garchSpec functions.
     - Include the gev restriction of stationarity into the model and test it.
-    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation. Notice that the Zhao paper has qsi > 0.
+    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation.     Notice that the Zhao paper has qsi > 0.
     - Install the package "stable" from Nolan, J.P. and test the function GSgarch.Fit.
     - Test the estimation using the "sqp.restriction" algorithm.
     - Test the stable.moment.stationarity function using the particular cases provided 
     in Mittinik et al (2002).
     - Implementar overload do metodo print para objetos da classe fGEVSTABLEGARCH
+    - Prediction of conditional variance for GARCH/APARCH models.
     -Separar funções ARMA com GEV e estavel das funções ARMA-GARCH.
     - Modify function names to make the package more user friendly.
-    - Make a "document" with the filtering formulas.
+    - Cant we define the ARMA-APARCH model with t-Student distribution with infinite 
+    variance? degrees of freedom > 0 and not > 2.
+    - Correct ARMA-stable estimation
+      1.1 get.start para stable sem pegar variancia. pegar mean(abs(data-Mean))
+      1.2 garch.Dist, fazer diferente. Calcular density stable com parametros z 
+      (data) e hh(para sigma da estavel)
+      1.3 definir valor de N para filter.Arma
+      1.4 Ver sobre valores de inicio, superiores e inferiores do sigma da estavel, da media do processo e dos coeficientes arma.
 
 #   Important notes about the modifications
 
