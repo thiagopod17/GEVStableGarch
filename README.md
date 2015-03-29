@@ -5,6 +5,9 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
 #   Things to do
     - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
     - Change name of variables that are functions or objects in R, such as: gamma, data, etc.
+    - Correct the formula for the calculation of the stable.moment general. Just change the expressions (1-gm)^delta and (1+gm)^delta.
+    - Analyse the possibility to implement the GED cond. distr since the other GARCH packages
+    have it. 
     gamma need to be changed in function GSgarch.Fit
     - Test the 0-parametrization indicated from Nolan to see if it performs better. Then,
     make sure the definition of the stable distribution is correct on the paper.
@@ -14,7 +17,7 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
     - Install the package "stable" from Nolan, J.P. and test the function GSgarch.Fit.
     - Test the estimation using the "sqp.restriction" algorithm.
     - Test the stable.moment.stationarity function using the particular cases provided 
-    in Mittinik et al (2002).
+    in Mittinik et al (2002), Mittnik et al. (1995) and Diong (2006).
     - Implementar overload do metodo print para objetos da classe fGEVSTABLEGARCH
     - Prediction of conditional variance for GARCH/APARCH models.
     -Separar funções ARMA com GEV e estavel das funções ARMA-GARCH.

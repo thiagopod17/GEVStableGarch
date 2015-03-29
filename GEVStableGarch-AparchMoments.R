@@ -131,12 +131,12 @@ stable.moment.aparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
   # Description: 
   #   Returns the following Expectation for a standard normal distribution
   #   E[ (|z|-gm*z)^delta.
-  #   This formula uses S(alpha,skew,1,0;pm) where pm = 2.
+  #   This formula uses S(alpha,skew,1,0;pm) where pm = 1.
   #   Reference: The GEVStableGarch papper on JSS. 
   
   # Error treatment of input parameters
   if( (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
-        (delta <= 1) || (delta >= shape))
+      (delta >= shape))
     stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
          The following conditions cannot be true.
          (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
@@ -145,14 +145,14 @@ stable.moment.aparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
   
   # Calculate the expression
   sigma.til <- (1 + (skew*tan(shape*pi/2))^2)^(1/2/shape)
-  k.shape <- shape - 2
+  k.shape <- shape - 2 # since skew > 1
   skew.til <- 2/pi/(shape-2)*atan(skew*tan((shape-2)*pi/2))
   g1 <- gamma((1/2 + skew.til*k.shape/2/shape)*(-delta))
-  g2 <- gamma(1/2 - skew.til*k.shape/2/shape + (1/2 + skew.til*k.shape/2/shape))
+  g2 <- gamma(1/2 - skew.til*k.shape/2/shape + (1/2 + skew.til*k.shape/2/shape)*(delta+1))
   g3 <- gamma((1/2 - skew.til*k.shape/2/shape)*(-delta))
-  g4 <- gamma(1/2 + skew.til*k.shape/2/shape + (1/2 - skew.til*k.shape/2/shape))
+  g4 <- gamma(1/2 + skew.til*k.shape/2/shape + (1/2 - skew.til*k.shape/2/shape)*(delta+1))
   kappa <- 1/shape/sigma.til*sigma.til^(delta+1)*gamma(delta+1)*gamma(-delta/shape)*
-    1/g1/g2*((1+gm)^delta + 1/g3/g4*(1-gm)^delta)
+    (1/g1/g2*(1-gm)^delta + 1/g3/g4*(1+gm)^delta)
   return(kappa)
 }
 
@@ -171,19 +171,50 @@ stable.simmetric.moment.garch <- function(shape = 1.5)
   gamma(1 - 1/shape)*2/pi
 }
 
+
+
 # ------------------------------------------------------------------------------
-stable.moment.power.garch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
+
+
+stable.symmetric.moment.aparch <- function(shape = 1.5, delta = 1.2, gm = 0)
+{
+  # See Diongue - 2008 (An investigation of the stable-Paretian Asymmetric Power GARCH model)
+  # This formula uses S(alpha,0,1,0;pm) where pm = 0 or 1. 
+  # Error treatment of input parameters
+  if( (shape <= 1) || (shape > 2) || (delta >= shape))
+    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+           The following conditions cannot be true.
+            (shape <= 1) || (shape > 2) || (delta >= shape))")
+  
+  
+  # k(delta): At this point we have delta > 1
+  if(delta == 1)
+    k = pi/2
+  else
+    k = gamma(1-delta)*cos(pi*delta/2)
+  # Expectation
+  expectation = k^(-1)*gamma(1-delta/shape)*1/2*((1+gm)^delta+(1-gm)^delta)
+  expectation
+}
+
+
+
+
+
+
+
+# ------------------------------------------------------------------------------
+stable.moment.power.garch <- function(shape = 1.5, skew = 0.5, delta = 1.2)
 {
     # See Mittnik et al. (2002) - Stationarity of stable power-GARCH processes
-    # This formula uses S(alpha,skew,1,0;pm) where pm = 0 or 1. 
+    # This formula uses S(alpha,skew,1,0;pm) where pm = 1 (tests reveald) 
     # Error treatment of input parameters
     if( (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || 
-        (abs(gm) >= 1) || (delta >= shape))
+        (delta >= shape))
       stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
            The following conditions cannot be true.
             (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || 
-            (abs(gm) >= 1) || (delta >= shape)
-           Note: This function do not accept the normal case, i.e, alpha = 2")
+            (delta >= shape)")
     
     
     # k(delta): At this point we have delta > 1
@@ -191,12 +222,13 @@ stable.moment.power.garch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm =
         k = pi/2
     else
         k = gamma(1-delta)*cos(pi*delta/2)
-    # tal(,skew)
+    # tal(shape,skew)
     tau = skew*tan(shape*pi/2)
     # lambda(shape,skew,delta): eq (10) Mittnik et al. (2002)
     lambda = k^(-1)*gamma(1-delta/shape)*(1 + tau^2)^(delta/2/shape)*cos(delta/shape*atan(tau))
     lambda
 }
+
 
 
 # ------------------------------------------------------------------------------
@@ -227,5 +259,47 @@ rest <- function(parm)
 }
 
 
+
+
+
+
+
+# ------------------------------------------------------------------------------
+TrueAparchMomentsWurtz <- 
+  function(fun = "norm", gamma = 0, delta = 1, ...)
+  {   
+    # A function implemented by Diethelm Wuertz
+    # Adapted to return only the aparch moment.
+    # Description:
+    #   Computes persistence for an APARCH process
+    
+    # Arguments:
+    #   fun - name of density functions of APARCH innovations
+    #   alpha, gamma - numeric value or vector of APARCH coefficients,
+    #       must be of same length  
+    #   beta - numeric value or vector of APARCH coefficients
+    #   delta - numeric value of APARCH exponent
+    
+    # Note:
+    #   fun is one of: norm, snorn, std, sstd, ged, sged, snig
+    
+    # FUNCTION:
+    
+    # Match Density Function:
+    fun = match.fun(fun)
+    
+    # Persisgtence Function: E(|z|-gamma z)^delta
+    e = function(x, gamma, delta, ...) {
+      (abs(x)-gamma*x)^delta * fun(x, ...)
+    }
+    
+    # Compute Persistence by Integration:
+      I = integrate(e, -Inf, Inf, subdivisions = 1000,
+                    rel.tol = .Machine$double.eps^0.25,
+                    gamma = gamma, delta = delta, ...)
+    
+    # Return Value:
+    I
+  }
 
 ################################################################################

@@ -27,20 +27,17 @@
 
 
 
-
-
-
 # ------------------------------------------------------------------------------
 # Test Cases for functions norm.moment.aparch
 # ------------------------------------------------------------------------------
 
-# E(z^2) = Var(z) = 1, where z ~ N(0,1)
+# E(z^2) = Var(z) = 1, where z ~ N(0,1) - OK
 norm.moment.aparch(delta = 2, gm = 0)
 
-# E(z^0) = 1, where z ~ N(0,1)
+# E(z^0) = 1, where z ~ N(0,1) - OK
 norm.moment.aparch(delta = 0.0000001, gm = 0)
 
-# Comparison with simulated data
+# Comparison with simulated data - OK
 n = 100
 nSimulations = 1000000
 deltaValues = runif(n, 0, 10)
@@ -57,15 +54,16 @@ plot(error, ylab = "error In percentage")
 summary(error)
 
 
+
 # ------------------------------------------------------------------------------
 # Test Cases for function stable.simmetric.moment.garch
 # ------------------------------------------------------------------------------
 
-# E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002)
+# E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
 stable.simmetric.moment.garch(shape = 2)
 sqrt(2)*norm.moment.aparch(delta = 1, gm = 0)
 
-# Comparison with simulated data
+# Comparison with simulated data - OK
 library(stabledist)
 n = 100
 nSimulations = 10000000
@@ -83,47 +81,141 @@ plot(error, ylab = "error In percentage")
 summary(error)
 
 
+
 # ------------------------------------------------------------------------------
 # Test Cases for functions stable.moment.power.garch (Mittnik et al. (2002))
 # ------------------------------------------------------------------------------
-# E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002)
-stable.moment.power.garch(shape = 2, skew = 0, delta = 1, gm = 0)
+
+# E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
+stable.moment.power.garch(shape = 2, skew = 0, delta = 1)
 stable.simmetric.moment.garch(shape = 2)
 sqrt(2)*norm.moment.aparch(delta = 1, gm = 0)
 
-# Comparison with symmetric stable garch model
+# Comparison with symmetric stable garch model - OK
 n = 10000
 shapeValues = runif(n, 1, 2)
 error = rep(NA,n)
 for(i in 1:n)
 {
-  error[i] = abs((stable.moment.power.garch(shape=shapeValues[i],skew=0,delta=1,gm=0) - 
+  error[i] = abs((stable.moment.power.garch(shape=shapeValues[i],skew=0,delta=1) - 
                     stable.simmetric.moment.garch(shape=shapeValues[i]) )/
                     stable.simmetric.moment.garch(shape=shapeValues[i]))
 }
 plot(error, ylab = "error In percentage", ylim = c(0,1e-15))
 summary(error)
+
+# Comparison with simulated data - OK
+# Works really well for all values with errors around 0.002%!!!
+# The trueValues are the estimated moments using numerical integration 
+# from function TrueAparchMomentsWurtz addapted from function .truePersistence
+# on the garch-Stats.R file.
+n = 100
+shapeValues = runif(n, 1+0.1, 2)
+skewValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.09)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+    trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gamma = 0, delta = deltaValues[i],
+                                           alpha = shapeValues[i], beta = skewValues[i],pm = 1)[1])
+    functionValues[i] = stable.moment.power.garch(shape = shapeValues[i], skew = skewValues[i],
+                        delta = deltaValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(skewValues,deltaValues,shapeValues,trueValues,functionValues)
+summary(error)
+
+
+
 # ------------------------------------------------------------------------------
 # Test Cases for functions stable.moment.aparch (GEVStableGarch papper)
 # ------------------------------------------------------------------------------
 
-# E(z^1) = E(x^1) where x ~ N(0,2) see Mittnik et al. (2002)
-# CORRECT THIS FUNCTION BY STUDYING THE DIFFERENT PARAMETRIZATIONS ON THE 
-# NOLAN BOOK CHAPTER 1.
-stable.moment.aparch(shape = 1.6,skew = 0,delta = 1.5,gm = 0.5)
-stable.moment.power.garch(shape = 1.6, skew = 0, delta = 1.5, gm = 0.5)
+# E(z^1) = E(x^1), where x ~ N(0,2) see Mittnik et al. (2002) - OK
+z = stabledist::rstable(n=10^7,alpha=1.999,beta = 0,
+                        gamma=1,delta=0,pm=0)
+lambdaSim = mean((abs(z)-gm*z)^delta)
+lambdaSim
+stable.moment.aparch(shape = 1.999999,skew = skew,delta = delta,gm = gm)
+
+# Comparison with stable.moment.power.garch function - OK
+# from Mittnik et al. (2002)
+n = 10000
+shapeValues = runif(n, 1+0.1, 2)
+skewValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.09)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = stable.moment.power.garch(shape = shapeValues[i], skew = skewValues[i],
+                                            delta = deltaValues[i])
+  functionValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = skewValues[i],
+                                           delta = deltaValues[i], gm = 0)
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% GEVStableGarch eq. VS Mittnik)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,skewValues,trueValues,functionValues)
+summary(error)
+
+# Comparison with simulated data - OK
+# Works really well for all values with errors around 0.005%!!!
+n = 100
+shapeValues = runif(n, 1+0.1, 2)
+skewValues = runif(n,-1,1)
+gmValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.05)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gamma = gmValues[i], 
+                  delta = deltaValues[i],alpha = shapeValues[i], beta = skewValues[i],
+                  pm = 1)[1])
+  functionValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = skewValues[i],
+                  delta = deltaValues[i], gm = gmValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,gmValues,skewValues,trueValues,functionValues)
+summary(error)
 
 
 
+# ------------------------------------------------------------------------------
+# Test Cases for function stable.symmetric.moment.aparch (Diongue papper)
+# ------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
+# Comparison with stable.moment.garch function 
+# from GEVStableGarch papper on JSS - OK
+# Error around 1e-9%!!!
+n = 100000
+shapeValues = runif(n, 1+0.1, 2)
+gmValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.09)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = 0,
+                                      delta = deltaValues[i], gm = gmValues[i])
+  functionValues[i] = stable.symmetric.moment.aparch(shape = shapeValues[i],
+                                           delta = deltaValues[i], gm = gmValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% GEVStableGarch eq. VS Mittnik)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,gmValues,trueValues,functionValues)
+summary(error)
 
 
 
@@ -152,4 +244,4 @@ Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec
                                            delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
                               formula = .getFormula(spec@formula), cond.dist = spec@distribution)
 
-
+?sstd
