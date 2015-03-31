@@ -47,7 +47,8 @@
     #   formula - ARMA(m,n) + GARCH/APARCH(p,q) mean and variance specification 
     
     # Return:
-    #   A list containing two elements, formula.mean and formula.variance     
+    #   A list containing two elements, formula.mean and formula.variance, 
+    #   formula.order and the boolean formula.isAPARCH
     
     # FUNCTION: 
     

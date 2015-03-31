@@ -56,6 +56,78 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
+# Test Cases for functions std.moment.aparch (standard t-Student)
+# ------------------------------------------------------------------------------
+
+
+# Tests with the numerical integration computation - OK
+n = 1000
+shapeValues = runif(n, 2+0.01, 5)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,0,shapeValues[i]-0.09)
+gmValues = runif(n,-1,1)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dstd",gm = gmValues[i], 
+                                                    delta = deltaValues[i], nu = shapeValues[i])[1])
+  functionValues[i] = std.moment.aparch(shape = shapeValues[i], delta = deltaValues[i],
+                                        gm = gmValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,gmValues,trueValues,functionValues)
+summary(error)
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for functions ged.moment.aparch (standard GED distribution)
+# ------------------------------------------------------------------------------
+
+# Tests with the numerical integration computation - OK
+n = 100
+shapeValues = runif(n, 0.1, 5)
+deltaValues = runif(n,0,10)
+gmValues = runif(n,-1,1)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dged",gm = gmValues[i], 
+                                                    delta = deltaValues[i], nu = shapeValues[i])[1])
+  functionValues[i] = ged.moment.aparch(shape = shapeValues[i], delta = deltaValues[i],
+                                        gm = gmValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,gmValues,trueValues,functionValues)
+summary(error)
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for functions sstd.moment.aparch (standard skew t-Student)
+# ------------------------------------------------------------------------------
+
+
+# Tests with simulated data
+#  works well for the simmetric case, i.e. skew = 1 and delta = 1.
+shape = 10
+skew = 1
+delta = 5
+gm = 0
+sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm)
+TrueAparchMomentsWurtz(fun = "dsstd", gm = gm, delta = delta, nu = shape, xi = skew)
+
+plot(seq(-3,3,0.01),dsstd(seq(-3,3,0.01), xi = 1, nu = shape))
+
+
+
+
+
+# ------------------------------------------------------------------------------
 # Test Cases for function stable.simmetric.moment.garch
 # ------------------------------------------------------------------------------
 
@@ -69,6 +141,7 @@ n = 100
 nSimulations = 10000000
 shapeValues = runif(n, 1.5, 2) # the mean of simulated values is more well behaved.
 error = rep(NA,n)
+
 for(i in 1:n)
 {
   z = stabledist::rstable(n=nSimulations,alpha=shapeValues[i],beta = 0,
@@ -79,6 +152,29 @@ for(i in 1:n)
 }
 plot(error, ylab = "error In percentage")
 summary(error)
+
+
+# Comparison with the numerical integration routine
+library(stabledist)
+n = 20
+shapeValues = runif(n, 1, 2)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+error = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = 1,
+                  alpha = shapeValues[i], beta = 0,pm = 1)[1])
+  functionValues[i] = stable.simmetric.moment.garch(shapeValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(shapeValues,trueValues,functionValues)
+summary(error)
+
+
+
+
 
 
 
@@ -119,7 +215,7 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-    trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gamma = 0, delta = deltaValues[i],
+    trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = deltaValues[i],
                                            alpha = shapeValues[i], beta = skewValues[i],pm = 1)[1])
     functionValues[i] = stable.moment.power.garch(shape = shapeValues[i], skew = skewValues[i],
                         delta = deltaValues[i])
@@ -137,7 +233,7 @@ summary(error)
 
 # E(z^1) = E(x^1), where x ~ N(0,2) see Mittnik et al. (2002) - OK
 z = stabledist::rstable(n=10^7,alpha=1.999,beta = 0,
-                        gamma=1,delta=0,pm=0)
+                        gm=1,delta=0,pm=0)
 lambdaSim = mean((abs(z)-gm*z)^delta)
 lambdaSim
 stable.moment.aparch(shape = 1.999999,skew = skew,delta = delta,gm = gm)
@@ -177,7 +273,7 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-  trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gamma = gmValues[i], 
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = gmValues[i], 
                   delta = deltaValues[i],alpha = shapeValues[i], beta = skewValues[i],
                   pm = 1)[1])
   functionValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = skewValues[i],

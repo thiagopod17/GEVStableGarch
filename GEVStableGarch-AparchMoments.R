@@ -79,6 +79,9 @@ Stationarity.Condition.Aparch <-
     # garch model
     if(formula$isAPARCH == FALSE) 
       return(sum(alpha) + sum(beta))
+    else
+      stop("APARCH case not implemented yet.")
+    
     
     # aparch model
     kappa = rep(0,length(alpha))
@@ -119,6 +122,89 @@ norm.moment.aparch <- function(delta = 1.2, gm = 0)
   1/sqrt(2*pi)*( (1+gm)^delta + (1-gm)^delta )*
     2^((delta-1)/2)*gamma((delta+1)/2)
 }
+
+
+
+# ------------------------------------------------------------------------------
+
+
+std.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0)
+{
+  # Description:
+  #   Returns the following Expectation for a standard t-Student distribution
+  #   E[ (|z|-gm*z)^delta.
+  #   Reference: Mittnik -  (2000) - Conditional Density and Value-at-Risk 
+  #   Prediction of Asian Currency Exchange Rates
+  #   Note that the formula provided by Mittnik is valid for the original t-Student 
+  #   distribution (which is nonStandardized).
+  #   Since our objective is to calculate it for the standart t-Student distribution
+  #   defined in Wurtz et al. (2006) - eq (13) we need to multiply the Mittnik
+  #   formula by (sqrt((shape-2)/shape))^delta.
+  #   The main drawback is that the standardized t-Student distribution 
+  #   is valid only for shape > 2 ( in which case the variance is finite)
+  # Error treatment of input parameters
+  if( (abs(gm) >= 1) || (delta <= 0) || (shape <= 2) || (delta >= shape))
+    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+         The following conditions cannot be true
+         (abs(gm) >= 1) || (delta <= 0) || (shape <= 0)|| (delta >= shape)")
+  
+  mittnikFormula = shape^(delta/2)*1/2/sqrt(pi)*( (1+gm)^delta+(1-gm)^delta )*
+    gamma((delta+1)/2)*(gamma(shape/2))^(-1)*gamma((shape-delta)/2)
+  factorToMultiply = (sqrt((shape-2)/shape))^delta
+  return(mittnikFormula*factorToMultiply)
+}
+
+
+# ------------------------------------------------------------------------------
+
+sstd.moment.aparch <- function(shape = 3, skew = 0, delta = 1.2, gm = 0)
+{
+    # Description:
+    #   Returns the following Expectation for a standard skew t-Student distribution
+    #   E[ (|z|-gm*z)^delta.
+    #   Reference: fGarch: Wurtz and the package Skewt uses the one defined 
+    #   in Fernandez, C. and Steel, M. F. J. (1998). On Bayesian modeling of fat 
+    #   tails and skewness, J. Am. Statist. Assoc. 93, 359–371.
+    #   Another reference: http://www.timberlake.co.uk/slaurent/G@RCH/Book63.html
+    
+    if( (abs(gm) >= 1) || (delta <= 0) || (shape <= 2) || 
+        (delta >= shape) || (skew <= 0)) 
+      stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+           The following conditions cannot be true
+           (abs(gm) >= 1) || (delta <= 0) || (shape <= 2) || 
+           (delta >= shape) || (skew <= 0)")
+    a = skew^(-1-delta)*(1+gm)^delta + skew^(1+delta)*(1-gm)^delta
+    b = gamma((delta+1)/2)*gamma((shape-delta)/2)*(shape-2)^((1+delta)/2)
+    c = (skew + 1/skew)*sqrt((shape-2)*pi)*gamma(shape/2)
+    a*b/c  
+}
+
+
+
+
+# ------------------------------------------------------------------------------
+
+
+
+ged.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0)
+{
+    # Description:
+    #   Returns the following Expectation for a standard skew t-Student distribution
+    #   E[ (|z|-gm*z)^delta.
+    #   Reference: http://www.timberlake.co.uk/slaurent/G@RCH/Book63.html
+    
+    if( (abs(gm) >= 1) || (delta <= 0)) 
+      stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+             The following conditions cannot be true
+             ")
+    lambda = sqrt(gamma(1/shape)*2^(-2/shape)/gamma(3/shape))
+    ((1+gm)^delta + (1-gm)^delta)*2^((delta-shape)/shape)*
+    gamma((delta+1)/shape)*lambda^delta/gamma(1/shape)
+}
+
+
+
+
 
 
 
@@ -235,7 +321,7 @@ stable.moment.power.garch <- function(shape = 1.5, skew = 0.5, delta = 1.2)
 
 
 
-rest <- function(parm)
+garch.stationarity <- function(parm)
 {
   # Description: Old and incomplete implementation of restriction of stationarity
   #   for aparch models
@@ -246,15 +332,6 @@ rest <- function(parm)
   beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
   delta <- parm[2+m+n+2*p+q+1]; 
   skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
-  if(cond.dist == "stable")
-  {
-    tau <- skew*tan(shape*pi/2)
-    kdelta <- pi/2
-    if(abs(delta-1) > GStol) kdelta <- gamma(1 - delta)*cos(pi*delta/2)
-    lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
-      cos(delta/shape*atan(tau))
-    return(lamb*sum(alpha) + sum(beta))
-  }
   return(sum(alpha) + sum(beta))
 }
 
@@ -266,7 +343,7 @@ rest <- function(parm)
 
 # ------------------------------------------------------------------------------
 TrueAparchMomentsWurtz <- 
-  function(fun = "norm", gamma = 0, delta = 1, ...)
+  function(fun = "norm", gm = 0, delta = 1, ...)
   {   
     # A function implemented by Diethelm Wuertz
     # Adapted to return only the aparch moment.
@@ -275,7 +352,7 @@ TrueAparchMomentsWurtz <-
     
     # Arguments:
     #   fun - name of density functions of APARCH innovations
-    #   alpha, gamma - numeric value or vector of APARCH coefficients,
+    #   alpha, gm - numeric value or vector of APARCH coefficients,
     #       must be of same length  
     #   beta - numeric value or vector of APARCH coefficients
     #   delta - numeric value of APARCH exponent
@@ -288,15 +365,15 @@ TrueAparchMomentsWurtz <-
     # Match Density Function:
     fun = match.fun(fun)
     
-    # Persisgtence Function: E(|z|-gamma z)^delta
-    e = function(x, gamma, delta, ...) {
-      (abs(x)-gamma*x)^delta * fun(x, ...)
+    # Persisgtence Function: E(|z|-gm z)^delta
+    e = function(x, gm, delta, ...) {
+      (abs(x)-gm*x)^delta * fun(x, ...)
     }
     
     # Compute Persistence by Integration:
       I = integrate(e, -Inf, Inf, subdivisions = 1000,
                     rel.tol = .Machine$double.eps^0.25,
-                    gamma = gamma, delta = delta, ...)
+                    gm = gm, delta = delta, ...)
     
     # Return Value:
     I

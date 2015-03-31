@@ -3,6 +3,7 @@
 R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme Value) or Stable distributions
 
 #   Things to do
+    - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm.
     - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
     - Change name of variables that are functions or objects in R, such as: gamma, data, etc.
     - Correct the formula for the calculation of the stable.moment general. Just change the expressions (1-gm)^delta and (1+gm)^delta.

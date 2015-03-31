@@ -47,7 +47,7 @@ GSgarch.Dist <-
     # FUNCTION:  
       
     # Error treatment of input parameters
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable")
+    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable", "ged")
     if( !any(cond.dist.list == cond.dist) )   
         stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev or stable")
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
@@ -84,6 +84,15 @@ GSgarch.Dist <-
         return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))
     }
     
+    # GED conditional distribution.
+    if(cond.dist == "ged")
+    {
+      if(!(shape > 0))
+        stop("Invalid shape in std distribution. shape > 0")
+      nu = shape
+      return(-sum(log(dged(x = z/hh, nu = nu)/hh)))
+    }
+    
     # GEV conditional distribution
     if(cond.dist == "gev")
     {
@@ -117,10 +126,10 @@ GSgarch.Dist <-
         y <- arg
         if(sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y)))
             return(1e99)
-        #dens.stable <- stable::dstable.quick(y,alpha = alpha.stable, 
-        #beta = beta.stable, gamma = 1, delta = 0, param = 2)
-        dens.stable <- GSgarch.dstable(y,alpha = alpha.stable,
-                       beta = beta.stable, gamma = 1,delta = 0, param = 2)
+        dens.stable <- stable::dstable.quick(y,alpha = alpha.stable, 
+        beta = beta.stable, gamma = 1, delta = 0, param = 1)
+        #dens.stable <- GSgarch.dstable(y,alpha = alpha.stable,
+        #               beta = beta.stable, gamma = 1,delta = 0, param = 2)
         llh <- sum(log(sig[sig>0])) - 
             sum(log(dens.stable[dens.stable>0]))
         return(llh)

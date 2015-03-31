@@ -167,6 +167,30 @@ model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,0),
                       algorithm = "nlminb", DEBUG = FALSE)
 fit1@fit$par-model1@fit$par
 
+
+# garch(1,1)-ged-intercept
+fit1 <- garchFit(data = x, formula = ~garch(1,1),
+                 cond.dist = "ged", include.mean = TRUE,
+                 algorithm = "nlminb")
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                      cond.dist = "ged", include.mean = TRUE, 
+                      algorithm = "sqp")
+fit1@fit$par-model1@fit$par
+fit1@fit$llh
+model1@fit$llh
+
+# aparch(3,2)-ged-intercept
+fit1 <- garchFit(data = x, formula = ~aparch(3,2),
+                 cond.dist = "ged", include.mean = TRUE,
+                 algorithm = "nlminb")
+model1 <- GSgarch.Fit(data = x , formula = ~aparch(3,2),
+                      cond.dist = "ged", include.mean = TRUE, 
+                      algorithm = "sqp")
+fit1@fit$par-model1@fit$par
+fit1@fit$llh
+model1@fit$llh
+
+
 ############
 # Fitting ARMA-GARCH or ARMA-APARCH process
 library(fGarch)
@@ -317,7 +341,7 @@ x = dem2gbp[, 1]-1000
 # arma(1,1)-norm-intercept-nlminb
 m <- 5
 n <- 5
-fit1 <- GSgarch.Fit(data = x, formula = ~arma(5,5),
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
                     cond.dist = "norm", include.mean = TRUE, 
                     algorithm = "nlminb", DEBUG = FALSE, control = list(trace = 3))
 model1 <- arima(x, order = c(m, 0, n))
@@ -347,6 +371,22 @@ model1 <- garchFit(data = x, formula = ~garch(1,1),
                    algorithm = "nlminb")
 model1@fit
 fit1@fit
+
+##########
+# Testing the sqp.restriction algorithm
+library(fGarch)
+library(fExtremes)
+library(stable)
+library(Rsolnp)
+data(dem2gbp)
+data(sp500dge)
+x = 100*sp500dge[, 1]
+x = dem2gbp[, 1]
+# garch(1,1)-norm-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~garch(1,1),
+                    cond.dist = "sstd", include.mean = TRUE, 
+                    algorithm = "sqp.restriction")
+
 
 #########
 # Studying the ARMA stationarity

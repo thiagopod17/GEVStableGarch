@@ -52,7 +52,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
     #   with the Moving Average part included
     #   ARMAonly - Indicates whether we have a pure ARMA model
     #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd
+    #       gev, stable, norm, std, sstd, ged
     #   GSstable.tol.b - boundary tolerance. Should be greater than GSstable.tol
     #   GStol.b - pper and lower bounds tolerance. Should be greater than tol
 
@@ -72,9 +72,9 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         stop("'p' and 'q' need to be integers greater than zero")
     if(p == 0 && q != 0)
         stop("Invalid Garch(p,q) order")
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable")
+    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable","ged")
     if( !any(cond.dist.list == cond.dist) )   
-        stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev or stable")
+        stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev,ged or stable")
     if( !is.numeric(data) || !is.vector(data))
         stop("data set must be a numerical one dimensional vector")
     
@@ -185,6 +185,11 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         shape.init <- 4
         shape.lower <- 2 + GStol.b; shape.upper <- 20
         skew.lower <- GStol.b; skew.upper <- 20   
+    }
+    if (cond.dist == "ged")
+    {   
+      shape.init <- 4
+      shape.lower <- 0 + GStol.b; shape.upper <- 20   
     }
     if(cond.dist == "gev")
     {

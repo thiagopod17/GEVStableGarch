@@ -27,7 +27,7 @@ GSgarch.Fit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("norm", "std", "sstd", "gev", "stable"),
+    cond.dist = c("norm", "std", "sstd", "gev", "stable", "ged"),
     include.mean = TRUE, 
     algorithm = c("sqp","sqp.restriction","nlminb"),
     printRes = TRUE,
@@ -87,7 +87,7 @@ function(
     #   include.mean - a logical, should the mean value be estimated ? 
     #   algorithm - 
     #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd   
+    #       gev, stable, norm, std, sstd, ged 
     #   title - a character string which allows for a project title
     #   description - a character string which allows for a project description
     
@@ -128,7 +128,13 @@ function(
       formula.var <- formula$formula.var
     else
       formula.var <- ""
-        
+    
+    # Stop if the algorithm is not supported
+    if(algorithm == "sqp.restriction")
+        if(formula.var == "" || APARCH == TRUE)
+            stop("sqp.restriction is only implemented for the GARCH case.")
+    
+    
     # Configuring model order
     ARMAonly <- FALSE
     AR <- FALSE 
@@ -391,25 +397,21 @@ function(
     }
     
     # Function that evaluate stationarity conditions to guide parameter estimation.
-    rest <- function(parm)
+    garch.stationarity <- function(parm)
     {
-        mu <- parm[1];
-        a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
-        omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
-        gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
-        beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
-        delta <- parm[2+m+n+2*p+q+1]; 
-        skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
-        if(cond.dist == "stable")
-        {
-            tau <- skew*tan(shape*pi/2)
-            kdelta <- pi/2
-            if(abs(delta-1) > GStol) kdelta <- gamma(1 - delta)*cos(pi*delta/2)
-            lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
-                cos(delta/shape*atan(tau))
-            return(lamb*sum(alpha) + sum(beta))
-        }
-        return(sum(alpha) + sum(beta))
+      # Description: Old and incomplete implementation of restriction of stationarity
+      #   for aparch models
+      mu <- parm[1];
+      a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
+      omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
+      gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
+      beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
+      delta <- parm[2+m+n+2*p+q+1]; 
+      skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
+      kappa <- 1
+      if(cond.dist == "stable")
+          kappa = stable.simmetric.moment.garch(shape)
+      return(sum(alpha) + sum(beta))
     }
 
     # Optimization procedure using selected algorithms
@@ -422,8 +424,8 @@ function(
         fit1 <- solnp(pars = start[1,], fun = modelLLH, 
                     LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "sqp.restriction")
-        fit1 <- solnp(pars = start[1,], fun = modelLLH, ineqfun = rest, ineqLB = 0,
-                    ineqUB = 1, LB = start[2,], UB = start[3,], control = control)
+        fit1 <- solnp(pars = start[1,], fun = modelLLH, ineqfun = garch.stationarity, ineqLB = 0,
+                    ineqUB = 1-0.001, LB = start[2,], UB = start[3,], control = control)
     if (algorithm == "nlminb")
     {              
           fit1 <- nlminb(start[1,], objective = modelLLH,
@@ -439,7 +441,14 @@ function(
         out$llh <- fit1$values[length(fit1$values)]
         out$par <- fit1$pars
         out$hessian <- fit1$hessian
-    } 
+        if(algorithm == "sqp.restriction")
+        {
+          sizeHessian = length(out$hessian[1,])-1
+          out$hessian = out$hessian[1:sizeHessian,1:sizeHessian]
+        }
+        out$hessian <- optim(par = fit1$par, fn = modelLLH, 
+                             method = "Nelder-Mead", hessian = TRUE)$hessian
+    }
     
     if(DEBUG)
       print(fit1)
@@ -463,7 +472,7 @@ function(
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
                     if(any(c("sstd","stable")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd")  == cond.dist)) 
+                    if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
                       (4+m+n+2*p+q+1))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -475,7 +484,7 @@ function(
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
                     if(any(c("sstd","stable")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd")  == cond.dist)) 
+                    if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
                       (2+m+n+2*p+q+1),
                     length(out$par))  
     }
@@ -489,7 +498,7 @@ function(
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
                   if(any(c("sstd","stable")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd")  == cond.dist)) 
+                  if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
                     "shape",
                   if(ARMAonly) "sigma")
     
