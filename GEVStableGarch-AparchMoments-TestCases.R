@@ -119,6 +119,37 @@ summary(error)
 # routine.
 
 
+n = 1000
+shapeValues = runif(n, 2, 15)
+gmValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+skewValues = rep(NA,n)
+for(i in 1:n)
+{
+  deltaValues[i] = runif(n=1,0.05,shapeValues[i]-0.2) 
+  if(i %% 2 == 0)
+    skewValues[i] = runif(n=1,0.015,deltaValues[i]-0.02)  
+  else
+    skewValues[i] = runif(n=1,deltaValues[i]+0.02,max(deltaValues[i]+20,20))
+}
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+error = rep(NA,n)
+for(i in 1:n)
+{
+  M1 = sqrt((shapeValues[i]-2)/pi)*gamma(shapeValues[i]/2)^(-1)*
+    gamma((shapeValues[i]-1)/2)
+  M2 = 1
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dsstd", gm = gmValues[i], delta = deltaValues[i], 
+                                                    nu = shapeValues[i], xi = skewValues[i], mean = (skewValues[i]-1/skewValues[i])*M1,
+                                                    sd = sqrt((M2-M1^2)*(skewValues[i]^2+1/skewValues[i]^2)+2*M1^2-M2))[1])
+  functionValues[i] = sstd.moment.aparch(shape = shapeValues[i], skew = skewValues[i], 
+                                         delta = deltaValues[i], gm = gmValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(gmValues,skewValues,deltaValues,shapeValues,trueValues,functionValues)
+summary(error)
 
 
 
