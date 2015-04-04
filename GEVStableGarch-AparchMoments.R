@@ -128,7 +128,7 @@ norm.moment.aparch <- function(delta = 1.2, gm = 0)
 # ------------------------------------------------------------------------------
 
 
-std.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0)
+std.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0, useFactorToMultiply = TRUE)
 {
   # Description:
   #   Returns the following Expectation for a standard t-Student distribution
@@ -166,6 +166,16 @@ sstd.moment.aparch <- function(shape = 3, skew = 0, delta = 1.2, gm = 0)
     #   in Fernandez, C. and Steel, M. F. J. (1998). On Bayesian modeling of fat 
     #   tails and skewness, J. Am. Statist. Assoc. 93, 359–371.
     #   Another reference: http://www.timberlake.co.uk/slaurent/G@RCH/Book63.html
+     
+    # Note: This is not the APARCH moments for the 'dsstd' function from fGarch package. 
+    # This is the skew t-Student defined by Fernandez and Steel without the 
+    # reparametrization introduced by Wurtz et al. (2006).
+    # but theThe point here is that the SPLUS FinMetrics
+    # also uses this distribution without reparametrization. 
+    # Indeed, Mittnik et al. (2000) also uses his t3-distribution without such
+    # reparametrization. These distributions are in fact standardized, but the 
+    # point is that the assymetry parameter plays a crucial role in the calculation
+    # of the APARCH moments.   
     
     if( (abs(gm) >= 1) || (delta <= 0) || (shape <= 2) || 
         (delta >= shape) || (skew <= 0)) 
@@ -371,7 +381,7 @@ TrueAparchMomentsWurtz <-
     }
     
     # Compute Persistence by Integration:
-      I = integrate(e, -Inf, Inf, subdivisions = 1000,
+    I = integrate(e, -Inf, Inf, subdivisions = 1000,
                     rel.tol = .Machine$double.eps^0.25,
                     gm = gm, delta = delta, ...)
     

@@ -410,7 +410,7 @@ function(
       skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
       kappa <- 1
       if(cond.dist == "stable")
-          kappa = stable.simmetric.moment.garch(shape)
+          kappa = stable.moment.power.garch(shape = shape, skew = skew, delta = 1)
       return(sum(alpha) + sum(beta))
     }
 
@@ -513,7 +513,7 @@ function(
     out$hessian <- out$hessian[outindex,outindex]
     nParam <- length(out$par)
     out$aic  = 2*out$llh + 2*nParam 
-    out$aicc = 2*out$llh + 2*nParam*N/(N - nParam - 1)
+    out$aicc = 2*out$llh + 2*(nParam+1)*N/(N - nParam - 2)
     out$bic =  2*out$llh + nParam*log(N)
     out$ics = list(out$aic,out$aicc,out$bic)
     names(out$ics) <- c("AIC","AICc","BIC")

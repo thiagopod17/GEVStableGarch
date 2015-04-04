@@ -47,8 +47,8 @@ for(i in 1:n)
 {
   z = rnorm(nSimulations)
   error[i] = abs((mean((abs(z)-gmValues[i]*z)^deltaValues[i]) - 
-    norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))/
-    norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))
+                    norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))/
+                   norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))
 }
 plot(error, ylab = "error In percentage")
 summary(error)
@@ -108,20 +108,15 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for functions sstd.moment.aparch (standard skew t-Student)
+# Test Cases for functions sstd.moment.aparch (skew t-Student)
 # ------------------------------------------------------------------------------
+# We get numerical problems when delta/skew approaches 1.
 
 
 # Tests with simulated data
-#  works well for the simmetric case, i.e. skew = 1 and delta = 1.
-shape = 10
-skew = 1
-delta = 5
-gm = 0
-sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm)
-TrueAparchMomentsWurtz(fun = "dsstd", gm = gm, delta = delta, nu = shape, xi = skew)
-
-plot(seq(-3,3,0.01),dsstd(seq(-3,3,0.01), xi = 1, nu = shape))
+# works well with errors around 0.001% of the true value.
+# Sometimes the function TrueAparchMomentsWurtz fail because of the integration
+# routine.
 
 
 
@@ -148,7 +143,7 @@ for(i in 1:n)
                           gm=1,delta=0,pm=1)
   error[i] = abs((mean(abs(z)) - 
                     stable.simmetric.moment.garch(shapeValues[i]))/
-                    stable.simmetric.moment.garch(shapeValues[i]))
+                   stable.simmetric.moment.garch(shapeValues[i]))
 }
 plot(error, ylab = "error In percentage")
 summary(error)
@@ -164,7 +159,7 @@ error = rep(NA,n)
 for(i in 1:n)
 {
   trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = 1,
-                  alpha = shapeValues[i], beta = 0,pm = 1)[1])
+                                                    alpha = shapeValues[i], beta = 0,pm = 1)[1])
   functionValues[i] = stable.simmetric.moment.garch(shapeValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -195,7 +190,7 @@ for(i in 1:n)
 {
   error[i] = abs((stable.moment.power.garch(shape=shapeValues[i],skew=0,delta=1) - 
                     stable.simmetric.moment.garch(shape=shapeValues[i]) )/
-                    stable.simmetric.moment.garch(shape=shapeValues[i]))
+                   stable.simmetric.moment.garch(shape=shapeValues[i]))
 }
 plot(error, ylab = "error In percentage", ylim = c(0,1e-15))
 summary(error)
@@ -215,10 +210,10 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-    trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = deltaValues[i],
-                                           alpha = shapeValues[i], beta = skewValues[i],pm = 1)[1])
-    functionValues[i] = stable.moment.power.garch(shape = shapeValues[i], skew = skewValues[i],
-                        delta = deltaValues[i])
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = deltaValues[i],
+                                                    alpha = shapeValues[i], beta = skewValues[i],pm = 1)[1])
+  functionValues[i] = stable.moment.power.garch(shape = shapeValues[i], skew = skewValues[i],
+                                                delta = deltaValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
 plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
@@ -274,10 +269,10 @@ functionValues = rep(NA,n)
 for(i in 1:n)
 {
   trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = gmValues[i], 
-                  delta = deltaValues[i],alpha = shapeValues[i], beta = skewValues[i],
-                  pm = 1)[1])
+                                                    delta = deltaValues[i],alpha = shapeValues[i], beta = skewValues[i],
+                                                    pm = 1)[1])
   functionValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = skewValues[i],
-                  delta = deltaValues[i], gm = gmValues[i])
+                                           delta = deltaValues[i], gm = gmValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
 plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
@@ -304,9 +299,9 @@ functionValues = rep(NA,n)
 for(i in 1:n)
 {
   trueValues[i] = stable.moment.aparch(shape = shapeValues[i], skew = 0,
-                                      delta = deltaValues[i], gm = gmValues[i])
+                                       delta = deltaValues[i], gm = gmValues[i])
   functionValues[i] = stable.symmetric.moment.aparch(shape = shapeValues[i],
-                                           delta = deltaValues[i], gm = gmValues[i])
+                                                     delta = deltaValues[i], gm = gmValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
 plot(error, main = "Error (% GEVStableGarch eq. VS Mittnik)", type = "l", col = "red")
