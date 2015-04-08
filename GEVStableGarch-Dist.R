@@ -81,7 +81,14 @@ GSgarch.Dist <-
         gm = skew
         xi = gm
         nu = shape
-        return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))
+        
+        #return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))        
+ 
+        M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
+          gamma((shape-1)/2)
+        M2 = 1
+        return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
+               sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/hh)))
     }
     
     # GED conditional distribution.

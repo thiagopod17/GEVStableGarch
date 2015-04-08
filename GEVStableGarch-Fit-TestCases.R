@@ -114,6 +114,7 @@ model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
 fit1@fit$par-model1@fit$par
 fit1@fit$llh
 model1@fit$llh
+
 # garch(1,1)-std-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),
                       cond.dist = "std", include.mean = TRUE,
@@ -144,6 +145,19 @@ model1 <- GSgarch.Fit(data = x , formula = ~garch(1,0),
                       cond.dist = "norm", include.mean = TRUE, 
                       algorithm = "nlminb")
 fit1@fit$par-model1@fit$par
+
+
+# garch(1,1)-sstd-intercept
+fit1 <- garchFit(data = x, formula = ~aparch(1,1),
+                 cond.dist = "sstd", include.mean = TRUE,
+                 algorithm = "nlminb")
+
+
+model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
+                      cond.dist = "sstd", include.mean = TRUE, 
+                      algorithm = "sqp")
+fit1@fit$par-model1@fit$par
+
 
 # aparch(1,1)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~aparch(1,1),

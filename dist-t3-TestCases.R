@@ -82,9 +82,75 @@ summary(error)
 # ------------------------------------------------------------------------------
 
 
+# Plot some graphs for the distribution function:
 n = 1e4; mean = rnorm(1,mean = 10); sd = runif(1,0,10); nu = runif(1,0,10); 
 d = runif(1,0.1,10); xi = runif(1,0,1); x = sort(runif(n,-50,50))
 y = pt3(x = x, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
 plot(x,y, type = "l")
 
+# Boundary tests:
+# Tests the behaviour of the function when x approaches -Inf and +Inf
+# 20150406 - These tests are valuable since they can help you in finding erros. 
+# Change the largeX and smallX values to investigate the function behaviour. Since the domain
+# of the distribution can be very sparse we may get P(X < smallX) = 0.1 even when smallX = 1e10.
+# In these cases we need to test the function with smaller values, such as -1e-100 or sometimes
+# -1e-400 to get values next to zero.
+largeX = 1e10
+smallX = -1e10
+n = 10^5
+Smax = 10
+Smin = 0.05
+meanValues = runif(n,-Smax,Smax)
+sdValues = runif(n,1,Smax)
+nuValues = runif(n,Smin,Smax)
+dValues = runif(n,0.3,Smax)
+xiValues = runif(n,Smin,1)
+pt3LargeX = rep(NA,n)
+pt3SmallX = rep(NA,n)
+for(i in 1:n)
+{
+    pt3SmallX[i] = pt3 (smallX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                      d = dValues[i], xi = xiValues[i])
+    pt3LargeX[i] = pt3 (largeX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+    d = dValues[i], xi = xiValues[i])  
+}
+errorSmall = 100*abs((pt3SmallX - 0))
+errorLarge = 100*abs((pt3LargeX - 1))
+summary(errorSmall)
+summary(errorLarge)
+cbind(meanValues,sdValues,nuValues,dValues,xiValues,pt3SmallX,pt3LargeX)[which(errorSmall > 0.05),]
 
+# Test the computation of probability using the distribution function: 
+# We will test the following property: integral( pt3, a, b) = pt3(b) - pt3(a)
+# Note: small values of 'd' may lead to numerical problems when computing the 
+# probability with the 'integrate' routine from R.
+# Indeed, when the density is very concentrated on some interval the integration routine
+# may return a small (incorrect) value for the probability.
+# 20150406 - Absolute errors around 2% when simulating 10^5 points. 
+n = 10^5
+Smax = 10
+Smin = 0.05
+rangeProbabilityValues = 1e1
+aValues = rnorm(n,sd = rangeProbabilityValues)
+bValues = aValues + abs(rnorm(n,sd = rangeProbabilityValues))
+meanValues = runif(n,-Smax,Smax)
+sdValues = runif(n,1,Smax)
+nuValues = runif(n,Smin,Smax)
+dValues = runif(n,0.3,Smax)
+xiValues = runif(n,Smin,Smax)
+integrationValues = rep(NA,n)
+trueValues = rep(NA,n)
+for(i in 1:n)
+{
+  integrationValues[i] = as.numeric(integrate(dt3 , lower = aValues[i], upper = bValues[i], 
+                                              mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                                              d = dValues[i], xi = xiValues[i])[1])
+  trueValues[i] = pt3 (bValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                      d = dValues[i], xi = xiValues[i]) - 
+                  pt3 (aValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                  d = dValues[i], xi = xiValues[i])
+}
+error = 100*abs((integrationValues - trueValues))
+summary(error)
+plot(error, main = "Absolute error (%)", type = "l", col = "red")
+cbind(meanValues,sdValues,nuValues,dValues,xiValues,aValues,bValues,trueValues,integrationValues)[which(error > 0.1),]

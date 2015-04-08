@@ -124,7 +124,11 @@ pt3 <-
     }
     U <- function (z, nu = nu, d = d, xi = xi)
     {
-        (z/xi)^d / ( nu + (z/xi)^d ) # z must be positive ( > 0 ), but we do not check it here
+        pw = (z/xi)^d  # z must be negative ( <= 0 ), but we do not check it here
+        if(pw == Inf)
+            1
+        else
+            pw / ( nu + pw ) 
     } 
 
     # Compute auxiliary variables:

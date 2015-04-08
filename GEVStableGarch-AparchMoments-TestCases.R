@@ -151,6 +151,34 @@ plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col
 cbind(gmValues,skewValues,deltaValues,shapeValues,trueValues,functionValues)
 summary(error)
 
+# Compare the calculation of the moment with the G@RCH software
+# For the dem2gbp-APARCH(1,1) the G@RCH reports: persistency = 0.9901654 but the true
+# persistency is 0.9846524 as calculated with numerical integration on 
+# the dsstd distribution
+
+sstd.moment.aparch(shape = 4.211667, skew = exp(-0.100622), 
+                   delta = 1.183602, gm = 0.149934)*0.135215 + 0.885756
+.truePersistence(fun = "dsstd", alpha = 0.135215, beta = 0.885756,
+                      gamma = 0.149934, delta = 1.183602, 
+                       nu = 4.211667, xi = exp(-0.100622))
+
+# For the dem2gbp-ARMA(1,1)-APARCH the G@RCH reports: persistency = 0.989947
+# but the true persistency is 0.9845671.
+sstd.moment.aparch(shape = 4.221416, skew = exp(-0.095899), 
+                   delta = 1.202501, gm = 0.151121)*0.136845 + 0.884074
+.truePersistence(fun = "dsstd", alpha = 0.136845, beta = 0.884074,
+                 gamma = 0.151121, delta = 1.202501, 
+                 nu = 4.221416, xi = exp(-0.095899))
+
+# Conclusion: The G@RCH software is using the expression to calculate the 
+# moments of skewed t-Student definied by Lambert and Laurent (2000, 2001),
+# but the density defined in the garch model was reparameterized to be a 
+# zero mean and unit variance.
+# Another interesting conclusion is that if we work with the density 
+# defined by Lambert and Laurent (without reparameterizing it to have 
+# a zero mean and unit variance) we can also get the same garch estimated 
+# parameters.
+
 
 
 # ------------------------------------------------------------------------------
