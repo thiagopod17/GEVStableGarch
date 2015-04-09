@@ -1,7 +1,3 @@
-#   GEVStableGarch
-
-R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme Value) or Stable distributions
-
 #   Things to do
     - There is an error on the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
     - Implement the random number generator for the t3 distribution.
@@ -60,4 +56,3 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
     - The results are exactly the same as in the Code Snippet 2 presented in the papper Wurtz et al. (2006) The function garch11Fit works better if start the conditional  variance with 'var(x)'. Mehoramos muito minha funcao quando para a estimacao do garch(1,1). Fiz isso retirando o filtro do aparch e recolocando o filtro do wuertz, que funciona para o garch11.
  
     - When I put the filter from garch11Fit function inside my GSgarch.Fit the results were exactly the same. Therefore, thats is our starting pointing. Now, I am almost done because my filter function for pure APARCH model is matching exactly the filter function from garch11Fit.   
-    
