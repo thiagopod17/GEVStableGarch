@@ -103,6 +103,7 @@ fit4@fit$par
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
+library(Rsolnp)
 
 # garch(1,1)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),

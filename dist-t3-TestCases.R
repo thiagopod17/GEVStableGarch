@@ -36,7 +36,7 @@ dt3(rnorm(1000), mean = 0, sd = 3, nu = 1, d = -0.1, xi = 1)
 dt3(rnorm(1000), mean = 0, sd = 3, nu = 0.001, d = 0.1, xi = 1)
 
 
-# Test efficiency of implementation
+# Test efficiency of implementation and compare with the dnorm function.
 n = 1e7; mean = rnorm(1,mean = 10); sd = runif(1,0,10); nu = runif(1,0,10); 
 d = runif(1,0,10); xi = runif(1,0,10); x = rnorm(n)
 system.time(
@@ -154,3 +154,54 @@ error = 100*abs((integrationValues - trueValues))
 summary(error)
 plot(error, main = "Absolute error (%)", type = "l", col = "red")
 cbind(meanValues,sdValues,nuValues,dValues,xiValues,aValues,bValues,trueValues,integrationValues)[which(error > 0.1),]
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for the Quantile function qt3
+# ------------------------------------------------------------------------------
+
+
+# Test the computation of quantiles and compare with the corresponding probability values
+n = 1000
+nQuantiles = 500
+Smax = 10
+Smin = 0.05
+p = runif(nQuantiles,0,1)
+meanValues = rnorm(n,0,Smax)
+sdValues = runif(n,Smin,Smax)
+nuValues = runif(n,Smin,Smax)
+dValues = runif(n,0.3,Smax)
+xiValues = runif(n,Smin,Smax)
+quantileValues = matrix(NA,nrow = n, ncol = nQuantiles)
+CalculatedValues = matrix(NA,nrow = n, ncol = nQuantiles)
+error = matrix(NA,nrow = n, ncol = nQuantiles)
+for(i in 1:n)
+{
+  quantileValues[i,] = qt3(p,mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                                              d = dValues[i], xi = xiValues[i])
+  CalculatedValues[i,] = pt3(quantileValues[i,],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                           d = dValues[i], xi = xiValues[i])
+  error[i,] = 100*(CalculatedValues[i,] - p)/p
+}
+
+summary(as.vector(error))
+
+i = 1
+qt3(p[3],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+    d = dValues[i], xi = xiValues[i])
+
+
+
+error = 100*abs((CalculatedValues - p)/p)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(meanValues,sdValues,nuValues,dValues,xiValues,integrationValues)[which(error > 0.1),]
+summary(error)
+
+
+
+
+################################################################################
+
+
+
+

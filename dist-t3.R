@@ -125,10 +125,7 @@ pt3 <-
     U <- function (z, nu = nu, d = d, xi = xi)
     {
         pw = (z/xi)^d  # z must be negative ( <= 0 ), but we do not check it here
-        if(pw == Inf)
-            1
-        else
-            pw / ( nu + pw ) 
+        return ( replace(pw / ( nu + pw ),which (pw == Inf, arr.ind = TRUE),1) )
     } 
 
     # Compute auxiliary variables:
@@ -156,30 +153,63 @@ pt3 <-
     arg
   }
 
-# ------------------------------------------------------------------------------
-# 
-# 
-# qged <- 
-#   function(p, mean = 0, sd = 1, nu = 2)
-#   {   
-#     # A function implemented by Diethelm Wuertz
-#     
-#     # Description:
-#     #   Compute the quantiles for the  
-#     #   generalized error distribution.
-#     
-#     # FUNCTION:
-#     
-#     # Compute Quantiles:
-#     lambda = sqrt ( 2^(-2/nu) * gamma(1/nu) / gamma(3/nu) )
-#     q = lambda * (2*qgamma((abs(2*p-1)), 1/nu))^(1/nu)
-#     result = q*sign(2*p-1) * sd + mean
-#     
-#     # Return Value:
-#     result
-#   }
-# 
-# 
+
+------------------------------------------------------------------------------
+
+
+qt3 <- 
+  function(p, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
+  {   
+    
+    # Description:
+    #   Compute the quantiles for the  
+    #   generalized error distribution using the 
+    #   formula for the distribution function and
+    #   the quantile function of the Beta Distribution
+    #   already available in R
+    
+    # FUNCTION:
+    
+    # Define auxiliary functions
+    Lp <- function (p = p, nu = nu, d = d, xi = xi)
+    {
+        qbeta( ( 1 + xi^2 ) * p, nu, 1/d)
+    }
+    Up <- function (p = p, nu = nu, d = d, xi = xi)
+    {
+        qbeta( ( p - 1 / ( 1 + xi^2 ) ) * ( 1 + xi^(-2) ), 1/d, nu)
+    }
+    
+    # Compute quantiles located at (-Inf,0] and at (0,+Inf)
+    F0 = pt3(0, mean = 0, sd = 1, nu = nu, d = d, xi = xi)
+    n = length(p)
+    result = rep(NA,n)
+    indexLessThanF0 = which (p <= F0, arr.ind = TRUE)
+    sizeIndex = length(indexLessThanF0)
+    if(sizeIndex == 0) {
+      
+        U = Up (p = p, nu = nu, d = d, xi = xi)
+        result = ( U * nu / (1 - U) )^( 1/d ) * xi
+        
+    } else if (sizeIndex == n) {
+      
+         L = Lp (p = p, nu = nu, d = d, xi = xi)
+        result = - ( nu/L - nu )^( 1/d ) * 1/xi
+        
+    } else if (TRUE) {
+      
+        L = Lp (p = p[indexLessThanF0], nu = nu, d = d, xi = xi)
+        U = Up (p = p[-indexLessThanF0], nu = nu, d = d, xi = xi)
+        result[indexLessThanF0] = - ( nu/L - nu )^( 1/d ) * 1/xi
+        result[-indexLessThanF0] = ( U * nu / (1 - U) )^( 1/d ) * xi 
+    }
+    
+    # Return Value:
+    result * sd + mean
+  }
+
+
+
 # # ------------------------------------------------------------------------------
 # 
 # 
