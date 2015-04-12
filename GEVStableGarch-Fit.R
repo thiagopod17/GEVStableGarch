@@ -27,7 +27,7 @@ GSgarch.Fit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("norm", "std", "sstd", "gev", "stable", "ged"),
+    cond.dist = c("norm", "std", "sstd", "gev", "stable", "ged","t3"),
     include.mean = TRUE, 
     algorithm = c("sqp","sqp.restriction","nlminb"),
     printRes = TRUE,
@@ -169,6 +169,13 @@ function(
     out$cond.dist <- cond.dist
     out$data <- data
     optim.finished <- FALSE
+    if(cond.dist == "t3")
+        lengthShape = 2
+    else
+        lengthShape = 1
+    
+    if(DEBUG)    
+        print(c("lengthShape",lengthShape))
     # This function checks if the model is an stationary ARMA process.   
     arCheck <- function(ar) {
         p <- max(which(c(1, -ar) != 0)) - 1
@@ -192,8 +199,8 @@ function(
         a <- parm[(1+1):(2+m-1)]
         b <- parm[(1+m+1):(2+m+n-1)]
         skew <- parm[1+m+n+1]
-        shape <- parm[2+m+n+1]
-        sigma <- parm[3+m+n+1]
+        shape <- parm[(2+m+n+1):(2+m+n+lengthShape)]
+        sigma <- parm[2+lengthShape+m+n+1]
         
         # Setting parameters to accept tapper off MA, AR or GARCH coefficients
         if( AR == TRUE) 
@@ -270,15 +277,20 @@ function(
         beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
         delta <- parm[2+m+n+2*p+q+1] 
         skew <- parm[3+m+n+2*p+q+1]
-        shape <- parm[4+m+n+2*p+q+1]
+        shape <- parm[(4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape)]
         
+        
+        # Configure 'shape' for the 't3' distribution
+        #if(cond.dist == "t3")
+        #    shape <- parm[4+m+n+2*p+q+1,4+m+n+2*p+q+1+1]
         
         # Configuring delta and gamma for Garch estimation
         if( !APARCH) 
         { 
             gm = rep(0,p);
             delta = 2; 
-            if( cond.dist == "stable" ) delta = 1
+            if( cond.dist == "stable" ) 
+                delta = 1
         }
         
         # Setting parameters to accept tapper off MA, AR or GARCH coefficients
@@ -373,7 +385,7 @@ function(
             out$h.t <<- as.numeric(hh^delta)           
         }
         
-        # Return llh function        
+        # Return llh function 
         llh.dens <- GSgarch.Dist(z = z, hh = hh, shape = shape, 
                                  skew = skew, cond.dist = cond.dist)
         llh <- llh.dens
@@ -462,7 +474,7 @@ function(
     
     # Creating index to create a vector with the estimated parameters.
     if(!ARMAonly)
-    {
+    {   
         outindex <- c(if(include.mean) 1, 
                     if(AR == FALSE) (1+1):(2+m-1),
                     if(MA == FALSE) (1+m+1):(2+m+n-1),
@@ -471,9 +483,9 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","stable")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
-                      (4+m+n+2*p+q+1))
+                    if(any(c("sstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                      (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
                     if(AR == FALSE) (1+1):(2+m-1),
@@ -483,9 +495,9 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","stable")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
-                      (2+m+n+2*p+q+1),
+                    if(any(c("sstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                      (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
     
@@ -497,9 +509,9 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stable")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd","ged")  == cond.dist)) 
-                    "shape",
+                  if(any(c("sstd","stable","t3")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                    paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     
     if(DEBUG)
@@ -515,8 +527,8 @@ function(
     out$aic  = 2*out$llh + 2*nParam 
     out$aicc = 2*out$llh + 2*(nParam+1)*N/(N - nParam - 2)
     out$bic =  2*out$llh + nParam*log(N)
-    out$ics = list(out$aic,out$aicc,out$bic)
-    names(out$ics) <- c("AIC","AICc","BIC")
+    out$ics = c(out$aic,out$bic,out$aicc)
+    names(out$ics) <- c("AIC","BIC","AICc")
     
     # Print Summary
     if ( printRes ) 
@@ -562,5 +574,6 @@ function(
     h.t = out$h.t, sigma.t = as.vector(out$sigma.t), title = as.character(title), 
     description = as.character(description))
 }
+
 # -----------------------------------------------------------------------------
 

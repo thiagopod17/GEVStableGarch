@@ -162,8 +162,8 @@ cbind(meanValues,sdValues,nuValues,dValues,xiValues,aValues,bValues,trueValues,i
 
 
 # Test the computation of quantiles and compare with the corresponding probability values
-n = 1000
-nQuantiles = 500
+n = 100
+nQuantiles = 5000
 Smax = 10
 Smin = 0.05
 p = runif(nQuantiles,0,1)
@@ -181,22 +181,39 @@ for(i in 1:n)
                                               d = dValues[i], xi = xiValues[i])
   CalculatedValues[i,] = pt3(quantileValues[i,],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                            d = dValues[i], xi = xiValues[i])
-  error[i,] = 100*(CalculatedValues[i,] - p)/p
+  error[i,] = 100*abs(CalculatedValues[i,] - p)/p
 }
 
 summary(as.vector(error))
 
-i = 1
-qt3(p[3],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
-    d = dValues[i], xi = xiValues[i])
 
+# ------------------------------------------------------------------------------
+# Test Cases for the random number generation function rt3
+# ------------------------------------------------------------------------------
 
+# Plot of density and histogram
+histPlot <- function(x, ...) {
+  X = as.vector(x)
+  H = hist(x = X, col = "steelblue",border = "white", nclass = 25, freq = FALSE)
+  box()
+  grid()
+  abline(h = 0, col = "grey")
+  mean = mean(X)
+  sd = sd(X)
+  xlim = range(H$breaks)
+  s = seq(xlim[1], xlim[2], length = 201)
+  lines(s, dt3(s, ...), lwd = 2, col = "brown")
+  abline(v = mean, lwd = 2, col = "orange")
+  Text = paste("Mean:", signif(mean, 3))
+  mtext(Text, side = 4, adj = 0, col = "darkgrey", cex = 0.7)
+  rug(X, ticksize = 0.01, quiet = TRUE)
+  invisible(s)
+}
+mean = 0; sd = 1; nu = 1; d = 5; xi = 1
+histPlot(rt3(1000,mean = mean,sd = sd,nu = nu,d = d,xi = xi),
+         mean = mean, sd = sd, nu = nu, d = d, xi = xi)
 
-error = 100*abs((CalculatedValues - p)/p)
-plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
-cbind(meanValues,sdValues,nuValues,dValues,xiValues,integrationValues)[which(error > 0.1),]
-summary(error)
-
+# implementar a t3 junto com o garch e utilizar essa funcao para ajustar dados simulados.
 
 
 

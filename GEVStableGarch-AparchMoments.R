@@ -21,20 +21,51 @@
 ####################################################################################
 #  FUNCTION:                        DESCRIPTION:
 #
-#  Stationarity.Condition.Aparch    Evaluate the moments of  the type
+#  Stationarity.Condition.Aparch    Evaluate the exact moments of the type
 #                                   E(z - gm|z|)^delta for several conditional
 #                                   distributions.
+#
+#  norm.moment.aparch               Exact APARCH moments for the standard normal 
+#
+#  std.moment.aparch                Exact APARCH moments for the standard t-Student
+#
+#  sstd.moment.aparch               Exact APARCH moments for the standard skew
+#                                   t-Student defined by Fernandez and Steel (2002).
+#                                   Notice that this distribution is standardized 
+#                                   with location zero and unit scale, but it is not
+#                                   standardized in the sense that it has a zero mean and 
+#                                   unit variance. The exact formula for this expression 
+#                                   would be very complicated to compute if we reescale 
+#                                   the original distribution to (X - mu) / sigma and 
+#                                   therefore, we choose to work with the raw distribution
+#                                   defined in Fernandez and Steel without this reparametrization
+#
+#  ged.moment.aparch                Exact APARCH moments for the standard GED distribution
+#
+#  stable.moment.aparch             Exact APARCH moments for the location zero and unit scale
+#                                   in S1 parametrization (see Nolan (1999)).
+#
+#  stable.symmetric.moment.garch    Exact GARCH moments ( E |zt| for the symmetric stable distribution
+#
+#  stable.symmetric.moment.aparch   Exact APARCH moments for the symmetric stable distribution
+#
+#  stable.moment.power.garch        Exact power-GARCH moments for the asymmetric stable distribution
+#
+#  TrueAparchMomentsWurtz           Function that evaluate moments with numerical integration.
+#                                   This function was used only to test the mathematical 
+#                                   formulas implemented here
 ####################################################################################
 
 Stationarity.Condition.Aparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("gev","stable","norm", "std", "sstd"))
+            cond.dist = c("gev","stable","norm", "std", "sstd", "t3", "ged"))
   {
     
     # Description: 
     #   A function that evaluate stationarity conditions 
     #   to guide parameter estimation in GARCH/APARCH models
+    #   Make sure we have a garch or aparch with p > 0
     
     # Arguments:
     #   formula - an object returned by function .getFormula
@@ -52,7 +83,6 @@ Stationarity.Condition.Aparch <-
     #        shape parameter.
     #   cond.dist - a character string naming the distribution
     #       function.           
-    # make sure we have a garch or aparch with p > 0.
     
     
     # FUNCTION:
@@ -255,11 +285,11 @@ stable.moment.aparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
 
 
 # ------------------------------------------------------------------------------
-stable.simmetric.moment.garch <- function(shape = 1.5)
+stable.symmetric.moment.garch <- function(shape = 1.5)
 {
   # See Mittinik et al. (1995) for the definition of 
-  # the stable garch model with conditional simmetric stable distribution
-  # This formula uses S(alpha,skew,1,0;pm) where pm = 0 or 1. 
+  # the stable garch model with conditional symmetric stable distribution
+  # This formula uses S(alpha,skew,1,0;pm) where pm = 1. 
   if( (shape <= 1) || (shape > 2) )
     stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
          The following conditions cannot be true.
@@ -275,7 +305,7 @@ stable.simmetric.moment.garch <- function(shape = 1.5)
 stable.symmetric.moment.aparch <- function(shape = 1.5, delta = 1.2, gm = 0)
 {
   # See Diongue - 2008 (An investigation of the stable-Paretian Asymmetric Power GARCH model)
-  # This formula uses S(alpha,0,1,0;pm) where pm = 0 or 1. 
+  # This formula uses S(alpha,0,1,0;pm) where pm = 1. 
   # Error treatment of input parameters
   if( (shape <= 1) || (shape > 2) || (delta >= shape))
     stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
@@ -356,7 +386,7 @@ TrueAparchMomentsWurtz <-
   function(fun = "norm", gm = 0, delta = 1, ...)
   {   
     # A function implemented by Diethelm Wuertz
-    # Adapted to return only the aparch moment.
+    # Adapted to return only the aparch moment expression.
     # Description:
     #   Computes persistence for an APARCH process
     

@@ -1,2 +1,12 @@
 See the package activity on Github at:
 https://github.com/thiagopod17/GEVStableGarch
+
+
+ ----------------------------
+  date: 2015/04/12;  
+  author: ThiagoSousa;
+  Description: 
+  1 - Include t3 distribution inside function GSgarch.Fit
+  2 - Revision of AIC, BIC and AICc formulas
+  3 - Added names for the object returned from function GSgarch.GetStart
+  ----------------------------

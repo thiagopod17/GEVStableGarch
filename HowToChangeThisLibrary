@@ -1,0 +1,22 @@
+This list contains detailed information about how to change the functions
+to fit your specific needs
+
+
+-----------------------------------------
+How to add a new conditional distribution
+-----------------------------------------
+1 - Include the distribution in the GSgarch.Dist function:
+    1.1 - Change the list of conditional distributions 'cond.dist.list'
+    1.2 - Include the computation of the garch density in the following 
+    formatefollowing format: if(cond.dist == "name")
+
+2 - Configure lower, upper and starting value for the parameters
+    inside function GSgarch.GetStart:
+    2.1 - Change the list of conditional distributions 'cond.dist.list'
+    2.2 - Change the shape and skew init, lower and upper bounds accordingly
+
+3 - Function GSgarch.Fit:
+    3.1 - Add the distribution name to the input parameter 'cond.dist'
+    3.2 - Change the 'outindex' variable for both ARMAonly and ARMA-GARCH models.
+    3.3 - Change the 'outnames' variable for both ARMAonly and ARMA-GARCH models. 
+

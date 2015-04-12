@@ -25,7 +25,7 @@
 ################################################################################
 
 
-GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FALSE,
+GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
                              cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)
 {    
     # Description:
@@ -72,7 +72,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
         stop("'p' and 'q' need to be integers greater than zero")
     if(p == 0 && q != 0)
         stop("Invalid Garch(p,q) order")
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable","ged")
+    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable","ged","t3")
     if( !any(cond.dist.list == cond.dist) )   
         stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev,ged or stable")
     if( !is.numeric(data) || !is.vector(data))
@@ -174,7 +174,7 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
     delta.upper <- 3 + GStol.b
     sigma.upper <- 10*Var
     
-    # Setting skew and shape for other conditional Distributions
+    # Setting skew and shape appropriatelly for other conditional Distributions
     if (cond.dist == "std")
     {   
         shape.init <- 4
@@ -190,6 +190,12 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
     {   
       shape.init <- 4
       shape.lower <- 0 + GStol.b; shape.upper <- 20   
+    }
+    if (cond.dist == "t3")
+    {   
+      shape.init <- c(4,1)
+      shape.lower <- rep(0 + GStol.b,2)
+      shape.upper <- rep(100,2)   
     }
     if(cond.dist == "gev")
     {
@@ -216,19 +222,27 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,ARMAonly = FAL
                  beta.lower,delta.lower,skew.lower,shape.lower)
         upper <- c(mean.upper,arma.upper,omega.upper,alpha.upper,gm.upper,
                beta.upper,delta.upper,skew.upper,shape.upper)
+        paste("alpha", 1:p, sep = "")
+        namesStart = c("mu", paste("ar", 1:length(ar.init), sep = ""), paste("ma", 1:length(ma.init), sep = ""),
+                       "omega", paste("alpha", 1:length(alpha.init), sep = ""),paste("gm", 1:length(gm.init), sep = ""), 
+                       paste("beta", 1:length(beta.init), sep = ""), "delta","skew",paste("shape", 1:length(shape.init), sep = ""))
     } else {
       init <- c(mean.init,arma.init,skew.init,shape.init,sigma.init)
       lower <- c(mean.lower,arma.lower,skew.lower,shape.lower,sigma.lower)
-      upper <- c(mean.upper,arma.upper,skew.upper,shape.upper,sigma.upper)      
+      upper <- c(mean.upper,arma.upper,skew.upper,shape.upper,sigma.upper)   
+      namesStart = c("mu", paste("ar", 1:length(ar.init), sep = ""), paste("ma", 1:length(ma.init), sep = ""),
+                    "skew",paste("shape", 1:length(shape.init), sep = ""),"sigma")
     }
       
     if(arima.failed == TRUE)
         warning("arima function from package stats failed to get initial AR and MA coefficients")
     
-    # return argument
-    return(rbind(init,lower,upper))
+    # Create result
+    result = rbind(init,lower,upper)
+    colnames(result) = namesStart
+    
+    # Return
+    result
 }
-
-
 
 ################################################################################

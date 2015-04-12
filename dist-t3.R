@@ -29,7 +29,7 @@
 dt3 <- 
   function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1, log = FALSE)
   {   
-    # A function imlemented by Thiago Sousa
+    # A function implemented by Thiago Sousa
     
     # Description:
     #   Compute the density for the 
@@ -210,33 +210,30 @@ qt3 <-
 
 
 
-# # ------------------------------------------------------------------------------
-# 
-# 
-# rged <-  
-#   function(n, mean = 0, sd = 1, nu = 2)
-#   {   
-#     # A function implemented by Diethelm Wuertz
-#     
-#     # Description:
-#     #   Generate GED random deviates. The function uses the 
-#     #   method based on the transformation of a Gamma random 
-#     #   variable.
-#     
-#     # FUNCTION:
-#     
-#     # Generate Random Deviates:
-#     lambda = sqrt ( 2^(-2/nu) * gamma(1/nu) / gamma(3/nu) )
-#     # print(lambda)
-#     r = rgamma(n, 1/nu)
-#     z =  lambda * (2*r)^(1/nu) * sign(runif(n)-1/2)
-#     result = z * sd + mean
-#     
-#     
-#     # Return Value:
-#     result
-#   }
 
 
+
+
+# ------------------------------------------------------------------------------
+
+
+rt3 <-  
+  function(n, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
+  {   
+    
+    # Description:
+    #   Generate t3 Random values
+    #   using the inverse of the distribution function.
+    
+    # FUNCTION:
+    
+    randomUnif = runif(n = n, min = 0, max = 1)
+    result = qt3(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+    
+    # Return Value:
+    result
+  }
+
+rt3(10)
 ################################################################################
 

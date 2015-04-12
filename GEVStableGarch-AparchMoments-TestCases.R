@@ -182,11 +182,11 @@ sstd.moment.aparch(shape = 4.221416, skew = exp(-0.095899),
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function stable.simmetric.moment.garch
+# Test Cases for function stable.symmetric.moment.garch
 # ------------------------------------------------------------------------------
 
 # E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
-stable.simmetric.moment.garch(shape = 2)
+stable.symmetric.moment.garch(shape = 2)
 sqrt(2)*norm.moment.aparch(delta = 1, gm = 0)
 
 # Comparison with simulated data - OK
@@ -201,8 +201,8 @@ for(i in 1:n)
   z = stabledist::rstable(n=nSimulations,alpha=shapeValues[i],beta = 0,
                           gm=1,delta=0,pm=1)
   error[i] = abs((mean(abs(z)) - 
-                    stable.simmetric.moment.garch(shapeValues[i]))/
-                   stable.simmetric.moment.garch(shapeValues[i]))
+                    stable.symmetric.moment.garch(shapeValues[i]))/
+                   stable.symmetric.moment.garch(shapeValues[i]))
 }
 plot(error, ylab = "error In percentage")
 summary(error)
@@ -219,7 +219,7 @@ for(i in 1:n)
 {
   trueValues[i] = as.numeric(TrueAparchMomentsWurtz("dstable",gm = 0, delta = 1,
                                                     alpha = shapeValues[i], beta = 0,pm = 1)[1])
-  functionValues[i] = stable.simmetric.moment.garch(shapeValues[i])
+  functionValues[i] = stable.symmetric.moment.garch(shapeValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
 plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
@@ -238,7 +238,7 @@ summary(error)
 
 # E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
 stable.moment.power.garch(shape = 2, skew = 0, delta = 1)
-stable.simmetric.moment.garch(shape = 2)
+stable.symmetric.moment.garch(shape = 2)
 sqrt(2)*norm.moment.aparch(delta = 1, gm = 0)
 
 # Comparison with symmetric stable garch model - OK
@@ -248,8 +248,8 @@ error = rep(NA,n)
 for(i in 1:n)
 {
   error[i] = abs((stable.moment.power.garch(shape=shapeValues[i],skew=0,delta=1) - 
-                    stable.simmetric.moment.garch(shape=shapeValues[i]) )/
-                   stable.simmetric.moment.garch(shape=shapeValues[i]))
+                    stable.symmetric.moment.garch(shape=shapeValues[i]) )/
+                   stable.symmetric.moment.garch(shape=shapeValues[i]))
 }
 plot(error, ylab = "error In percentage", ylim = c(0,1e-15))
 summary(error)

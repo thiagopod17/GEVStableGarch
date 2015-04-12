@@ -1,23 +1,22 @@
 #   Things to do
+    - Test the general aparch.moments function
+    - Configure the sqp.restriction method for all distribution functions.
+    - Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
     - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
     - Test the pure ARMA model implementation. Tip: Compare with the code sent to Doctor Mohammad because at that point the code was working well.
-    - Implement the random number generator for the t3 distribution.
     - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm.
     - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
     - Change name of variables that are functions or objects in R, such as: gamma, data, etc.
     - Correct the formula for the calculation of the stable.moment general (in the paper). Just change the expressions (1-gm)^delta and (1+gm)^delta.
     - Analyse the possibility to implement the GED cond. distr since the other GARCH packages
-    have it. 
+    have it.
     gamma need to be changed in function GSgarch.Fit
     - Test the 0-parametrization indicated from Nolan to see if it performs better. Then,
     make sure the definition of the stable distribution is correct on the paper.
     - How to cite the code I used from package fGarch: Sim and garchSpec functions.
     - Include the gev restriction of stationarity into the model and test it.
-    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation.     Notice that the Zhao paper has qsi > 0.
-    - Install the package "stable" from Nolan, J.P. and test the function GSgarch.Fit.
-    - Test the estimation using the "sqp.restriction" algorithm.
-    - Test the stable.moment.stationarity function using the particular cases provided 
-    in Mittinik et al (2002), Mittnik et al. (1995) and Diong (2006).
+    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation.
+    Notice that the Zhao paper has qsi > 0.
     - Implementar overload do metodo print para objetos da classe fGEVSTABLEGARCH
     - Prediction of conditional variance for GARCH/APARCH models.
     -Separar funções ARMA com GEV e estavel das funções ARMA-GARCH.

@@ -47,7 +47,7 @@ GSgarch.Dist <-
     # FUNCTION:  
       
     # Error treatment of input parameters
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable", "ged")
+    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable", "ged", "t3")
     if( !any(cond.dist.list == cond.dist) )   
         stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev or stable")
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
@@ -89,6 +89,21 @@ GSgarch.Dist <-
         M2 = 1
         return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
                sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/hh)))
+    }
+    
+    # t3 distribution
+    if(cond.dist == "t3")
+    {
+        if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
+        {
+          return(1e99)
+        }
+        
+        nu = shape[1]
+        d = shape[2]
+        xi = skew
+        
+        return(-sum(log(dt3(x = z/hh, nu = nu, d = d, xi = xi)/hh)))        
     }
     
     # GED conditional distribution.

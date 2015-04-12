@@ -115,6 +115,8 @@ model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
 fit1@fit$par-model1@fit$par
 fit1@fit$llh
 model1@fit$llh
+fit1@fit$ics*length(x)
+model1@fit$ics
 
 # garch(1,1)-std-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),
@@ -133,7 +135,7 @@ fit1 <- garchFit(data = x, formula = ~garch(2,2),
 
 model1 <- GSgarch.Fit(data = x , formula = ~garch(2,2),
                       cond.dist = "std", include.mean = TRUE, 
-                      algorithm = "nlminb")
+                      algorithm = "sqp")
 fit1@fit$par-model1@fit$par
 
 # garch(1,0)-norm-intercept
@@ -206,6 +208,32 @@ fit1@fit$llh
 model1@fit$llh
 
 
+# garch(1,1)-t3-intercept
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                      cond.dist = "t3", include.mean = TRUE, DEBUG = TRUE,
+                      algorithm = "nlminb")
+model1@fit$par
+model1@fit$llh
+
+
+# aparch(1,1)-t3-intercept-nlminb
+model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
+                      cond.dist = "t3", include.mean = TRUE, DEBUG = TRUE,
+                      algorithm = "nlminb")
+
+# garch(1,1)-t3-intercept-sqp
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                      cond.dist = "t3", include.mean = TRUE, DEBUG = TRUE,
+                      algorithm = "sqp")
+
+
+model1@fit$par
+model1@fit$llh
+
+
+
+
+
 ############
 # Fitting ARMA-GARCH or ARMA-APARCH process
 library(fGarch)
@@ -270,6 +298,22 @@ model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
 (model1@fit$par-fit1@fit$par)/fit1@fit$par
 
 
+# arma(1,1)-aparch(1,1)-std-intercept
+fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                    cond.dist = "sstd", include.mean = TRUE, 
+                    algorithm = "sqp")
+
+model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
+                   cond.dist = "sstd", include.mean = TRUE)
+(model1@fit$par-fit1@fit$par)/fit1@fit$par
+cbind(model1@fit$par,fit1@fit$par)
+
+
+# arma(1,1)-garch(1,1)-t3-intercept-nlminb
+model1 <- GSgarch.Fit(data = x , formula = ~arma(1,1)+garch(1,1),
+                      cond.dist = "t3", include.mean = TRUE, DEBUG = TRUE,
+                      algorithm = "nlminb")
+
 
 # arma(0,1)-garch(1,1)-norm-intercept
 data(sp500dge)
@@ -294,6 +338,7 @@ model1 <- GSgarch.Fit(data = x, formula = ~arma(1,1)+aparch(1,1),
                     cond.dist = "std", include.mean = TRUE, 
                     algorithm = "sqp")
 abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
+
 
 # arma(1,1)-std
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
@@ -354,11 +399,11 @@ library(FitARMA)
 data(dem2gbp)
 x = dem2gbp[, 1]-1000
 # arma(1,1)-norm-intercept-nlminb
-m <- 5
-n <- 5
+m <- 2
+n <- 1
 fit1 <- GSgarch.Fit(data = x, formula = ~arma(1,1),
                     cond.dist = "norm", include.mean = TRUE, 
-                    algorithm = "nlminb", DEBUG = FALSE, control = list(trace = 3))
+                    algorithm = "sqp", DEBUG = FALSE, control = list(trace = 3))
 model1 <- arima(x, order = c(m, 0, n))
 model2 <- FitARMA(x, order = c(m,0,n))
 
