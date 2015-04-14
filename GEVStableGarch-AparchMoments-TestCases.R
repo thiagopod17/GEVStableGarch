@@ -55,6 +55,37 @@ summary(error)
 
 
 
+
+# ------------------------------------------------------------------------------
+# Test Cases for functions gev.moment.aparch
+# ------------------------------------------------------------------------------
+
+# E(z^0) = 1, where z ~ GEV(0,1) - OK
+gev.moment.aparch(delta = 0.0000001, gm = 0, shape = 5)
+
+# Comparison with simulated data - OK
+n = 10
+nSimulations = 1000000
+qsiValues = runif(n,-0.5,3)
+deltaValues = rep(NA,n)
+for(i in 1:n)
+  deltaValues[i] = runif(1,0,1/qsiValues[i])
+gmValues = runif(n, -1, 1)
+error = rep(NA,n)
+for(i in 1:n)
+{
+  z = rnorm(nSimulations)
+  error[i] = abs((mean((abs(z)-gmValues[i]*z)^deltaValues[i]) - 
+                    norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))/
+                   norm.moment.aparch(delta = deltaValues[i], gm = gmValues[i]))
+}
+plot(error, ylab = "error In percentage")
+summary(error)
+
+
+
+
+
 # ------------------------------------------------------------------------------
 # Test Cases for functions std.moment.aparch (standard t-Student)
 # ------------------------------------------------------------------------------
@@ -178,6 +209,40 @@ sstd.moment.aparch(shape = 4.221416, skew = exp(-0.095899),
 # defined by Lambert and Laurent (without reparameterizing it to have 
 # a zero mean and unit variance) we can also get the same garch estimated 
 # parameters.
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for functions t3.moment.aparch (standard t3 distribution)
+# ------------------------------------------------------------------------------
+
+# Tests with the numerical integration computation
+# 20150413 - Test OK with error around 0.05% of the true value. 
+# Sometimes the integrate function fails because of the integration interval.
+# Note that the t3 density becames very picky when d approaches zero and thus,
+# the integrate function will fail for these values. 
+n = 2000
+shapeValues = cbind(runif(n, 0.1, 5),runif(n, 0.5, 5))
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,0,shapeValues[i,1]*shapeValues[i,2]-0.09)
+gmValues = runif(n,-1,1)
+skewValues = runif(n,0,3)
+trueValues = rep(NA,n)
+functionValues = rep(NA,n)
+for(i in 1:n)
+{
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dt3",gm = gmValues[i], 
+                  delta = deltaValues[i], nu = shapeValues[i,1], d = shapeValues[i,2], 
+                  xi = skewValues[i], lower = -Inf, upper = Inf)[1])
+  functionValues[i] = t3.moment.aparch(shape = shapeValues[i,], delta = deltaValues[i],
+                                        gm = gmValues[i], skew = skewValues[i])
+}
+error = 100*abs((trueValues - functionValues)/trueValues)
+plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
+cbind(deltaValues,shapeValues,gmValues,trueValues,functionValues)[which(error > 1),]
+summary(error)
+
 
 
 
@@ -394,4 +459,3 @@ Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec
                                            delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
                               formula = .getFormula(spec@formula), cond.dist = spec@distribution)
 
-?sstd

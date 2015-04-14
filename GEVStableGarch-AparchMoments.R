@@ -59,13 +59,24 @@
 Stationarity.Condition.Aparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("gev","stable","norm", "std", "sstd", "t3", "ged"))
-  {
+            cond.dist = c("gev", "stable", "t3", "norm", "std", "sstd", "ged"))
+{
     
     # Description: 
     #   A function that evaluate stationarity conditions 
     #   to guide parameter estimation in GARCH/APARCH models
     #   Make sure we have a garch or aparch with p > 0
+    #   The stationarity condition for the APARCH is:
+    #   sum ( E[ |z|-gm*z ] ^ delta * alpha + beta ) < 1
+    #   and for the GARCH model is
+    #   sum ( E[ |z| ] ^ delta * alpha + beta ) < 1
+    #   where delta is usually equal to 2, except for the 
+    #   stable model where delta = 1.
+    #   The expectation  E[ |z| ] is equal to one for the following 
+    #   distributions: norm, std, sstd and ged.
+    #   For the t3, gev and stable conditional distribution we need to 
+    #   calculate this expectation, even for the GARCH model.  
+    
     
     # Arguments:
     #   formula - an object returned by function .getFormula
@@ -106,29 +117,53 @@ Stationarity.Condition.Aparch <-
     if(formula$formula.order[3] == 0)
       stop("Invalid model")
     
-    # garch model
+    # garch model: sum ( E[ |z| ] ^ delta * alpha + beta ) < 1
     if(formula$isAPARCH == FALSE) 
-      return(sum(alpha) + sum(beta))
-    else
-      stop("APARCH case not implemented yet.")
-    
-    
-    # aparch model
-    kappa = rep(0,length(alpha))
-    if(cond.dist == "norm")
-      kappa <- norm.moment.aparch(delta = delta, gm = gm)
-    if(cond.dist == "stable")
     {
-      kappa <- stable.moment.aparch(shape = shape, skew = skew, 
-                                    delta = delta, gm = gm)
-    }
-    # Distribution not implemented yet
-    if( any(c("gev","std","sstd") == cond.dist) )   
-      stop ("Stationarity.Condition.Aparch can not handle 
-            this conditional distribution yet.")
-    
-    return(sum(kappa*alpha) + sum(beta))    
-  }
+        if (any( c("norm", "std", "sstd", "ged") == cond.dist))
+            return(sum(alpha) + sum(beta))  
+        
+        if(cond.dist == "gev")
+            kappa = gev.moment.aparch(shape = shape, delta = 1, gm = 0)
+        
+        if(cond.dist == "stable")
+            kappa = stable.moment.power.garch (shape = shape, skew = skew, 
+                                                      delta = 1)
+        if(cond.dist == "t3")
+           kappa = t3.moment.aparch(shape = shape, delta = 1, gm = 0)      
+              
+        return(kappa*sum(alpha) + sum(beta))
+      
+    } else {
+        # aparch model
+        kappa = rep(0,length(alpha))
+        
+        for( i in 1:length(alpha))
+        {
+            if(cond.dist == "stable")
+               kappa[i] = stable.moment.power.garch (shape = shape, skew = skew,
+                                                  delta = delta, gm = gm[i])
+            if(cond.dist == "gev")
+              kappa[i] = gev.moment.aparch(shape = shape, delta = delta, gm = gm[i])
+            
+            if(cond.dist == "t3")
+              kappa[i] = t3.moment.aparch(shape = shape, delta = delta, gm = gm[i])   
+            
+            if(cond.dist == "norm")
+              kappa[i] = norm.moment.aparch (delta = delta, gm = gm[i])
+            
+            if(cond.dist == "std")
+              kappa[i] = std.moment.aparch(shape = shape, delta = delta, gm = gm[i])
+            
+            if(cond.dist == "sstd")
+              kappa[i] = sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm[i]) 
+            
+            if(cond.dist == "ged")
+              kappa[i] = ged.moment.aparch(shape = shape, delta = delta, gm = gm[i])     
+        }
+        return(sum(kappa*alpha) + sum(beta))  
+    }   
+}
 
 
 
@@ -187,7 +222,7 @@ std.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0, useFactorToMultipl
 
 # ------------------------------------------------------------------------------
 
-sstd.moment.aparch <- function(shape = 3, skew = 0, delta = 1.2, gm = 0)
+sstd.moment.aparch <- function(shape = 3, skew = 1, delta = 1.2, gm = 0)
 {
     # Description:
     #   Returns the following Expectation for a standard skew t-Student distribution
@@ -226,6 +261,40 @@ sstd.moment.aparch <- function(shape = 3, skew = 0, delta = 1.2, gm = 0)
 
 
 
+
+t3.moment.aparch <- function(shape = c(3,1), skew = 1, delta = 1.2, gm = 0)
+{
+  # Description:
+  #   Returns the following Expectation for a standard t3 distribution
+  #   E[ (|z|-gm*z)^delta.
+  #   Reference: Mittnik -  (2000) - Conditional Density and Value-at-Risk 
+  #   Prediction of Asian Currency Exchange Rates.
+  
+  if( (abs(gm) >= 1) || (delta <= 0) || (shape[1] <= 0) || (shape[2] <= 0) ||
+        (delta >= (shape[1])*(shape[2]) ) || (skew <= 0)) 
+    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+         The following conditions cannot be true
+         (abs(gm) >= 1) || (delta <= 0) || (shape[1] <= 0) || (shape[2] <= 0)
+         (delta >= shape[1]*shape[2]) || (skew <= 0)")
+  
+    nu = shape[1]
+    d = shape[2]
+    theta = skew
+  
+    a = ( 1 + gm ) ^ delta * theta ^ ( - delta - 1 ) + ( 1 - gm ) ^ delta * theta ^ ( delta + 1 )
+    b = nu ^ ( delta / d ) * beta ( ( delta + 1 ) / d , nu - delta / d )
+    c = ( 1 / theta + theta ) * beta( 1 / d , nu )
+    a * b / c  
+}
+
+
+
+
+# ------------------------------------------------------------------------------
+
+
+
+
 ged.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0)
 {
     # Description:
@@ -245,7 +314,40 @@ ged.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0)
 
 
 
+# ------------------------------------------------------------------------------
 
+gev.moment.aparch <- function(shape = 0.3, delta = 1.2, gm = 0)
+{
+  
+    # FIND A BETTER WAY TO CALCULATE IT INSTEAD OF USING THE INTEGRATION FUNCTION
+  
+  
+    # Description:
+    #   Returns the following Expectation for a standard (location zero and scale 1) 
+    #   GEV distribution 
+    #   E[ (|z|-gm*z)^delta.
+    #   Reference: GEVStableGarch papper
+    
+    if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) || ( delta >= 1 / shape ) ) 
+      stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+           The following conditions cannot be true
+           ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) || ( delta >= 1 / shape )")
+    
+    xi = shape
+    
+    library(fExtremes)
+    e = function(x, gm, delta) {
+      (abs(x)-gm*x)^delta * dgev(x, xi = xi)
+    }
+    
+    # Compute Moment by Integration
+    I = integrate(e, lower = -Inf, upper = +Inf, subdivisions = 1000,
+                  rel.tol = .Machine$double.eps^0.25,
+                  gm = gm, delta = delta)
+    
+    # Return
+    I
+}
 
 
 # ------------------------------------------------------------------------------
@@ -383,12 +485,12 @@ garch.stationarity <- function(parm)
 
 # ------------------------------------------------------------------------------
 TrueAparchMomentsWurtz <- 
-  function(fun = "norm", gm = 0, delta = 1, ...)
-  {   
-    # A function implemented by Diethelm Wuertz
-    # Adapted to return only the aparch moment expression.
+  function(fun = "norm", gm = 0, delta = 1, lower = -Inf, upper = Inf, ...)
+  { 
+    # This function was originally from package fGarch. We 
+    # changed it to return only the aparch moment expression.
     # Description:
-    #   Computes persistence for an APARCH process
+    #   Computes APARCH moments using Integration
     
     # Arguments:
     #   fun - name of density functions of APARCH innovations
@@ -410,8 +512,8 @@ TrueAparchMomentsWurtz <-
       (abs(x)-gm*x)^delta * fun(x, ...)
     }
     
-    # Compute Persistence by Integration:
-    I = integrate(e, -Inf, Inf, subdivisions = 1000,
+    # Compute Moment by Integration
+    I = integrate(e, lower = lower, upper = upper, subdivisions = 1000,
                     rel.tol = .Machine$double.eps^0.25,
                     gm = gm, delta = delta, ...)
     

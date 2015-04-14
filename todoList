@@ -1,5 +1,7 @@
 #   Things to do
-    - Test the general aparch.moments function
+    - Implement and Test the general aparch.moments function.
+    - Implemente the sstdfs ( skew t-student Fernandez and Steel (2002))
+    - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration   function.
     - Configure the sqp.restriction method for all distribution functions.
     - Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
     - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
