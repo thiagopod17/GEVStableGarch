@@ -21,7 +21,7 @@
 ####################################################################################
 #  FUNCTION:                        DESCRIPTION:
 #
-#  Stationarity.Condition.Aparch    Evaluate the exact moments of the type
+#  stationarity.aparch               Evaluate the exact moments of the type
 #                                   E(z - gm|z|)^delta for several conditional
 #                                   distributions.
 #
@@ -41,6 +41,8 @@
 #                                   defined in Fernandez and Steel without this reparametrization
 #
 #  ged.moment.aparch                Exact APARCH moments for the standard GED distribution
+
+#  t3.moment.aparch                 Exact APARCH moments for the standard t3 distribution
 #
 #  stable.moment.aparch             Exact APARCH moments for the location zero and unit scale
 #                                   in S1 parametrization (see Nolan (1999)).
@@ -56,10 +58,10 @@
 #                                   formulas implemented here
 ####################################################################################
 
-Stationarity.Condition.Aparch <-
+stationarity.aparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("gev", "stable", "t3", "norm", "std", "sstd", "ged"))
+            cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "ged"))
 {
     
     # Description: 
@@ -95,6 +97,9 @@ Stationarity.Condition.Aparch <-
     #   cond.dist - a character string naming the distribution
     #       function.           
     
+    # Return Values:
+    # sum ( E[ |z|-gm*z ] ^ delta * alpha + beta ) - When it can be computed
+    # 1e99 - In case we the expectation E[ |z|-gm*z ] ^ delta could not be evaluated. 
     
     # FUNCTION:
     
@@ -124,15 +129,18 @@ Stationarity.Condition.Aparch <-
             return(sum(alpha) + sum(beta))  
         
         if(cond.dist == "gev")
-            kappa = gev.moment.aparch(shape = shape, delta = 1, gm = 0)
+            kappa = try(gev.moment.aparch(shape = shape, delta = 1, gm = 0), silent = TRUE)
         
         if(cond.dist == "stable")
-            kappa = stable.moment.power.garch (shape = shape, skew = skew, 
-                                                      delta = 1)
+            kappa = try(stable.moment.power.garch (shape = shape, skew = skew, 
+                                                      delta = 1), silent = TRUE)
         if(cond.dist == "t3")
-           kappa = t3.moment.aparch(shape = shape, delta = 1, gm = 0)      
-              
-        return(kappa*sum(alpha) + sum(beta))
+           kappa = try(t3.moment.aparch(shape = shape, delta = 1, gm = 0), silent = TRUE)      
+        if( is.numeric(kappa))
+            return(kappa*sum(alpha) + sum(beta)) 
+        else 
+            return(1e99)      
+        
       
     } else {
         # aparch model
@@ -141,31 +149,32 @@ Stationarity.Condition.Aparch <-
         for( i in 1:length(alpha))
         {
             if(cond.dist == "stable")
-               kappa[i] = stable.moment.power.garch (shape = shape, skew = skew,
-                                                  delta = delta, gm = gm[i])
+               kappa[i] = try(stable.moment.aparch (shape = shape, skew = skew,
+                                                  delta = delta, gm = gm[i]), silent = TRUE)
             if(cond.dist == "gev")
-              kappa[i] = gev.moment.aparch(shape = shape, delta = delta, gm = gm[i])
+              kappa[i] = try(gev.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "t3")
-              kappa[i] = t3.moment.aparch(shape = shape, delta = delta, gm = gm[i])   
+              kappa[i] = try(t3.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
             
             if(cond.dist == "norm")
-              kappa[i] = norm.moment.aparch (delta = delta, gm = gm[i])
+              kappa[i] = try(norm.moment.aparch (delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "std")
-              kappa[i] = std.moment.aparch(shape = shape, delta = delta, gm = gm[i])
+              kappa[i] = try(std.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "sstd")
-              kappa[i] = sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm[i]) 
+              kappa[i] = try(sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "ged")
-              kappa[i] = ged.moment.aparch(shape = shape, delta = delta, gm = gm[i])     
+              kappa[i] = try(ged.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)     
         }
-        return(sum(kappa*alpha) + sum(beta))  
+        if( is.numeric(kappa))
+            return(sum(kappa*alpha) + sum(beta))  
+        else 
+            return(1e99)
     }   
 }
-
-
 
 # ------------------------------------------------------------------------------
 

@@ -436,26 +436,149 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function Stationarity.Condition.Aparch
+# Test Cases for function moment.Aparch
 # ------------------------------------------------------------------------------
 
+# GARCH(1,0)
+# GARCH(1,1)
+# GARCH(5,1)
+# APARCH(1,0)
+# APARCH(5,1)
+
+# GARCH(1,0) Test Cases
+# GARCH(1,0)-gev
+spec <- GSgarchSpec(model = list(alpha = 1.3), 
+                    presample = NULL,cond.dist = c("gev"), rseed = 3)
+# GARCH(1,0)-stable
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 1, shape = 4), 
+                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+# GARCH(1,0)-t3
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 2, shape = c(3,3)), 
+                    presample = NULL,cond.dist = c("t3"), rseed = 3)
+# GARCH(1,0)-norm
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 2), 
+                    presample = NULL,cond.dist = c("norm"), rseed = 3)
+# GARCH(1,0)-std
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("std"), rseed = 3)
+# GARCH(1,0)-sstd
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("sstd"), rseed = 3)
+# GARCH(1,0)-ged
+spec <- GSgarchSpec(model = list(alpha = 1.3, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("ged"), rseed = 3)
 
 
-# MA(2)-APARCH(1)-norm
-spec <- GSgarchSpec(model = list(mu = 3,ma = c(1,2),alpha = 0.3,beta = 0.3, delta = 1), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARCH(1)-norm
-spec <- GSgarchSpec(model = list(alpha = c(0.03), delta = 2), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-norm
-spec <- GSgarchSpec(model = list(ar = c(1,2),ma = c(3,3,3), alpha = c(3,3),
-                                 gm = c(0,0.4),beta = c(3,3),delta = 2), 
-                    presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(2,3)-APARCH(2,2)-stable
-spec <- GSgarchSpec(model = list(ar = c(0.1,0.04),ma = c(3,3,3), alpha = c(0.1,0.1),
-                                 gm = c(0.3,0),beta = c(0.1,0.1),delta = 1.4, shape = 1.5, skew = 0), 
-                    presample = NULL,cond.dist = c("stable"),rseed = 3)
-Stationarity.Condition.Aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gm = spec@model$gm, 
-                                           delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
-                              formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+# GARCH(1,1) Test Cases
+# GARCH(1,1)-gev
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4), 
+                    presample = NULL,cond.dist = c("gev"), rseed = 3)
+# GARCH(1,1)-stable
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 1, shape = 4), 
+                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+# GARCH(1,1)-t3
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = c(3,3)), 
+                    presample = NULL,cond.dist = c("t3"), rseed = 3)
+# GARCH(1,1)-norm
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2), 
+                    presample = NULL,cond.dist = c("norm"), rseed = 3)
+# GARCH(1,1)-std
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("std"), rseed = 3)
+# GARCH(1,1)-sstd
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("sstd"), rseed = 3)
+# GARCH(1,1)-ged
+spec <- GSgarchSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("ged"), rseed = 3)
+
+
+# GARCH(5,1) Test Cases
+# GARCH(5,1)-gev
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4), 
+                    presample = NULL,cond.dist = c("gev"), rseed = 3)
+# GARCH(5,1)-stable
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 1, shape = 4), 
+                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+# GARCH(5,1)-t3
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = c(3,3)), 
+                    presample = NULL,cond.dist = c("t3"), rseed = 3)
+# GARCH(5,1)-norm
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2), 
+                    presample = NULL,cond.dist = c("norm"), rseed = 3)
+# GARCH(5,1)-std
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("std"), rseed = 3)
+# GARCH(5,1)-sstd
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("sstd"), rseed = 3)
+# GARCH(5,1)-ged
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = 4), 
+                    presample = NULL,cond.dist = c("ged"), rseed = 3)
+
+
+# APARCH(1,0) Test Cases
+# APARCH(1,0)-gev
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1)), 
+                    presample = NULL,cond.dist = c("gev"), rseed = 3)
+# APARCH(1,0)-stable
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
+                                 shape = runif(1,0,5), skew = runif(1,0,5) ), 
+                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+# APARCH(1,0)-t3
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
+                                 shape = runif(2,0,5), skew = runif(1,0,5)), 
+                    presample = NULL,cond.dist = c("t3"), rseed = 3)
+# APARCH(1,0)-norm
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1)), 
+                    presample = NULL,cond.dist = c("norm"), rseed = 3)
+# APARCH(1,0)-std
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
+                                 shape = runif(1,0,100)), 
+                    presample = NULL,cond.dist = c("std"), rseed = 3)
+# APARCH(1,0)-sstd
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1), 
+                                 shape = runif(1,0,5), skew = runif(1,0,5)), 
+                    presample = NULL,cond.dist = c("sstd"), rseed = 3)
+# APARCH(1,0)-ged
+spec <- GSgarchSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1), shape = 4), 
+                    presample = NULL,cond.dist = c("ged"), rseed = 3)
+
+
+# APARCH(5,1) Test Cases
+# APARCH(5,1)-gev
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1)), 
+                    presample = NULL,cond.dist = c("gev"), rseed = 3)
+# APARCH(5,1)-stable
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
+                                 shape = runif(1,0,5), skew = runif(1,0,5) ), 
+                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+# APARCH(5,1)-t3
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
+                                 shape = runif(2,0,5), skew = runif(1,0,5)), 
+                    presample = NULL,cond.dist = c("t3"), rseed = 3)
+# APARCH(5,1)-norm
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1)), 
+                    presample = NULL,cond.dist = c("norm"), rseed = 3)
+# APARCH(5,1)-std
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
+                                 shape = runif(1,0,100)), 
+                    presample = NULL,cond.dist = c("std"), rseed = 3)
+# APARCH(5,1)-sstd
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1), 
+                                 shape = runif(1,0,5), skew = runif(1,0,5)), 
+                    presample = NULL,cond.dist = c("sstd"), rseed = 3)
+# APARCH(5,1)-ged
+spec <- GSgarchSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1), shape = 4), 
+                    presample = NULL,cond.dist = c("ged"), rseed = 3)
+
+
+# General testing
+stationarity.aparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gm = spec@model$gm, 
+                                 delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
+                    formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+
+
+
+################################################################################
 

@@ -26,7 +26,7 @@
 # GSgarchSpec function
 GSgarchSpec <-
     function (model = list(), presample = NULL,
-    cond.dist = c("gev","stable","norm", "std", "sstd"),
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "ged"),
     rseed = NULL)
 {	
     # Description:
@@ -38,7 +38,7 @@ GSgarchSpec <-
     #       specification,
     #     alpha - a vector of autoregressive coefficients
     #       of length p for the GARCH/APARCH specification,
-    #     gamma - a vector of leverage coefficients of
+    #     gm - a vector of leverage coefficients of
     #       length p for the APARCH specification,
     #     beta - a vector of moving average coefficients of
     #       length q for the GARCH/APARCH specification,
@@ -81,19 +81,23 @@ GSgarchSpec <-
       
     # Skewness Parameter Settings:
     skew = list(
-        "gev" = NULL,
         "stable" = 0,
+        "gev" = NULL,
+        "t3" = 1,
         "norm" = NULL,
         "std" = NULL,
-        "sstd" = 0.9)
+        "sstd" = 0.9,
+        "ged" = NULL)
 
     # Shape Parameter Settings:
     shape = list(
-        "gev" = 0.3,
-        "stable" = 1.7,
-        "norm" = NULL,
-        "std" = 4,
-        "sstd" = 4)
+      "stable" = 1.7,
+      "gev" = 0.3,
+      "t3" = c(3,1),
+      "norm" = NULL,
+      "std" = 4,
+      "sstd" = 4,
+      "ged" = 4)
 
     # Conditional distribution
     cond.dist = match.arg(cond.dist)
@@ -101,11 +105,17 @@ GSgarchSpec <-
     # Default Model (AR(1)):
     initialDelta = NULL
     if(!is.null(model$alpha) && is.null(model$delta)) # Garch model
-    	initialDelta = 2
+    {
+        if(cond.dist == "stable")
+            initialDelta = 1
+        else 
+            initialDelta = 2
+    }
+    	
     control = list(
         omega = 1,
         alpha = NULL,
-        gamma = NULL,
+        gm = NULL,
         beta = NULL,
         mu = NULL,
         ar = NULL,
@@ -138,14 +148,14 @@ GSgarchSpec <-
       	stop("The parameter 'delta' must be > 0.")
     }
     
-    if( (length(model$gamma) != 0) && (length(model$alpha) != 0)) # means aparch model
+    if( (length(model$gm) != 0) && (length(model$alpha) != 0)) # means aparch model
     {
-      if(length(model$alpha) != length(model$gamma))
+      if(length(model$alpha) != length(model$gm))
         stop("'alpha' and 'gm' must have the same size for APARCH models")    
     }
    
-    if(!is.null(model$gamma)){
-    	if(sum(!(abs(model$gamma)<1)) > 0) # all gm in (-1,1)
+    if(!is.null(model$gm)){
+    	if(sum(!(abs(model$gm)<1)) > 0) # all gm in (-1,1)
         stop("The parameter 'gm' must be in the range -1 < gm < 1")     	
     }
              
@@ -205,11 +215,14 @@ GSgarchSpec <-
     if (order.alpha > 0 && order.beta == 0) formula.var = "garch"
     if (order.alpha > 0 && order.beta > 0) formula.var = "garch"   
     if(!is.null(model$alpha)){
-    	if (!is.null(model$gamma)){
-    		if(sum(model$gamma == 0) != length(model$gamma))
+    	if (!is.null(model$gm)){
+    		if(sum(model$gm == 0) != length(model$gm))
     		   formula.var = "aparch"
     	}
-    	if (model$delta != 2) formula.var = "aparch" # gm = 0 and delta != 0 we get powergarch model   	
+    	if (model$delta != 2 && cond.dist != "stable") 
+          formula.var = "aparch" # gm = 0 and delta != 0 we get powergarch model   	
+    	if (model$delta != 1 && cond.dist == "stable") 
+    	    formula.var = "aparch" 
     }
    
     if (order.alpha == 0 && order.beta == 0) {
@@ -243,7 +256,7 @@ GSgarchSpec <-
     if (is.null(model$mu)) model$mu = 0
     if (is.null(model$ar)) model$ar = 0
     if (is.null(model$ma)) model$ma = 0
-    if (is.null(model$gamma)) model$gamma = rep(0, times = order.alpha)
+    if (is.null(model$gm)) model$gm = rep(0, times = order.alpha)
 
     # Seed:
     if (is.null(rseed)) {
@@ -288,7 +301,7 @@ GSgarchSpec <-
         call = match.call(),
         formula = formula,
         model = list(omega = model$omega, alpha = model$alpha,
-            gamma = model$gamma, beta = model$beta, mu = model$mu,
+            gm = model$gm, beta = model$beta, mu = model$mu,
             ar = model$ar, ma = model$ma, delta = model$delta,
             skew = model$skew, shape = model$shape),
         presample = as.matrix(presample),

@@ -1,7 +1,11 @@
 #   Things to do
-    - Implement and Test the general aparch.moments function.
     - Implemente the sstdfs ( skew t-student Fernandez and Steel (2002))
-    - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration   function.
+    - Define the ARMA-GARCH model with zero location and unit variance and explain why.
+    - Change function names:
+      gsgFit, gsgGetStart, gsgAIC, gsgSim ( there is a package called gsg in R CRAN)
+      gFit, gGetStart, gAIC, gSim
+      gsFit, gsGetStart, gsAIC, gsSim, gsAparchMoments
+
     - Configure the sqp.restriction method for all distribution functions.
     - Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
     - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
@@ -25,6 +29,7 @@
     - Modify function names to make the package more user friendly.
     - Cant we define the ARMA-APARCH model with t-Student distribution with infinite 
     variance? degrees of freedom > 0 and not > 2.
+    - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
     - Correct ARMA-stable estimation
       1.1 get.start para stable sem pegar variancia. pegar mean(abs(data-Mean))
       1.2 garch.Dist, fazer diferente. Calcular density stable com parametros z 

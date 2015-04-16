@@ -2,11 +2,22 @@ See the package activity on Github at:
 https://github.com/thiagopod17/GEVStableGarch
 
 
+
+ ----------------------------
+  date: 2015/04/15;  
+  author: ThiagoSousa;
+  Description: 
+  1 - function stationarity.aparch tested with several 
+  test cases and some small corrections on function GSgarchSpec
+  2 - t3 distribution included in function GSgarchSpec
+  ----------------------------
+
+
  ----------------------------
   date: 2015/04/13;  
   author: ThiagoSousa;
   Description: 
-  1 - t3.aparch.moment function included and tested
+  1 - t3.moment.aparch function included and tested
   ----------------------------
 
 
