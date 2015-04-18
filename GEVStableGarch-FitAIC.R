@@ -24,7 +24,8 @@
 ################################################################################
 
 GSgarch.FitAIC <- 
-    function(data,mMAX=1,nMAX=1,pMAX=1,qMAX=1, cond.dist = "norm", 
+    function(data,mMAX=1,nMAX=1,pMAX=1,qMAX=1, 
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
     algorithm = "sqp",APARCH = FALSE, intercept = TRUE,control = NULL)
 {
       
@@ -48,9 +49,7 @@ GSgarch.FitAIC <-
     # FUNCTION:      
       
     # error treatment on input parameters
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable")
-    if( !any(cond.dist.list == cond.dist) )   
-        stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev or stable")
+    cond.dist = match.arg(cond.dist)    
     if( !is.numeric(data) || !is.vector(data))
         stop("data set must be a numerical one dimensional vector")
     

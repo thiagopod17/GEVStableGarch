@@ -27,7 +27,7 @@
 
 
 dt3 <- 
-  function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1, log = FALSE)
+  function(x, mean = 0, sd = 1, nu = 3, d = 2, xi = 1, log = FALSE)
   {   
     # A function implemented by Thiago Sousa
     

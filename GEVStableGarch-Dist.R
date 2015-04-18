@@ -27,7 +27,8 @@
 
 GSgarch.Dist <-
     function(z, hh, shape = 4, skew = 0.1, 
-    cond.dist = "sstd", GStol = 1e-8) 
+    cond.dist = c("dstable", "dgev", "dt3", "dnorm", "dstd", "dsstd", "dskstd", "dged"), 
+    GStol = 1e-8) 
 {
     # Description:
     #   Calculates the likelihood function for a vector of points (z)
@@ -47,9 +48,7 @@ GSgarch.Dist <-
     # FUNCTION:  
       
     # Error treatment of input parameters
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable", "ged", "t3")
-    if( !any(cond.dist.list == cond.dist) )   
-        stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev or stable")
+    cond.dist = match.arg(cond.dist)
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
     {
         warning("NA or zero element found in vector hh")
@@ -57,11 +56,11 @@ GSgarch.Dist <-
     }
     
     # normal conditional distribution
-    if(cond.dist == "norm")
+    if(cond.dist == "dnorm")
         return(-sum(log(dnorm(x = z/hh)/hh)))
     
     # t-student conditional distribution.
-    if(cond.dist == "std")
+    if(cond.dist == "dstd")
     {
         if(!(shape > 2))
             stop("Invalid shape in std distribution. shape > 2")
@@ -69,8 +68,8 @@ GSgarch.Dist <-
         return(-sum(log(dstd(x = z/hh, nu = nu)/hh)))
     }
     
-    # skew t-student conditional 
-    if(cond.dist == "sstd")
+    # skew t-student conditional (standardized version defined in Wurtz)
+    if(cond.dist == "dsstd")
     {
         if(!(shape > 2) || !(skew > 0))
         {
@@ -82,17 +81,30 @@ GSgarch.Dist <-
         xi = gm
         nu = shape
         
-        #return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))        
+        return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))        
  
-        M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
-          gamma((shape-1)/2)
-        M2 = 1
-        return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
-               sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/hh)))
+#         M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
+#           gamma((shape-1)/2)
+#         M2 = 1
+#         return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
+#                sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/hh)))
+    }
+    
+    # skew t-student from Fernandez, C. and Steel, M. F. J. (1998)
+    if(cond.dist == "dskstd")
+    {
+      if(!(shape > 2) || !(skew > 0))
+      {
+        #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
+        return(1e99)
+      }
+      
+      return(-sum(log(dskstd(x = z/hh, nu = shape, xi = skew)/hh)))        
+    
     }
     
     # t3 distribution
-    if(cond.dist == "t3")
+    if(cond.dist == "dt3")
     {
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
         {
@@ -107,7 +119,7 @@ GSgarch.Dist <-
     }
     
     # GED conditional distribution.
-    if(cond.dist == "ged")
+    if(cond.dist == "dged")
     {
       if(!(shape > 0))
         stop("Invalid shape in std distribution. shape > 0")
@@ -116,7 +128,7 @@ GSgarch.Dist <-
     }
     
     # GEV conditional distribution
-    if(cond.dist == "gev")
+    if(cond.dist == "dgev")
     {
         if(abs(shape) < 1e-6)
           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
@@ -137,7 +149,7 @@ GSgarch.Dist <-
     }
     
     # stable conditional distribution
-    if(cond.dist == "stable")
+    if(cond.dist == "dstable")
     {
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
             stop("Invalid shape or skew in stable parameters. 1 < shape < 2 and |skew| < 1")

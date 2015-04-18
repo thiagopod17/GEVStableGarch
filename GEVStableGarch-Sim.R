@@ -82,6 +82,10 @@ GSgarch.Sim <-
         z = rnorm(n)
     if (spec@distribution == "std")
         z = rstd(n, nu = model$shape)
+	  if (spec@distribution == "skstd") 
+	      z = rskstd(n, nu = model$shape, xi = model$skew)
+	  if (spec@distribution == "t3") 
+	      z = rt3(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
 	  if (spec@distribution == "sstd") 
 	  z = rsstd(n, nu = model$shape, xi = model$skew)
 

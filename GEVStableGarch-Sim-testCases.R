@@ -36,6 +36,14 @@ spec <- GSgarchSpec(model = list(ar = 0.1, alpha = 0.3, beta = 0.2, delta = 2),
 sim <- GSgarch.Sim(spec, n = 1000, n.start = 0)
 plot(sim)
 
+
+# Simulate AR(1)-GARCH(1,1) with conditional dt3 distr.
+spec <- GSgarchSpec(model = list(ar = 0.1, alpha = 0.3, beta = 0.2, delta = 2,
+                                 shape = c(1,2), skew = 1), 
+                    presample = NULL,cond.dist = "t3",rseed = NULL)  
+sim <- GSgarch.Sim(spec, n = 1000, n.start = 0)
+plot(sim)
+
 # Simulate GARCH(1,1) with conditional stable distr.
 spec <- GSgarchSpec(model = list(alpha = 0.05, beta = 0.01, omega = 0.01, delta = 2,shape = 1.2), 
                     presample = NULL,cond.dist = "stable",rseed = NULL)  

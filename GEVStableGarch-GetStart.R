@@ -26,7 +26,8 @@
 
 
 GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
-                             cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)
+                    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
+                    GSstable.tol.b = 2e-2, GStol.b = 1e-7)
 {    
     # Description:
     #   Get initial values to start the estimation and the bounds for
@@ -72,9 +73,8 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FA
         stop("'p' and 'q' need to be integers greater than zero")
     if(p == 0 && q != 0)
         stop("Invalid Garch(p,q) order")
-    cond.dist.list <- c("norm", "std", "sstd", "gev", "stable","ged","t3")
-    if( !any(cond.dist.list == cond.dist) )   
-        stop ("Invalid Conditional Distribution. Choose: norm,std,sstd,gev,ged or stable")
+    # Conditional distribution
+    cond.dist = match.arg(cond.dist)
     if( !is.numeric(data) || !is.vector(data))
         stop("data set must be a numerical one dimensional vector")
     
@@ -182,9 +182,15 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FA
     }
     if (cond.dist == "sstd")
     {   
-        shape.init <- 4
+        shape.init <- 4; skew.init = 1
         shape.lower <- 2 + GStol.b; shape.upper <- 20
-        skew.lower <- GStol.b; skew.upper <- 20   
+        skew.lower <- GStol.b; skew.upper <- 20 
+    }
+    if (cond.dist == "skstd")
+    {   
+      shape.init <- 4; skew.init = 1
+      shape.lower <- GStol.b; shape.upper <- 100
+      skew.lower <- GStol.b; skew.upper <- 100   
     }
     if (cond.dist == "ged")
     {   

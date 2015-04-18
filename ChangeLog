@@ -3,7 +3,18 @@ https://github.com/thiagopod17/GEVStableGarch
 
 
 
- ----------------------------
+
+
+  ----------------------------
+  date: 2015/04/18;  
+  author: ThiagoSousa;
+  Description: 
+  1 - dskstd distribution implemented using the dskt function from skewt package
+  2 - dskstd included in function GSgarch.Fit
+  ----------------------------
+
+
+  ----------------------------
   date: 2015/04/15;  
   author: ThiagoSousa;
   Description: 
@@ -13,7 +24,7 @@ https://github.com/thiagopod17/GEVStableGarch
   ----------------------------
 
 
- ----------------------------
+  ----------------------------
   date: 2015/04/13;  
   author: ThiagoSousa;
   Description: 
@@ -21,7 +32,7 @@ https://github.com/thiagopod17/GEVStableGarch
   ----------------------------
 
 
- ----------------------------
+  ----------------------------
   date: 2015/04/12;  
   author: ThiagoSousa;
   Description: 

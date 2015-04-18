@@ -29,8 +29,8 @@
 #
 #  std.moment.aparch                Exact APARCH moments for the standard t-Student
 #
-#  sstd.moment.aparch               Exact APARCH moments for the standard skew
-#                                   t-Student defined by Fernandez and Steel (2002).
+#  skstd.moment.aparch              Exact APARCH moments for the standard skew
+#                                   t-Student defined by Fernandez and Steel (1998).
 #                                   Notice that this distribution is standardized 
 #                                   with location zero and unit scale, but it is not
 #                                   standardized in the sense that it has a zero mean and 
@@ -61,7 +61,7 @@
 stationarity.aparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "ged"))
+            cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"))
 {
     
     # Description: 
@@ -134,8 +134,13 @@ stationarity.aparch <-
         if(cond.dist == "stable")
             kappa = try(stable.moment.power.garch (shape = shape, skew = skew, 
                                                       delta = 1), silent = TRUE)
+        
         if(cond.dist == "t3")
-           kappa = try(t3.moment.aparch(shape = shape, delta = 1, gm = 0), silent = TRUE)      
+           kappa = try(t3.moment.aparch(shape = shape, delta = 1, gm = 0), silent = TRUE)   
+        
+        if(cond.dist == "skstd")
+          kappa = try(t3.moment.aparch(shape = shape, delta = 1, gm = 0), silent = TRUE)  
+        
         if( is.numeric(kappa))
             return(kappa*sum(alpha) + sum(beta)) 
         else 
@@ -163,8 +168,8 @@ stationarity.aparch <-
             if(cond.dist == "std")
               kappa[i] = try(std.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
-            if(cond.dist == "sstd")
-              kappa[i] = try(sstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm[i]), silent = TRUE)
+            if(cond.dist == "skstd")
+              kappa[i] = try(skstd.moment.aparch(shape = shape, skew = skew, delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "ged")
               kappa[i] = try(ged.moment.aparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)     
@@ -231,7 +236,7 @@ std.moment.aparch <- function(shape = 3, delta = 1.2, gm = 0, useFactorToMultipl
 
 # ------------------------------------------------------------------------------
 
-sstd.moment.aparch <- function(shape = 3, skew = 1, delta = 1.2, gm = 0)
+skstd.moment.aparch <- function(shape = 3, skew = 1, delta = 1.2, gm = 0)
 {
     # Description:
     #   Returns the following Expectation for a standard skew t-Student distribution

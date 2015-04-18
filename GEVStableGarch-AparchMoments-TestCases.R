@@ -22,7 +22,14 @@
 #                
 #  Stationarity.Condition.Aparch
 #  norm.moment.aparch
-#  stable.moment.aparch
+#  std.moment.aparch
+#  skstd.moment.aparch              
+#  ged.moment.aparch                
+#  t3.moment.aparch                
+#  stable.moment.aparch            
+#  stable.symmetric.moment.garch    
+#  stable.symmetric.moment.aparch   
+#  stable.moment.power.garch
 ################################################################################
 
 
@@ -139,19 +146,19 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for functions sstd.moment.aparch (skew t-Student)
+# Test Cases for functions skstd.moment.aparch (skewed t-Student from Fernandez and Steel)
 # ------------------------------------------------------------------------------
 # We get numerical problems when delta/skew approaches 1.
 
 
 # Tests with simulated data
-# works well with errors around 0.001% of the true value.
+# works well with errors around 0.01% of the true value.
 # Sometimes the function TrueAparchMomentsWurtz fail because of the integration
 # routine.
 
 
-n = 1000
-shapeValues = runif(n, 2, 15)
+n = 1e4
+shapeValues = runif(n, 2, 5)
 gmValues = runif(n,-1,1)
 deltaValues = rep(NA,n)
 skewValues = rep(NA,n)
@@ -161,19 +168,15 @@ for(i in 1:n)
   if(i %% 2 == 0)
     skewValues[i] = runif(n=1,0.015,deltaValues[i]-0.02)  
   else
-    skewValues[i] = runif(n=1,deltaValues[i]+0.02,max(deltaValues[i]+20,20))
+    skewValues[i] = runif(n=1,deltaValues[i]+0.02,max(deltaValues[i]+2,2))
 }
 trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 error = rep(NA,n)
 for(i in 1:n)
 {
-  M1 = sqrt((shapeValues[i]-2)/pi)*gamma(shapeValues[i]/2)^(-1)*
-    gamma((shapeValues[i]-1)/2)
-  M2 = 1
-  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dsstd", gm = gmValues[i], delta = deltaValues[i], 
-                                                    nu = shapeValues[i], xi = skewValues[i], mean = (skewValues[i]-1/skewValues[i])*M1,
-                                                    sd = sqrt((M2-M1^2)*(skewValues[i]^2+1/skewValues[i]^2)+2*M1^2-M2))[1])
+  trueValues[i] = as.numeric(TrueAparchMomentsWurtz(fun = "dskstd", gm = gmValues[i], delta = deltaValues[i], 
+                                                    nu = shapeValues[i], xi = skewValues[i])[1])
   functionValues[i] = sstd.moment.aparch(shape = shapeValues[i], skew = skewValues[i], 
                                          delta = deltaValues[i], gm = gmValues[i])
 }
@@ -209,7 +212,6 @@ sstd.moment.aparch(shape = 4.221416, skew = exp(-0.095899),
 # defined by Lambert and Laurent (without reparameterizing it to have 
 # a zero mean and unit variance) we can also get the same garch estimated 
 # parameters.
-
 
 
 # ------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ GSgarch.Fit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("norm", "std", "sstd", "gev", "stable", "ged","t3"),
+    cond.dist = c("norm", "std", "sstd", "dskstd", "gev", "stable", "ged","t3"),
     include.mean = TRUE, 
     algorithm = c("sqp","sqp.restriction","nlminb"),
     printRes = TRUE,
@@ -483,8 +483,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","dskstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","dskstd","ged","t3")  == cond.dist)) 
                       (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -495,8 +495,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","dskstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","dskstd","ged","t3")  == cond.dist)) 
                       (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
@@ -509,8 +509,8 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stable","t3")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd","ged","t3")  == cond.dist)) 
+                  if(any(c("sstd","stable","t3","dskstd")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stable","sstd","ged","t3","dskstd")  == cond.dist)) 
                     paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     

@@ -26,7 +26,7 @@
 # GSgarchSpec function
 GSgarchSpec <-
     function (model = list(), presample = NULL,
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "ged"),
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
     rseed = NULL)
 {	
     # Description:
@@ -81,23 +81,25 @@ GSgarchSpec <-
       
     # Skewness Parameter Settings:
     skew = list(
-        "stable" = 0,
-        "gev" = NULL,
-        "t3" = 1,
-        "norm" = NULL,
-        "std" = NULL,
-        "sstd" = 0.9,
-        "ged" = NULL)
+        "dstable" = 0,
+        "dgev" = NULL,
+        "dt3" = 1,
+        "dnorm" = NULL,
+        "dstd" = NULL,
+        "dsstd" = 0.9,
+        "dskstd" = 1,
+        "dged" = NULL)
 
     # Shape Parameter Settings:
     shape = list(
-      "stable" = 1.7,
-      "gev" = 0.3,
-      "t3" = c(3,1),
-      "norm" = NULL,
-      "std" = 4,
-      "sstd" = 4,
-      "ged" = 4)
+      "dstable" = 1.7,
+      "dgev" = 0.3,
+      "dt3" = c(3,1),
+      "dnorm" = NULL,
+      "dstd" = 4,
+      "dsstd" = 4,
+      "dskstd" = 4,
+      "dged" = 4)
 
     # Conditional distribution
     cond.dist = match.arg(cond.dist)
@@ -106,7 +108,7 @@ GSgarchSpec <-
     initialDelta = NULL
     if(!is.null(model$alpha) && is.null(model$delta)) # Garch model
     {
-        if(cond.dist == "stable")
+        if(cond.dist == "dstable")
             initialDelta = 1
         else 
             initialDelta = 2

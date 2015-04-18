@@ -104,7 +104,7 @@ library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
 library(Rsolnp)
-
+library(skewt)
 # garch(1,1)-norm-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),
                  cond.dist = "norm", include.mean = TRUE,
@@ -151,15 +151,22 @@ fit1@fit$par-model1@fit$par
 
 
 # garch(1,1)-sstd-intercept
-fit1 <- garchFit(data = x, formula = ~aparch(1,1),
+fit1 <- garchFit(data = x, formula = ~garch(1,1),
                  cond.dist = "sstd", include.mean = TRUE,
                  algorithm = "nlminb")
 
 
-model1 <- GSgarch.Fit(data = x , formula = ~aparch(1,1),
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
                       cond.dist = "sstd", include.mean = TRUE, 
                       algorithm = "sqp")
 fit1@fit$par-model1@fit$par
+
+# garch(1,1)-skstd-intercept
+
+model1 <- GSgarch.Fit(data = x , formula = ~garch(1,1),
+                      cond.dist = "skstd", include.mean = TRUE, 
+                      algorithm = "nlminb")
+model1@fit$par
 
 
 # aparch(1,1)-norm-intercept
