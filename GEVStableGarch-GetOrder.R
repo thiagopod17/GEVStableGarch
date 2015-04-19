@@ -20,12 +20,12 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  GSgarch.GetOrder        Return a matrix with parameter order to be used 
+#  .getOrder        Return a matrix with parameter order to be used 
 #                          inside function GSgarch.FitAIC 
 ################################################################################
 
 
-GSgarch.GetOrder <- 
+.getOrder <- 
     function(m,n,p,q)
 {
       

@@ -1,35 +1,48 @@
 #   Things to do on Package now
+   
 
-    - Change function names:
-      gsFit, gsGetStart, gsSelect, gsSim, gsSpec, gsAparchMoments...
-      Names of files on project...
-      AparchMoments
-      Dist
-      Filter
-      Fit
-      FitAIC
-      getFormula
-      GetStart
-      Sim
-      Spec
-
-    - Configure the sqp.restriction method for all distribution functions.
-    - Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
-    - Implement method SHOW ver pacote fGarch
-    - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
-    - Test the pure ARMA model implementation. Tip: Compare with the code sent to Doctor Mohammad because at that point the code was working well.
-    - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm.
-    - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
-
-    - Make sure the definition of stable distr. is the 1-parameterization
-    - Test GEV density to see why qsi < 0 is somewhat frequent in real data estimation.
-    Notice that the Zhao paper has qsi > 0.
+    - Implement the ARMA dist function for every distribution.
+    - Test the pure ARMA model implementation. Tip: Compare with the code sent to Doctor Mohammad because     at that point the code was working well.
     - Correct ARMA-stable estimation
       1.1 get.start para stable sem pegar variancia. pegar mean(abs(data-Mean))
       1.2 garch.Dist, fazer diferente. Calcular density stable com parametros z 
       (data) e hh(para sigma da estavel)
       1.3 definir valor de N para filter.Arma
-      1.4 Ver sobre valores de inicio, superiores e inferiores do sigma da estavel, da media do processo e dos coeficientes arma.
+
+    - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
+    - Configure the sqp.restriction method for all distribution functions.
+   - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm
+    - Test gsAparchMoments function.
+    - Arrumar Sim function 
+    - Arrumar AIC function
+    - Implement method SHOW ver pacote fGarch
+    - Test GEV density to see why qsi < 0 i somewhat frrequent in real data Notce that the Zhao paper has qsi > 0.
+
+# Mudancas criticas para fazer e ir testando...
+- Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
+
+  
+
+
+
+
+
+# Naming: 
+      user functions: gsFit, gsSelect, gsMomentAparch
+      variables: cond.dist, arma.order, garch.llh
+      constans: TOL, TOLSTABLE, ARMA.ORDER
+      internal functions: .getStart, .getFormula
+
+
+# Changes on function names:
+
+gsGarchDist    .armaGarchDist
+filter.Arma     .filterArma
+filter.Aparch   .filterAparch
+filter.Aparch.Forloop     .filterAparchForLoop
+filter1.garch11Fit
+gsGetOrder    .getOrder
+gsGetStart     .getStart
 
 
 
@@ -38,16 +51,27 @@
 
 
 
-# Changes on papper
+
+
+
+# Advices for Debugging: 
+
+  - See the TOLG and TOLGSTABLE parameters in function gsGetStart. They were originally set to 
+    1e-7 and 2e-2.
+
+
+
+# Changes on papper:
 
     - Correct the formula for the calculation of the stable.moment general (in the paper). Just change the expressions (1-gm)^delta and (1+gm)^delta.
+- Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
+- Make sure the definition of stable distr. is the 1-parameterization
 
 
 
 
 
-
-# Future modifications on package
+# Future modifications on package:
 
     -Separar funções ARMA com GEV e estavel das funções ARMA-GARCH.
     - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
@@ -59,7 +83,7 @@
 
 
 
-#   Important notes about the modifications. APAGAR DEPOIS OU INCLUIR NO CHANGELOG
+#   Important notes about the modifications: APAGAR DEPOIS OU INCLUIR NO CHANGELOG
 
     We will make the interface of this function more similar to the garchFit function
     from package fGarch to make it more user friendly. 

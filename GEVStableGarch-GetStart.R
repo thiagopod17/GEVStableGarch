@@ -20,14 +20,14 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  GSgarch.GetStart        Returns initial and boundary values to 
+#  .getStart               Returns initial and boundary values to 
 #                          perform optimization 
 ################################################################################
 
 
-GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
+.getStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
                     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
-                    GSstable.tol.b = 2e-2, GStol.b = 1e-7)
+                    TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
     # Description:
     #   Get initial values to start the estimation and the bounds for
@@ -54,8 +54,8 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FA
     #   ARMAonly - Indicates whether we have a pure ARMA model
     #   cond.dist - name of the conditional distribution, one of
     #       gev, stable, norm, std, sstd, ged
-    #   GSstable.tol.b - boundary tolerance. Should be greater than GSstable.tol
-    #   GStol.b - pper and lower bounds tolerance. Should be greater than tol
+    #   TOLSTABLE - boundary tolerance. Should be greater than GSstable.tol
+    #   TOLG - pper and lower bounds tolerance. Should be greater than tol
 
     # Return:
     #   Asdf - The asdf 
@@ -150,71 +150,71 @@ GSgarch.GetStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FA
     # Lower Bound
     #mean.lower <- mean.init - 3*abs(mean.init)
     mean.lower <- -10*abs(mean.init)
-    arma.lower <- rep(-10+GStol.b,m+n)
-    omega.lower <- rep(GStol.b,1)
-    alpha.lower <- rep(GStol.b,p)
-    beta.lower <- rep(GStol.b,q)
+    arma.lower <- rep(-10+TOLG,m+n)
+    omega.lower <- rep(TOLG,1)
+    alpha.lower <- rep(TOLG,p)
+    beta.lower <- rep(TOLG,q)
     shape.lower <- 0
     skew.lower <- 0
-    gm.lower <- rep(-1 + GStol.b,p)
-    delta.lower <- GStol.b
+    gm.lower <- rep(-1 + TOLG,p)
+    delta.lower <- TOLG
     sigma.lower <- 0
     
     # Upper Bound	
     #mean.upper <- mean.init + 3*abs(mean.init)
     mean.upper <- 10*abs(mean.init)
-    arma.upper <- rep(10-GStol.b,m+n)
-    omega.upper <- rep(1-GStol.b,1)
+    arma.upper <- rep(10-TOLG,m+n)
+    omega.upper <- rep(1-TOLG,1)
     #omega.upper <- 100*var(data)
-    alpha.upper <- rep(1-GStol.b,p)
-    beta.upper <- rep(1-GStol.b,q)
+    alpha.upper <- rep(1-TOLG,p)
+    beta.upper <- rep(1-TOLG,q)
     shape.upper <- 4
     skew.upper <- 4
-    gm.upper <- rep(1 - GStol.b,p)
-    delta.upper <- 3 + GStol.b
+    gm.upper <- rep(1 - TOLG,p)
+    delta.upper <- 3 + TOLG
     sigma.upper <- 10*Var
     
     # Setting skew and shape appropriatelly for other conditional Distributions
     if (cond.dist == "std")
     {   
         shape.init <- 4
-        shape.lower <- 2 + GStol.b; shape.upper <- 20   
+        shape.lower <- 2 + TOLG; shape.upper <- 20   
     }
     if (cond.dist == "sstd")
     {   
         shape.init <- 4; skew.init = 1
-        shape.lower <- 2 + GStol.b; shape.upper <- 20
-        skew.lower <- GStol.b; skew.upper <- 20 
+        shape.lower <- 2 + TOLG; shape.upper <- 20
+        skew.lower <- TOLG; skew.upper <- 20 
     }
     if (cond.dist == "skstd")
     {   
       shape.init <- 4; skew.init = 1
-      shape.lower <- GStol.b; shape.upper <- 100
-      skew.lower <- GStol.b; skew.upper <- 100   
+      shape.lower <- TOLG; shape.upper <- 100
+      skew.lower <- TOLG; skew.upper <- 100   
     }
     if (cond.dist == "ged")
     {   
       shape.init <- 4
-      shape.lower <- 0 + GStol.b; shape.upper <- 20   
+      shape.lower <- 0 + TOLG; shape.upper <- 20   
     }
     if (cond.dist == "t3")
     {   
       shape.init <- c(4,1)
-      shape.lower <- rep(0 + GStol.b,2)
+      shape.lower <- rep(0 + TOLG,2)
       shape.upper <- rep(100,2)   
     }
     if(cond.dist == "gev")
     {
         mean.init <- 0
         shape.init <- 0.01; beta.init <- rep(0.4/q,q)
-        shape.lower <- -0.5 + GStol.b; shape.upper <- 0.5 - GStol.b
+        shape.lower <- -0.5 + TOLG; shape.upper <- 0.5 - TOLG
     }
     if(cond.dist == "stable")
     {
         shape.init <- 1.8; delta.init <- 1
-        shape.lower <- 1 + GSstable.tol.b; shape.upper <- 2 - GSstable.tol.b
+        shape.lower <- 1 + TOLSTABLE; shape.upper <- 2 - TOLSTABLE
         skew.init <- 0
-        skew.lower <- -1 + GSstable.tol.b; skew.upper <- 1 - GSstable.tol.b
+        skew.lower <- -1 + TOLSTABLE; skew.upper <- 1 - TOLSTABLE
         delta.upper <- 1.9
     }
     

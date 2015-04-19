@@ -20,13 +20,13 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  GSgarch.FitAIC          Find best fitted model according to AIC criterion
+#  gsSelect                Find best fitted model according to AIC criterion
 ################################################################################
 
-GSgarch.FitAIC <- 
+gsSelect <- 
     function(data,mMAX=1,nMAX=1,pMAX=1,qMAX=1, 
     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
-    algorithm = "sqp",APARCH = FALSE, intercept = TRUE,control = NULL)
+    algorithm = "sqp", APARCH = FALSE, intercept = TRUE,control = NULL)
 {
       
     # Description:

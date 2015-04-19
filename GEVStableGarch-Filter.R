@@ -24,12 +24,12 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  filter.Arma             Filter function for Arma, Ar or Ma process
+#  .filterArma             Filter function for Arma, Ar or Ma process
 #                          
 ################################################################################
 
 
-filter.Arma <- function(
+.filterArma <- function(
   data,
   m,n, 
   mu, a, b)
@@ -92,11 +92,11 @@ filter.Arma <- function(
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  filter.Aparch          Filtering Aparch process and its particular cases
+#  .filterAparch          Filtering Aparch process and its particular cases
 #                          
 ################################################################################
 
-filter.Aparch <- function(
+.filterAparch <- function(
   data,init.Value = NULL,
   p,q, 
   mu, omega, alpha, beta, gamma, delta)
@@ -175,12 +175,12 @@ filter.Aparch <- function(
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  filter1.garch11Fit      Filter function for Garch(1,1) process. This code 
+#  .filterGarch11Fit      Filter function for Garch(1,1) process. This code 
 #                          snipet was taken from the Wurtz et al. (2006) paper
 #                          
 ################################################################################
 
-filter1.garch11Fit <- function(data, parm)
+.filterGarch11Fit <- function(data, parm)
 {
   mu = parm[1]; omega = parm[2]; alpha = parm[3]; beta = parm[4]
   z = (data-mu); Mean = mean(z^2)
@@ -210,12 +210,12 @@ filter1.garch11Fit <- function(data, parm)
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  filter.Aparch.Forloop   Conditional Variance filtering - 
+#  .filterAparchForLoop   Conditional Variance filtering - 
 #                          for loop - Wuertz et al. (2006) 
 #                          
 ################################################################################
 
-filter.Aparch.Forloop <- function(
+.filterAparchForLoop <- function(
     data,h.init = 0.1,
     p,q, 
     mu, omega, alpha, beta, gamma, delta)

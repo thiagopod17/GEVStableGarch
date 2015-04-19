@@ -26,7 +26,7 @@
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function GSgarch.Dist
+# Test Cases for function gsGarchDist
 # ------------------------------------------------------------------------------
 library(skewt)
 plot(function(x)dskt(x,df = 0.3,gamma = 2),-3,1)

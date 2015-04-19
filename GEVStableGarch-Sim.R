@@ -19,12 +19,12 @@
 
 ################################################################################
 # FUNCTION:               SIMULATION:
-#  GSgarch.Sim            Simulates a GARCH/APARCH process with GEV or stable
+#  gsSim            Simulates a GARCH/APARCH process with GEV or stable
 #						  conditional distribution
 ################################################################################
 
 
-GSgarch.Sim <-
+gsSim <-
     function(spec = garchSpec(), n = 100, n.start = 100)
 {
     # Description:

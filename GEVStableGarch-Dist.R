@@ -20,14 +20,14 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  GSgarch.Dist            Computes density values for several 
+#  .armaGarchDist          Computes density values for several 
 #                          conditional distributions
 ################################################################################
 
 
-GSgarch.Dist <-
+.armaGarchDist <- 
     function(z, hh, shape = 4, skew = 0.1, 
-    cond.dist = c("dstable", "dgev", "dt3", "dnorm", "dstd", "dsstd", "dskstd", "dged"), 
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
     GStol = 1e-8) 
 {
     # Description:
@@ -56,11 +56,11 @@ GSgarch.Dist <-
     }
     
     # normal conditional distribution
-    if(cond.dist == "dnorm")
+    if(cond.dist == "norm")
         return(-sum(log(dnorm(x = z/hh)/hh)))
     
     # t-student conditional distribution.
-    if(cond.dist == "dstd")
+    if(cond.dist == "std")
     {
         if(!(shape > 2))
             stop("Invalid shape in std distribution. shape > 2")
@@ -69,7 +69,7 @@ GSgarch.Dist <-
     }
     
     # skew t-student conditional (standardized version defined in Wurtz)
-    if(cond.dist == "dsstd")
+    if(cond.dist == "sstd")
     {
         if(!(shape > 2) || !(skew > 0))
         {
@@ -91,7 +91,7 @@ GSgarch.Dist <-
     }
     
     # skew t-student from Fernandez, C. and Steel, M. F. J. (1998)
-    if(cond.dist == "dskstd")
+    if(cond.dist == "skstd")
     {
       if(!(shape > 2) || !(skew > 0))
       {
@@ -104,7 +104,7 @@ GSgarch.Dist <-
     }
     
     # t3 distribution
-    if(cond.dist == "dt3")
+    if(cond.dist == "t3")
     {
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
         {
@@ -119,7 +119,7 @@ GSgarch.Dist <-
     }
     
     # GED conditional distribution.
-    if(cond.dist == "dged")
+    if(cond.dist == "ged")
     {
       if(!(shape > 0))
         stop("Invalid shape in std distribution. shape > 0")
@@ -128,7 +128,7 @@ GSgarch.Dist <-
     }
     
     # GEV conditional distribution
-    if(cond.dist == "dgev")
+    if(cond.dist == "gev")
     {
         if(abs(shape) < 1e-6)
           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
@@ -149,7 +149,7 @@ GSgarch.Dist <-
     }
     
     # stable conditional distribution
-    if(cond.dist == "dstable")
+    if(cond.dist == "stable")
     {
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
             stop("Invalid shape or skew in stable parameters. 1 < shape < 2 and |skew| < 1")

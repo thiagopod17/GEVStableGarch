@@ -20,56 +20,56 @@
 
 ################################################################################
 # TEST CASES FOF FUNCTIONS:               SPECIFICATION:
-#  filter.Aparch                    Test how our filter.Aparh function
-#  filter1.garch11Fit               build with matrices operation is related  
-# filter.Aparch.Forloop   				  to the other filter functions described
+#  .filterAparch                    Test how our filter.Aparh function
+#  .filterGarch11Fit               build with matrices operation is related  
+# .filterAparchForLoop   				  to the other filter functions described
 #                                   in Wuertz et al. (2006)
 ################################################################################
 
 library(fGarch)
 data(dem2gbp)
-x = dem2gbp[, 1][1:1000]
+x = dem2gbp[, 1][1:100]
 
 ###############
 # Comparison between our function and the filter function from Wurtz.
 # garch(1,1)
-filter1Result <- filter.Aparch(data = x, p = 1,q = 1,mu = 0.4, omega = 0.1, 
+filter1Result <- .filterAparch(data = x, p = 1,q = 1,mu = 0.4, omega = 0.1, 
                                alpha = c(0.3), beta = c(0.5), gamma = c(0),delta = 2)
 
-filter2Result <- filter1.garch11Fit(x,parm = c(mu = 0.4, omega = 0.1, alpha = 0.3, beta = 0.5))
+filter2Result <- .filterGarch11Fit(x,parm = c(mu = 0.4, omega = 0.1, alpha = 0.3, beta = 0.5))
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.5381661^2, p = 1,q = 1,mu = 0.4, omega = 0.1, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.5381661^2, p = 1,q = 1,mu = 0.4, omega = 0.1, 
                                        alpha = c(0.3), beta = c(0.5), gamma = c(0),delta = 2)
 
 cbind(filter1Result[,1],filter2Result[,1],filter3Result[,1],filter1Result[,2],filter2Result[,2],filter3Result[,2])
 
 # arch(1) == garch(1,0): put p = 1, q = 1 and beta = 0. 
-# Notice that the filter.Aparch.Forloop must be equal 
+# Notice that the .filterAparchForLoop must be equal 
 # to the other filter functions after a couple of steps. 
 # This is due to the different starting points they have.
-filter1Result <- filter.Aparch(data = x, p = 1,q = 1,mu = 0.4, omega = 0.1, 
+filter1Result <- .filterAparch(data = x, p = 1,q = 1,mu = 0.4, omega = 0.1, 
                                alpha = c(0.3), beta = c(0), gamma = c(0),delta = 2)
-filter2Result <- filter1.garch11Fit(x,parm = c(mu = 0.4, omega = 0.1, alpha = 0.3, beta = 0))
+filter2Result <- .filterGarch11Fit(x,parm = c(mu = 0.4, omega = 0.1, alpha = 0.3, beta = 0))
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.4136527^2, p = 1,q = 1,mu = 0.4, omega = 0.1, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.4136527^2, p = 1,q = 1,mu = 0.4, omega = 0.1, 
                                        alpha = c(0.3), beta = c(0), gamma = c(0),delta = 2)
 cbind(filter1Result[,1],filter2Result[,1],filter3Result[,1],filter1Result[,2],filter2Result[,2],filter3Result[,2])
 
 # garch(2,2)
-filter1Result <- filter.Aparch(data = x, p = 2,q = 2,mu = 0.4, omega = 0.1, 
+filter1Result <- .filterAparch(data = x, p = 2,q = 2,mu = 0.4, omega = 0.1, 
                                alpha = c(0.3,0.1), beta = c(0.1,0.2), gamma = c(0,0),delta = 2)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 2,q = 2,mu = 0.4, omega = 0.1, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 2,q = 2,mu = 0.4, omega = 0.1, 
                                        alpha = c(0.3,0.1), beta = c(0.1,0.2), gamma = c(0,0),delta = 2)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 
 
 # arch(15) == garch(15,0)
-filter1Result <- filter.Aparch(data = x, p = 15,q = 1,mu = 0.4, omega = 0.1, 
+filter1Result <- .filterAparch(data = x, p = 15,q = 1,mu = 0.4, omega = 0.1, 
                                alpha = rep(0.03,15), beta = c(0), gamma = rep(0,15),delta = 2)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 15,q = 1,mu = 0.4, omega = 0.1, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 15,q = 1,mu = 0.4, omega = 0.1, 
                                        alpha = rep(0.03,15), beta = c(0), gamma = rep(0,15),delta = 2)
 a <- NULL; 
 a <- 0.2
@@ -79,50 +79,50 @@ cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 filter1Result[,2]-filter3Result[,2]
 
 # arch(15) == garch(15,0)
-filter1Result <- filter.Aparch(data = x, p = 15,q = 1,mu = 0.4, omega = 0.1, 
+filter1Result <- .filterAparch(data = x, p = 15,q = 1,mu = 0.4, omega = 0.1, 
                                alpha = rep(0.03,15), beta = c(0), gamma = rep(0,15),delta = 2)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 15,q = 1,mu = 0.4, omega = 0.1, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 15,q = 1,mu = 0.4, omega = 0.1, 
                                        alpha = rep(0.03,15), beta = c(0), gamma = rep(0,15),delta = 2)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 filter1Result[,2]-filter3Result[,2]
 
 # aparch(4,5)
-filter1Result <- filter.Aparch(data = x, p = 4,q = 5,mu = -5, omega = 5, 
+filter1Result <- .filterAparch(data = x, p = 4,q = 5,mu = -5, omega = 5, 
                                alpha = rep(0.05,4), beta = c(0.1,0.03,0.02,0.005,0.02), gamma = rep(0.9,4),delta = 1.1)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 4,q = 5,mu = -5, omega = 5, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 4,q = 5,mu = -5, omega = 5, 
                                        alpha = rep(0.05,4), beta = c(0.1,0.03,0.02,0.005,0.02), gamma = rep(0.9,4),delta = 1.1)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 filter1Result[,2]-filter3Result[,2]
 
 # aparch(1,1)
-filter1Result <- filter.Aparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
+filter1Result <- .filterAparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
                                alpha = rep(0.3), beta = c(0.1), gamma = rep(0),delta = 2)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 1,q =1 ,mu = -5, omega = 5, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 1,q =1 ,mu = -5, omega = 5, 
                                        alpha = rep(0.3), beta = c(0.1), gamma = rep(0),delta = 2)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 filter1Result[,2]-filter3Result[,2]
 
 # aparch(2,2)
-filter1Result <- filter.Aparch(data = x, p = 2,q =2 ,mu = -5, omega = 5, 
+filter1Result <- .filterAparch(data = x, p = 2,q =2 ,mu = -5, omega = 5, 
                                alpha = rep(0.1,2), beta = c(0.1,0.3), gamma = rep(0,2),delta = 1.1)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 2,q =2 ,mu = -5, omega = 5, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 2,q =2 ,mu = -5, omega = 5, 
                                        alpha = rep(0.1,2), beta = c(0.1,0.3), gamma = rep(0,2),delta = 1.1)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
 filter1Result[,2]-filter3Result[,2]
 
 # aparch(1,0)
-filter1Result <- filter.Aparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
+filter1Result <- .filterAparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
                                alpha = 0.2, beta = 0 , gamma = 0, delta = 20)
 
-filter3Result <- filter.Aparch.Forloop(data = x, h.init = 0.1, p = 1,q =1 ,mu = -5, omega = 5, 
+filter3Result <- .filterAparchForLoop(data = x, h.init = 0.1, p = 1,q =1 ,mu = -5, omega = 5, 
                                        alpha = 0.2, beta = 0 , gamma = 0, delta = 20)
 
 cbind(filter1Result[,1],filter3Result[,1],filter1Result[,2],filter3Result[,2])
@@ -132,7 +132,7 @@ filter1Result[,2]-filter3Result[,2]
 # Testing different starting points in our filter function
 
 # arch(1) == garch(1,0)
-filter1Result <- filter.Aparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
+filter1Result <- .filterAparch(data = x, p = 1,q =1 ,mu = -5, omega = 5, 
                                alpha = 0.2, beta = 0 , gamma = 0, delta = 20)
 
 filter2Result <- filter.Aparch(data = x, p = 1,q =1 ,mu = -5, omega = 5,init.Value = 100, 
@@ -142,7 +142,7 @@ cbind(filter1Result[,2],filter2Result[,2])
 filter1Result[,2]-filter2Result[,2]
 
 # aparch(2,3)
-filter1Result <- filter.Aparch(data = x, p = 2,q =3 ,mu = -2, omega = 0.5, 
+filter1Result <- .filterAparch(data = x, p = 2,q =3 ,mu = -2, omega = 0.5, 
                                alpha = rep(0.1,2), beta = rep(0.04,3) , gamma = c(0.3,-0.8), delta = 1.2)
 
 filter2Result <- filter.Aparch(data = x, p = 2,q =3 ,mu = -2, omega = 0.5,init.Value = 100, 
@@ -155,10 +155,10 @@ filter1Result[,2]-filter2Result[,2]
 # attention that we are not going to start our time series deliberatelly. We may start it 
 # at a place that is representative of the conditional variance.
 x <- rnorm(100000)
-filter1Result <- filter.Aparch(data = x, p = 59,q =100 ,mu = -2, omega = 0.5, 
+filter1Result <- .filterAparch(data = x, p = 59,q =100 ,mu = -2, omega = 0.5, 
                                alpha = rep(5,59), beta = rep(0.04,100) , gamma = rep(0.5,59), delta = 2)
 
-filter2Result <- filter.Aparch(data = x, p = 59,q =100 ,mu = -2, omega = 0.5, init.Value = var((abs(x+2))^2),
+filter2Result <- .filterAparch(data = x, p = 59,q =100 ,mu = -2, omega = 0.5, init.Value = var((abs(x+2))^2),
                                alpha = rep(5,59), beta = rep(0.04,100) , gamma = rep(0.5,59), delta = 2)
 
 cbind(filter1Result[,2],filter2Result[,2])
@@ -177,22 +177,22 @@ data(dem2gbp)
 x = dem2gbp[, 1][1:1000]
 
 # Try to enter invalid parameters
-result <- filter.Arma(data = x,m = 1,n = 1, mu = 0, a = c(3,3), b = 0)
-result <- filter.Arma(data = x,m = 1,n = 3, mu = 0, a = c(3,3), b = c(3,3))
-result <- filter.Arma(data = x,m = 1,n = 3, mu = 0, a = c(3,3), b = c(3,3))
+result <- .filterArma(data = x,m = 1,n = 1, mu = 0, a = c(3,3), b = 0)
+result <- .filterArma(data = x,m = 1,n = 3, mu = 0, a = c(3,3), b = c(3,3))
+result <- .filterArma(data = x,m = 1,n = 3, mu = 0, a = c(3,3), b = c(3,3))
 
 
 # filter with no variables. Must be equal to the original time series
-result <- filter.Arma(data = x,m = 1,n = 1,mu = 0,a = 0,b = 0)
+result <- .filterArma(data = x,m = 1,n = 1,mu = 0,a = 0,b = 0)
 x-result
 
 # filter with mean = 1. Must be equal to the original time series - 1
 x = dem2gbp[, 1][1:1000]
-result <- filter.Arma(data = x,m = 1,n = 1,mu = 1,a = 0,b = 0)
+result <- .filterArma(data = x,m = 1,n = 1,mu = 1,a = 0,b = 0)
 x - 1 - result
 
 # Create a random arma(1,1) process with random residuals and try 
-# to rebuild the residuals vector with function filter.Arma 
+# to rebuild the residuals vector with function .filterArma 
 N = 10000; mu = 100; a = 0.3; b = 0.3; x.init = 0; z.init = 0;
 z = rnorm(N)
 x = rep(NA,N)
@@ -200,14 +200,14 @@ x[1] = mu + a*x.init + b*z.init + z[1]
 for (t in 2:N)
   x[t] = mu + a*x[t-1] + b*z[t-1] + z[t]
 
-result <- filter.Arma(data = x,m = 1,n = 1,mu = mu,a = a,b = b)
+result <- .filterArma(data = x,m = 1,n = 1,mu = mu,a = a,b = b)
 cbind(result,z)
 summary((result-z)/result)
 
 # Filter a time series and then try to reconstruct the original
-# time series with the result obtained from filter.Arma function
+# time series with the result obtained from .filterArma function
 data = dem2gbp[, 1]
-z = filter.Arma(data = data,m = 1,n = 1,mu = mu,a = a,b = b)
+z = .filterArma(data = data,m = 1,n = 1,mu = mu,a = a,b = b)
 N = length(x); mu = 100; a = 0.3; b = 0.3; x.init = 0; z.init = 0;
 x = rep(NA,N)
 x[1] = mu + a*x.init + b*z.init + z[1]
@@ -344,7 +344,7 @@ arma11Fit = function(x)
     
     fit$par
     -sum(log(armaDist(h, fit$par[4])))
-    fit$residuals = filter.Arma(x,1,1,mu = fit$par[1], a = fit$par[2],b = fit$par[3])
+    fit$residuals = .filterArma(x,1,1,mu = fit$par[1], a = fit$par[2],b = fit$par[3])
     fit
 
 }
@@ -359,4 +359,4 @@ fitArima <- arima(x, order = c(1,0,1), optim.control = list(trace = 0))
 cbind(fitMeu$residuals,fitArima$residuals)
 cbind(fitMeu$par[1:3],fitArima$coef[c(3,1,2)])
 
-filter.Arma(x,1,1,mu = 29.9836, a = -0.6229,b = 0.6446)
+.filterArma(x,1,1,mu = 29.9836, a = -0.6229,b = 0.6446)

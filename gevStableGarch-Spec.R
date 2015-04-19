@@ -19,18 +19,18 @@
 
 ################################################################################
 # FUNCTION:               SPECIFICATION:
-#  GSgarchSpec               Creates a 'fGEVSTABLEGARCHSPEC' object from scratch
+#  gsSpec               Creates a 'fGEVSTABLEGARCHSPEC' object from scratch
 ################################################################################
 
 
-# GSgarchSpec function
-GSgarchSpec <-
+# gsSpec function
+gsSpec <-
     function (model = list(), presample = NULL,
     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
     rseed = NULL)
 {	
     # Description:
-    #   Creates a "GSgarchSpec" object.
+    #   Creates a "gsSpec" object.
 
     # Arguments:
     #   model - a list with the model parameters as entries

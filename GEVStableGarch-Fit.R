@@ -20,18 +20,18 @@
 ################################################################################
 #  FUNCTION:               DESCRIPTION:
 #
-#  GSgarch.Fit             Fits ARMA-GARCH or ARMA-APARCH model  
+#  gsFit                   Fits ARMA-GARCH or ARMA-APARCH model  
 ################################################################################
 
-GSgarch.Fit <-
+gsFit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("norm", "std", "sstd", "dskstd", "gev", "stable", "ged","t3"),
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
     include.mean = TRUE, 
-    algorithm = c("sqp","sqp.restriction","nlminb"),
-    printRes = TRUE,
+    algorithm = c("sqp", "sqp.restriction", "nlminb"),
     control = NULL,
+    tolerance = NULL,
     title = NULL,
     description = NULL,
     DEBUG = FALSE)
@@ -106,9 +106,8 @@ function(
     CALL = match.call()  
   
     # Configuring Tolerance
-    GSstable.tol = 1e-2 # upper and lower bounds tolerance. Should be greater than tol
-    GStol = 1e-8 # General tolerance for arma-garch parameters. 
-    # In the beggining it was set to 1e-5
+    if( is.null (tolerance) )
+        tolerance = list( TOLG = 1e-8, TOLSTABLE = 1e-2, TOLSTATIONARITY = 1e-3 )
 
     # Getting order model from object formula
     formula.input <- formula
@@ -136,6 +135,7 @@ function(
     
     
     # Configuring model order
+    printRes = TRUE
     ARMAonly <- FALSE
     AR <- FALSE 
     MA <- FALSE 
@@ -156,7 +156,7 @@ function(
     # Initial configurations
     data <- data; 
     N <- length(data)
-    out <- NULL # output of the GSgarch.Fit function
+    out <- NULL # output of the gsFit function
     out$order <- c(m,n,p,q,include.mean,APARCH)
     TMPvector <- c(if(m != 0 || n != 0) c("arma(",m,",",n,")-"),
                    if(APARCH==FALSE)c("garch(",p,",",q,")"),
@@ -212,7 +212,7 @@ function(
          
         if( cond.dist == "stable")
         {
-            if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
+            if( shape-delta < tolerance$TOLSTABLE || abs(shape) < tolerance$TOLSTABLE ||
                   !(abs(skew) < 1) || !((shape - 2) < 0) )
             {
               return(1e99)
@@ -229,7 +229,7 @@ function(
         
         # Filters the Time series to obtain the i.i.d. sequence of 
         # 'innovations' to evaluate the Log-likelihood function
-        z <- filter.Arma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+        z <- .filterArma(data = data, m = m, n = n, mu = mu, a = a, b = b)
         
         if(DEBUG)
         {
@@ -247,7 +247,7 @@ function(
         }
         
         # Return llh function        
-        llh.dens <- GSgarch.Dist(z = z, hh = sigma, shape = shape, 
+        llh.dens <- .armaGarchDist(z = z, hh = sigma, shape = shape, 
                                  skew = skew, cond.dist = cond.dist)
         llh <- llh.dens
         if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
@@ -310,21 +310,21 @@ function(
         cond.gev <- FALSE
         cond.stable <- FALSE
         parset <- c(omega,alpha,if(!GARCH) beta,delta)
-        cond.general <- any(parset < GStol)
+        cond.general <- any(parset < tolerance$TOLG)
         
 #         if( cond.dist == "norm")
-#             cond.normal <- ( sum(alpha) + sum(beta) > 1 - GStol )
+#             cond.normal <- ( sum(alpha) + sum(beta) > 1 - tolerance$TOLG )
 #         
 #         if( cond.dist == "stable")
 #         {
-#             if( shape-delta < GSstable.tol || abs(shape) < GSstable.tol ||
+#             if( shape-delta < tolerance$TOLSTABLE || abs(shape) < tolerance$TOLSTABLE ||
 #                   !(abs(skew) < 1) || !((shape - 2) < 0) )
 #             {
 #               return(1e99)
 #             }
 #             tau <- skew*tan(shape*pi/2)
 #             kdelta <- pi/2
-#             if(abs(delta-1) > GStol) 
+#             if(abs(delta-1) > tolerance$TOLG) 
 #                 kdelta <- gamma(1 - delta)*cos(pi*delta/2)
 #                 lamb <- kdelta^(-1)*gamma(1 - delta/shape)*(1 + tau^2)^(delta/2/shape)*
 #                     cos(delta/shape*atan(tau))
@@ -344,15 +344,15 @@ function(
         # 'innovations' to evaluate the Log-likelihood function
         if(AR == TRUE && MA  == TRUE)
         {
-            filteredSeries <- filter.Aparch(data = data,p = p,q = q, 
+            filteredSeries <- .filterAparch(data = data,p = p,q = q, 
               mu = mu, omega = omega, alpha = alpha, beta = beta, gamma = gm, delta = delta)
             z <- filteredSeries[,1]
             hh <- filteredSeries[,2]          
         }
         if(AR == FALSE || MA == FALSE)
         {
-            filteredArma <- filter.Arma(data = data, m = m, n = n, mu = mu, a = a, b = b)
-            filteredSeries <- filter.Aparch(data = filteredArma,p = p,q = q, 
+            filteredArma <- .filterArma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+            filteredSeries <- .filterAparch(data = filteredArma,p = p,q = q, 
                               mu = 0, omega = omega, alpha = alpha, beta = beta, gamma = gm, delta = delta)
             z <- filteredSeries[,1]
             hh <- filteredSeries[,2]          
@@ -400,8 +400,9 @@ function(
 
 
     # Getting start, lower and upper bound for parameters to perform optimization
-    start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
-                              MA = MA, ARMAonly = ARMAonly, cond.dist = cond.dist)
+    start <- .getStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
+                              MA = MA, ARMAonly = ARMAonly, cond.dist = cond.dist,
+                              TOLG = tolerance$TOLG, TOLSTABLE = tolerance$TOLSTABLE)
     if(DEBUG)
     {
         print("start")
