@@ -1,17 +1,6 @@
 #   Things to do on Package now
-   
-
-    - Implement the ARMA dist function for every distribution.
-    - Test the pure ARMA model implementation. Tip: Compare with the code sent to Doctor Mohammad because     at that point the code was working well.
-    - Correct ARMA-stable estimation
-      1.1 get.start para stable sem pegar variancia. pegar mean(abs(data-Mean))
-      1.2 garch.Dist, fazer diferente. Calcular density stable com parametros z 
-      (data) e hh(para sigma da estavel)
-      1.3 definir valor de N para filter.Arma
-
-    - Test the arma(1,1)-aparch(1,1) model with conditional sstd distribution.
     - Configure the sqp.restriction method for all distribution functions.
-   - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm
+    - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm
     - Test gsAparchMoments function.
     - Arrumar Sim function 
     - Arrumar AIC function
@@ -30,7 +19,7 @@
 # Naming: 
       user functions: gsFit, gsSelect, gsMomentAparch
       variables: cond.dist, arma.order, garch.llh
-      constans: TOL, TOLSTABLE, ARMA.ORDER
+      constans: TOLG, TOLSTABLE, ARMA.ORDER
       internal functions: .getStart, .getFormula
 
 
@@ -73,10 +62,11 @@ gsGetStart     .getStart
 
 # Future modifications on package:
 
-    -Separar funções ARMA com GEV e estavel das funções ARMA-GARCH.
+    - Implement the ARMA dist function for every distribution. 
+    - Currently the code is working for ARMA(1,1) ARMA(p,1) ARMA(1,n) models with condtional normal. 
     - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
     - How to cite the code I used from package fGarch: Sim and garchSpec functions.
-    - Prediction methods
+    - Prediction methods using the results of Brockwell for stable prediction.
 
 
 

@@ -26,9 +26,9 @@
 
 
 .armaGarchDist <- 
-    function(z, hh, shape = 4, skew = 0.1, 
+    function(z, hh, shape = 1.5, skew = 0, 
     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
-    GStol = 1e-8) 
+    TOLG = 1e-8) 
 {
     # Description:
     #   Calculates the likelihood function for a vector of points (z)
@@ -42,7 +42,7 @@
     #   h - vector of conditional variances ????? BETTER DESCRIPTION NEEDED.
     #   cond.dist - name of the conditional distribution, one of
     #       gev, stable, norm, std, sstd
-    #   GStol - general tolerance for arma-garch parameters. 
+    #   TOLG - general tolerance for arma-garch parameters. 
     #   In the beggining it was set to 1e-5
       
     # FUNCTION:  
@@ -139,7 +139,7 @@
         if(sum(is.na(y)) || sum(is.nan(y)) ||
              sum(is.infinite(y))) 
           return(1e99)
-        gev.cond.gD <- any(y < GStol ) || abs(xi) < 1e-6
+        gev.cond.gD <- any(y < TOLG ) || abs(xi) < 1e-6
         if(gev.cond.gD)
         {
           return(1e99)

@@ -305,15 +305,37 @@ model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
 (model1@fit$par-fit1@fit$par)/fit1@fit$par
 
 
-# arma(1,1)-aparch(1,1)-std-intercept
+# arma(1,1)-aparch(1,1)-sstd-intercept
 fit1 <- gsFit(data = x, formula = ~arma(1,1)+aparch(1,1),
                     cond.dist = "sstd", include.mean = TRUE, 
-                    algorithm = "sqp")
+                    algorithm = "nlminb")
 
 model1 <- garchFit(data = x, formula = ~arma(1,1)+aparch(1,1),
                    cond.dist = "sstd", include.mean = TRUE)
 (model1@fit$par-fit1@fit$par)/fit1@fit$par
 cbind(model1@fit$par,fit1@fit$par)
+
+
+# arma(2,2)-aparch(2,2)-sstd-intercept
+fit1 <- gsFit(data = x, formula = ~arma(2,2)+aparch(2,2),
+              cond.dist = "sstd", include.mean = TRUE, 
+              algorithm = "nlminb")
+
+model1 <- garchFit(data = x, formula = ~arma(2,2)+aparch(2,2),
+                   cond.dist = "sstd", include.mean = TRUE)
+(model1@fit$par-fit1@fit$par)/fit1@fit$par
+cbind(model1@fit$par,fit1@fit$par)
+
+# arma(2,2)-aparch(2,2)-skstd-intercept
+fit1 <- gsFit(data = x, formula = ~arma(2,2)+aparch(2,2),
+              cond.dist = "skstd", include.mean = TRUE, 
+              algorithm = "nlminb")
+model1 <- garchFit(data = x, formula = ~arma(2,2)+aparch(2,2),
+                   cond.dist = "sstd", include.mean = TRUE)
+comparison = cbind(fit1@fit$par,model1@fit$par); colnames(comparison) = c("gsFit","garchFit")
+comparison
+fit1@fit$llh
+model1@fit$llh
 
 
 # arma(1,1)-garch(1,1)-t3-intercept-nlminb
@@ -401,23 +423,25 @@ abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
 # Notes:
 # The "sigma" parameter is the square root of the sigma2 parameter estimated
 # by function "arima".
+# works really well for arma(1,1), arma(m,1), arma(0,n),  arma(1,n), arma(0,n)
 library(fGarch)
+library(Rsolnp)
 library(FitARMA)
 data(dem2gbp)
-x = dem2gbp[, 1]
+x = dem2gbp[, 1]+10
 # arma(1,1)-norm-intercept-nlminb
 m <- 2
 n <- 2
-fit1 <- gsFit(data = x, formula = ~arma(2,2),
-                    cond.dist = "norm", include.mean = TRUE, 
-                    algorithm = "nlminb", DEBUG = FALSE, control = list(trace = 3))
+
+fit1 <- gsFit(data = x, 
+              formula = as.formula(paste ("~ arma(",m,", ",n,")", sep = "", collapse = NULL)),
+              cond.dist = "norm", include.mean = TRUE, 
+              algorithm = "sqp", DEBUG = FALSE, control = list(trace = 3))
 model1 <- arima(x, order = c(m, 0, n))
 model2 <- FitARMA(x, order = c(m,0,n))
-
 par.result <- cbind(model1$coef[c(m+n+1,1:(m+n))],model1$coef[c(m+n+1,1:(m+n))],fit1@fit$par[1:(1+m+n)])
 colnames(par.result) = c("arima","FitARMA","gsFit")
 par.result
-
 absoluteError <- abs((fit1@fit$par[1:(1+m+n)]-model1$coef[c(m+n+1,1:(m+n))])/fit1@fit$par[1:(1+m+n)])
 absoluteError
 fit1@fit$llh

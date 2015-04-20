@@ -140,7 +140,7 @@
             MA(1)-APARCH(1,0):     ~arma(0,1)+aparch(1,0),
             ARMA(1,1):             ~arma(1,1),
             ARCH(2):               ~garch(1,0),
-            For more details just type: ?GSgarch.Fit")
+            For more details just type: ?gsFit")
     
     # Return
     list(formula.mean = formula.mean,formula.var = formula.var, 

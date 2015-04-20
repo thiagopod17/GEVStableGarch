@@ -229,7 +229,7 @@ function(
         
         # Filters the Time series to obtain the i.i.d. sequence of 
         # 'innovations' to evaluate the Log-likelihood function
-        z <- .filterArma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+        z <- .filterArma(data = data, size.data = N, m = m, n = n, mu = mu, a = a, b = b)
         
         if(DEBUG)
         {
@@ -247,7 +247,7 @@ function(
         }
         
         # Return llh function        
-        llh.dens <- .armaGarchDist(z = z, hh = sigma, shape = shape, 
+        llh.dens <- .armaDist(z = z, sigma = sigma, shape = shape, 
                                  skew = skew, cond.dist = cond.dist)
         llh <- llh.dens
         if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
@@ -351,7 +351,7 @@ function(
         }
         if(AR == FALSE || MA == FALSE)
         {
-            filteredArma <- .filterArma(data = data, m = m, n = n, mu = mu, a = a, b = b)
+            filteredArma <- .filterArma(data = data, size.data = N, m = m, n = n, mu = mu, a = a, b = b)
             filteredSeries <- .filterAparch(data = filteredArma,p = p,q = q, 
                               mu = 0, omega = omega, alpha = alpha, beta = beta, gamma = gm, delta = delta)
             z <- filteredSeries[,1]
@@ -386,7 +386,7 @@ function(
         }
         
         # Return llh function 
-        llh.dens <- GSgarch.Dist(z = z, hh = hh, shape = shape, 
+        llh.dens <- .armaGarchDist(z = z, hh = hh, shape = shape, 
                                  skew = skew, cond.dist = cond.dist)
         llh <- llh.dens
         if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
@@ -484,8 +484,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","dskstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","dskstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","skstd","ged","t3")  == cond.dist)) 
                       (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -496,8 +496,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","dskstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","dskstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","skstd","ged","t3")  == cond.dist)) 
                       (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
@@ -510,8 +510,8 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stable","t3","dskstd")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd","ged","t3","dskstd")  == cond.dist)) 
+                  if(any(c("sstd","stable","t3","skstd")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stable","sstd","ged","t3","skstd")  == cond.dist)) 
                     paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     

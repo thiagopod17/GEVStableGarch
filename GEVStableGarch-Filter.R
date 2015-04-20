@@ -30,7 +30,7 @@
 
 
 .filterArma <- function(
-  data,
+  data, size.data,
   m,n, 
   mu, a, b)
 {  
@@ -67,7 +67,7 @@
     # z[t] = X[t] - a1*X[t-1] - b1*z[t-1]
     # See the program documentation for more details.
     
-    N <- length(data)
+    N <- size.data
     x.ZeroMean <- data - mu
     x2 = 0
     V <- c(x.init,x.ZeroMean[1:(N-1)])
