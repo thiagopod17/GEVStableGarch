@@ -171,7 +171,8 @@
     shape.upper <- 4
     skew.upper <- 4
     gm.upper <- rep(1 - TOLG,p)
-    delta.upper <- 3 + TOLG
+    # delta.upper <- 3 + TOLG
+    delta.upper <- 30 + TOLG
     sigma.upper <- 10*Var
     
     # Setting skew and shape appropriatelly for other conditional Distributions
@@ -206,8 +207,11 @@
     if(cond.dist == "gev")
     {
         mean.init <- 0
-        shape.init <- 0.01; beta.init <- rep(0.4/q,q)
-        shape.lower <- -0.5 + TOLG; shape.upper <- 0.5 - TOLG
+        shape.init <- 0.1; 
+        alpha.init <- rep(0.05/p,p)
+        beta.init <- rep(0.8/q,q)
+        # shape.lower <- -0.5 + TOLG; shape.upper <- 0.5 - TOLG
+        shape.lower <- -10 + TOLG; shape.upper <- 10 - TOLG
     }
     if(cond.dist == "stable")
     {
@@ -228,10 +232,11 @@
                  beta.lower,delta.lower,skew.lower,shape.lower)
         upper <- c(mean.upper,arma.upper,omega.upper,alpha.upper,gm.upper,
                beta.upper,delta.upper,skew.upper,shape.upper)
-        paste("alpha", 1:p, sep = "")
+        
         namesStart = c("mu", paste("ar", 1:length(ar.init), sep = ""), paste("ma", 1:length(ma.init), sep = ""),
                        "omega", paste("alpha", 1:length(alpha.init), sep = ""),paste("gm", 1:length(gm.init), sep = ""), 
-                       paste("beta", 1:length(beta.init), sep = ""), "delta","skew",paste("shape", 1:length(shape.init), sep = ""))
+                       paste("beta", 1:length(beta.init), sep = ""), "delta","skew",paste("shape", 1:length(shape.init), sep = ""))        
+        
     } else {
       init <- c(mean.init,arma.init,skew.init,shape.init,sigma.init)
       lower <- c(mean.lower,arma.lower,skew.lower,shape.lower,sigma.lower)

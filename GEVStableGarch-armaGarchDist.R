@@ -49,6 +49,8 @@
       
     # Error treatment of input parameters
     cond.dist = match.arg(cond.dist)
+    if(length(z) != length(hh))
+        stop("Error: Vectors 'z' and 'hh' have different length.")
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
     {
         warning("NA or zero element found in vector hh")
@@ -130,8 +132,8 @@
     # GEV conditional distribution
     if(cond.dist == "gev")
     {
-        if(abs(shape) < 1e-6)
-          stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
+#         if(abs(shape) < 1e-6)
+#           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
         sig <- hh
         xi <- shape
         arg <- z/sig
@@ -146,6 +148,10 @@
         }
         llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
         return(llh)
+          #xi = shape
+          # Result
+          #result = -sum(log(dgev(x = z/hh, xi = xi)/hh))
+          #return(result)
     }
     
     # stable conditional distribution

@@ -447,6 +447,114 @@ absoluteError
 fit1@fit$llh
 model1$loglik
 
+
+############
+# SQP.restriction algorithm
+
+library(fGarch)
+data(dem2gbp)
+library(skewt)
+x = dem2gbp[, 1]
+# c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged")
+
+
+# garch(1,1)-stable-intercept-NAO FIZ AINDA
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "stable", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+
+
+# garch(1,1)-gev-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "gev", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( tol = 1e-5, trace = 3, delta = 1e-3),
+              tolerance = list( TOLG = 1e-7, TOLSTABLE = 1e-2, TOLSTATIONARITY = 1e-3))
+
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "gev", include.mean = TRUE, 
+              algorithm = "sqp", control = list ( trace = 3) )
+
+
+
+# garch(1,1)-t3-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "t3", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "t3", include.mean = TRUE, 
+              algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
+gsMomentAparch(cond.dist = "t3", shape = fit1@fit$par[6:7], 
+               skew = fit1@fit$par[5], gm = 0, delta = 2)*fit1@fit$par[3] + fit1@fit$par[4]
+
+
+# garch(1,1)-norm-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "norm", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+fit1@fit$par[3] + fit1@fit$par[4]
+
+
+# garch(1,1)-skstd-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "skstd", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "skstd", include.mean = TRUE, 
+              algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
+
+.stationarityAparch(model = list(alpha = fit1@fit$par[3], beta = fit1@fit$par[4],
+                                 skew = fit1@fit$par[5], shape = fit1@fit$par[6], gm = 0,
+                                 delta = 2), formula = .getFormula(~garch(1,1)),
+                    cond.dist = "skstd")
+
+# garch(1,1)-aparch-intercept
+fit1 <- gsFit(data = x, formula = ~aparch(1,1),
+              cond.dist = "skstd", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+
+fit1 <- gsFit(data = x, formula = ~aparch(1,1),
+              cond.dist = "skstd", include.mean = TRUE, 
+              algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
+
+.stationarityAparch(model = list(alpha = fit1@fit$par[3], beta = fit1@fit$par[5],
+                                 skew = fit1@fit$par[7], shape = fit1@fit$par[8], gm = 0,
+                                 delta = 2), formula = .getFormula(~garch(1,1)),
+                    cond.dist = "skstd")
+
+
+
+
+gsMomentAparch(cond.dist = "skstd", shape = fit1@fit$par[6], 
+               skew = fit1@fit$par[5], gm = 0, delta = 2)*fit1@fit$par[3] + fit1@fit$par[4]
+
+
+# garch(1,1)-skstd-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "ged", include.mean = TRUE, 
+              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+
+fit1@fit$par[3] + fit1@fit$par[4]
+
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "ged", include.mean = TRUE, 
+              algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
+
+
+# garch(1,1)-sstd-intercept
+fit1 <- gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "sstd", include.mean = TRUE, 
+              algorithm = "sqp.restriction")
+
+model1 <- garchFit(data = x, formula = ~garch(1,1),
+         cond.dist = "sstd", include.mean = TRUE)
+fit1@fit$par[3]+fit1@fit$par[4]
+model1@fit$par[3]+model1@fit$par[4]
+
+
+.1179+0.8810
+
 ############
 # Testing the output object of class fGEVSTABLEGARCH
 

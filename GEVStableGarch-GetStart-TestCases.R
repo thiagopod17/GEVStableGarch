@@ -30,10 +30,9 @@
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-.getStart(data = x,m = 1,n = 1,p = 0,q = 0, 
+.getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
                  AR = FALSE, MA = FALSE,
-                 cond.dist = "norm", GSstable.tol.b = 2e-2, GStol.b = 1e-7)  
-
+                 cond.dist = "norm")  
 
 # Test the output for the t3 distribution
 library(fGarch)
@@ -41,9 +40,15 @@ data(dem2gbp)
 x = dem2gbp[,1]
 .getStart(data = x,m = 3,n = 3,p = 3,q = 2, 
                  AR = FALSE, MA = FALSE, ARMAonly = TRUE,
-                 cond.dist = "t3", GSstable.tol.b = 2e-2, GStol.b = 1e-7)  
+                 cond.dist = "t3")  
 
 
-
+# Test start parameters for gev distribution
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[,1]
+.getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
+          AR = FALSE, MA = FALSE, ARMAonly = FALSE,
+          cond.dist = "gev")  
 
 

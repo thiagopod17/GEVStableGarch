@@ -120,9 +120,12 @@
     # Conditional distribution
     cond.dist = match.arg(cond.dist)
     
+   #print(t(model))
+    
+    
     if(length(alpha) == 0  || length(alpha) != length(gm) || length(delta) != 1)
       stop("Failed to verify conditions:
-           if(length(alpha) == 0  || length(alpha) != length(gm) || length(delta) != 1)")
+           if(length(alpha) == 0 || length(delta) != 1)")
     
     # We must have a model with a non zero garch/aparch order
     if(formula$formula.order[3] == 0)
@@ -135,17 +138,18 @@
             return(sum(alpha) + sum(beta))  
         
         if(cond.dist == "gev")
-            kappa = try(gevMomentAparch(shape = shape, delta = 1, gm = 0), silent = TRUE)
+            kappa = try(.gevMomentAparch(shape = shape, delta = 2, gm = 0), silent = TRUE)
         
         if(cond.dist == "stable")
             kappa = try(.stableMomentPowerGarch (shape = shape, skew = skew, 
-                                                      delta = 1), silent = TRUE)
+                                                      delta = 2, gm = 0), silent = TRUE)
         
         if(cond.dist == "t3")
-           kappa = try(.t3MomentAparch(shape = shape, delta = 1, gm = 0), silent = TRUE)   
+           kappa = try(.t3MomentAparch(shape = shape, skew = skew, 
+                                       delta = 2, gm = 0), silent = TRUE)   
         
         if(cond.dist == "skstd")
-          kappa = try(.t3MomentAparch(shape = shape, delta = 1, gm = 0), silent = TRUE)  
+          kappa = try(.skstdMomentAparch(shape = shape, skew = skew, delta = 2, gm = 0), silent = TRUE)  
         
         if( is.numeric(kappa))
             return(kappa*sum(alpha) + sum(beta)) 
@@ -163,7 +167,7 @@
                kappa[i] = try(.stableMomentAparch (shape = shape, skew = skew,
                                                   delta = delta, gm = gm[i]), silent = TRUE)
             if(cond.dist == "gev")
-              kappa[i] = try(gevMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
+              kappa[i] = try(.gevMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
             if(cond.dist == "t3")
               kappa[i] = try(.t3MomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
@@ -208,10 +212,10 @@ gsMomentAparch <- function(
       kappa = .stableMomentAparch (shape = shape, skew = skew,
                                            delta = delta, gm = gm)
     if(cond.dist == "gev")
-      kappa = gevMomentAparch(shape = shape, delta = delta, gm = gm)
+      kappa = .gevMomentAparch(shape = shape, delta = delta, gm = gm)
     
     if(cond.dist == "t3")
-      kappa = .t3MomentAparch(shape = shape, delta = delta, gm = gm)  
+      kappa = .t3MomentAparch(shape = shape, delta = delta, skew = skew, gm = gm)  
     
     if(cond.dist == "norm")
       kappa = .normMomentAparch (delta = delta, gm = gm)
@@ -265,7 +269,7 @@ gsMomentAparch <- function(
 # ------------------------------------------------------------------------------
 
 
-.stdMomentAparch <- function(shape = 3, delta = 1.2, gm = 0, useFactorToMultiply = TRUE)
+.stdMomentAparch <- function(shape = 3, delta = 1.2, gm = 0)
 {
     # Description:
     #   Returns the following Expectation for a standard t-Student distribution
@@ -405,10 +409,11 @@ gsMomentAparch <- function(
     #   E[ (|z|-gm*z)^delta.
     #   Reference: GEVStableGarch papper
     
-    if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) || ( delta >= 1 / shape ) ) 
+    if( ( abs( gm ) >= 1 ) || ( delta <= 0 )) 
+    # if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) ) 
       stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
            The following conditions cannot be true
-           ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) || ( delta >= 1 / shape )")
+           ( abs( gm ) >= 1 ) || ( delta <= 0 )")
     
     xi = shape
     
@@ -422,10 +427,8 @@ gsMomentAparch <- function(
                   gm = gm, delta = delta)
     
     # Return
-    I
+    as.numeric(I[1])
 }
-
-
 
 # ------------------------------------------------------------------------------
 
@@ -434,35 +437,35 @@ gsMomentAparch <- function(
 .sstdMomentAparch <- function(shape = 4, skew = 1, delta = 1.2, gm = 0)
 {
   
-  # FIND A BETTER WAY TO CALCULATE IT INSTEAD OF USING THE INTEGRATION FUNCTION
-  
-  
-  # Description:
-  #   Returns the following Expectation for the sstd distribution implemented 
-  #   inside package fGarch
-  #   sstd distribution
-  #   E[ (|z|-gm*z)^delta.
-  #   Reference: fGarch package
-  
-  if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= 2 ) || ( skew <= 0 )) 
-    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
-           The following conditions cannot be true
-           ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= 2 ) || ( skew <= 0 )")
-  
-  nu = shape
-  xi = skew
-  
-  e = function(x, gm, delta) {
-    (abs(x)-gm*x)^delta * dsstd(x, nu = nu, xi = xi)
-  }
-  
-  # Compute Moment by Integration
-  I = integrate(e, lower = -Inf, upper = Inf, subdivisions = 1000,
-                rel.tol = .Machine$double.eps^0.25,
-                gm = gm, delta = delta)
-  
-  # Return
-  I
+    # FIND A BETTER WAY TO CALCULATE IT INSTEAD OF USING THE INTEGRATION FUNCTION
+    
+    
+    # Description:
+    #   Returns the following Expectation for the sstd distribution implemented 
+    #   inside package fGarch
+    #   sstd distribution
+    #   E[ (|z|-gm*z)^delta.
+    #   Reference: fGarch package
+    
+    if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= 2 ) || ( skew <= 0 )) 
+      stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+             The following conditions cannot be true
+             ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= 2 ) || ( skew <= 0 )")
+    
+    nu = shape
+    xi = skew
+    
+    e = function(x, gm, delta) {
+      (abs(x)-gm*x)^delta * dsstd(x, nu = nu, xi = xi)
+    }
+    
+    # Compute Moment by Integration
+    I = integrate(e, lower = -Inf, upper = Inf, subdivisions = 1000,
+                  rel.tol = .Machine$double.eps^0.25,
+                  gm = gm, delta = delta)
+    
+    # Return
+    as.numeric(I[1])
 }
 
 
@@ -584,19 +587,32 @@ gsMomentAparch <- function(
 # ------------------------------------------------------------------------------
 
 
-# APAGAR DEPOIS...
+
+
+# test input parametesr
+formula = ~ garch(1,1)
+cond.dist = "norm"
 garch.stationarity <- function(parm)
 {
-  # Description: Old and incomplete implementation of restriction of stationarity
-  #   for aparch models
-  mu <- parm[1];
-  a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
-  omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
+
+  # Getting parameters from parm vector 
+  # mu <- parm[1];
+  # a <- parm[(1+1):(2+m-1)]
+  # b <- parm[(1+m+1):(2+m+n-1)]
+  omega <- parm[1+m+n+1]
+  alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
   gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
   beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
-  delta <- parm[2+m+n+2*p+q+1]; 
-  skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
-  return(sum(alpha) + sum(beta))
+  delta <- parm[2+m+n+2*p+q+1] 
+  skew <- parm[3+m+n+2*p+q+1]
+  shape <- parm[(4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape)]
+  
+  model = list(omega, alpha, beta, delta, skew, shape)
+  
+  # Return
+  .stationarityAparch(model = model, 
+              formula = formula,
+              cond.dist = cond.dist)
 }
 
 

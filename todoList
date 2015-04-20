@@ -6,6 +6,7 @@
     - Arrumar AIC function
     - Implement method SHOW ver pacote fGarch
     - Test GEV density to see why qsi < 0 i somewhat frrequent in real data Notce that the Zhao paper has qsi > 0.
+    - avoid to estimate a model the user cant.
 
 # Mudancas criticas para fazer e ir testando...
 - Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
