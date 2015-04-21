@@ -26,29 +26,42 @@
 
 
 #######
-# Test the output for pure arma models
+# Test the output for arma(1,1)-aparch(1,1) model
+library(fExtremes); library(skewt)
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-.getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
+mylist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged")
+for( i in 1:length(mylist) )
+{
+    start = .getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
                  AR = FALSE, MA = FALSE,
-                 cond.dist = "norm")  
+                 cond.dist = mylist[i]) 
+    print(mylist[i])
+    print(start)
+} 
 
-# Test the output for the t3 distribution
+# Test the output for the arma(3,3)-aparch(3,3) model
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-.getStart(data = x,m = 3,n = 3,p = 3,q = 2, 
-                 AR = FALSE, MA = FALSE, ARMAonly = TRUE,
-                 cond.dist = "t3")  
-
+mylist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged")
+for( i in 1:length(mylist) )
+{
+  start = .getStart(data = x,m = 3,n = 3,p = 3,q = 2, 
+            AR = FALSE, MA = FALSE,
+            cond.dist = mylist[i]) 
+  print(mylist[i])
+  print(start)
+} 
+ 
 
 # Test start parameters for gev distribution
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
 .getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
-          AR = FALSE, MA = FALSE, ARMAonly = FALSE,
+          AR = FALSE, MA = FALSE,
           cond.dist = "gev")  
 
 

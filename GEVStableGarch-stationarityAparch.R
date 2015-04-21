@@ -224,7 +224,7 @@ gsMomentAparch <- function(
       kappa = .stdMomentAparch(shape = shape, delta = delta, gm = gm)
     
     if(cond.dist == "sstd")
-      kappa = sstdMomentAparch(shape = shape, skew = skew, delta = delta, gm = gm)
+      kappa = .sstdMomentAparch(shape = shape, skew = skew, delta = delta, gm = gm)
     
     if(cond.dist == "skstd")
       kappa = .skstdMomentAparch(shape = shape, skew = skew, delta = delta, gm = gm)

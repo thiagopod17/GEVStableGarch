@@ -147,6 +147,7 @@
           return(1e99)
         }
         llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
+        print(llh)
         return(llh)
           #xi = shape
           # Result

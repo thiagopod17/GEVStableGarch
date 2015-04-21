@@ -110,8 +110,8 @@ fit1 <- garchFit(data = x, formula = ~garch(1,1),
                  cond.dist = "norm", include.mean = TRUE,
                  algorithm = "nlminb")
 model1 <- gsFit(data = x , formula = ~garch(1,1),
-                      cond.dist = "norm", include.mean = TRUE, 
-                      algorithm = "sqp")
+                      cond.dist = "gev", include.mean = TRUE, 
+                      algorithm = "sqp", DEBUG = TRUE)
 fit1@fit$par-model1@fit$par
 fit1@fit$llh
 model1@fit$llh

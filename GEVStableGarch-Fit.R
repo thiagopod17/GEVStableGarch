@@ -401,7 +401,7 @@ function(
 
     # Getting start, lower and upper bound for parameters to perform optimization
     start <- .getStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
-                              MA = MA, ARMAonly = ARMAonly, cond.dist = cond.dist,
+                              MA = MA, cond.dist = cond.dist,
                               TOLG = tolerance$TOLG, TOLSTABLE = tolerance$TOLSTABLE)
     if(DEBUG)
     {
