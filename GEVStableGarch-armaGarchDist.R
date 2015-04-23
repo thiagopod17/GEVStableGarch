@@ -159,7 +159,8 @@
     if(cond.dist == "stable")
     {
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
-            stop("Invalid shape or skew in stable parameters. 1 < shape < 2 and |skew| < 1")
+          return(1e99)
+            # stop("Invalid shape or skew in stable parameters. 1 < shape < 2 and |skew| < 1")
         sig <- hh
         alpha.stable <- shape
         beta.stable <- skew

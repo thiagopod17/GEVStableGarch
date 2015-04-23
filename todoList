@@ -1,6 +1,6 @@
 #   Things to do on Package now
     - Configure the sqp.restriction method for all distribution functions.
-    - Test the getStart function.
+    - Test the gsFit to with the new .getStart function.
     - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm
     - Test gsAparchMoments function.
     - TOLSTATIONARITY nao pode ser menor que 0.1
