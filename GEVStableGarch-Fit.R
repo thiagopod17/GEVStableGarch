@@ -29,7 +29,7 @@ function(
     data,  
     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
     include.mean = TRUE, 
-    algorithm = c("sqp", "sqp.restriction", "nlminb"),
+    algorithm = c("sqp", "sqp.restriction", "nlminb+nm"),
     control = NULL,
     tolerance = NULL,
     title = NULL,
@@ -108,7 +108,9 @@ function(
     # Configuring Tolerance
     if( is.null (tolerance) )
         tolerance = list( TOLG = 1e-8, TOLSTABLE = 1e-2, TOLSTATIONARITY = 1e-3 )
-
+    if( tolerance$TOLSTATIONARITY > 0.05)
+        stop("TOLSTATIONARITY can not be > 0.05")
+    
     # Getting order model from object formula
     formula.input <- formula
     formula <- .getFormula(formula)
@@ -132,6 +134,10 @@ function(
     if(algorithm == "sqp.restriction")
         if(formula.var == "")
             stop("sqp.restriction should only be used with GARCH/APARCH models.")
+    
+    # Stop if the user specified a pure arma model
+    if(formula.var == "")
+          stop("Pure ARMA model not allowed")
     
     
     # Configuring model order
@@ -435,28 +441,6 @@ function(
                               cond.dist = cond.dist)
     }
 
-
-
-
-
-
-#     garch.stationarity <- function(parm)
-#     {
-#       # Description: Old and incomplete implementation of restriction of stationarity
-#       #   for aparch models
-#       mu <- parm[1];
-#       a <- parm[(1+1):(2+m-1)]; b <- parm[(1+m+1):(2+m+n-1)]
-#       omega <- parm[1+m+n+1]; alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
-#       gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
-#       beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
-#       delta <- parm[2+m+n+2*p+q+1]; 
-#       skew <- parm[3+m+n+2*p+q+1]; shape <- parm[4+m+n+2*p+q+1];
-#       kappa <- 1
-#       if(cond.dist == "stable")
-#           kappa = stable.moment.power.garch(shape = shape, skew = skew, delta = 1)
-#       return(sum(alpha) + sum(beta))
-#     }
-
     # Optimization procedure using selected algorithms
     if(ARMAonly)
         modelLLH <- armaLLH
@@ -464,35 +448,68 @@ function(
         modelLLH <- garchLLH
 
 
-    colnames(start) = NULL
-    if (algorithm == "sqp")
-        fit1 <- solnp(pars = start[1,], fun = modelLLH, 
-                    LB = start[2,], UB = start[3,], control = control)
-    if (algorithm == "sqp.restriction")
-        fit1 <- solnp(pars = start[1,], fun = modelLLH, ineqfun = garch.stationarity, ineqLB = 0,
-                    ineqUB = 1-tolerance$TOLSTATIONARITY, LB = start[2,], UB = start[3,], control = control)
-    if (algorithm == "nlminb")
-    {              
-          fit1 <- nlminb(start[1,], objective = modelLLH,
+    # colnames(start) = NULL
+
+#     if (algorithm == "nlminb+nm")
+#     {              
+#       fit1 <- nlminb(start[1,], objective = modelLLH,
+#                      lower = start[2,], upper = start[3,], 
+#                      control = control)
+#       out$llh <- fit1$objective
+#       out$par <- fit1$par
+#       out$hessian <- optim(par = fit1$par, fn = modelLLH, 
+#                            method = "Nelder-Mead", hessian = TRUE)$hessian
+#     }
+      if (algorithm == "nlminb+nm")
+      {              
+        fit1.partial <- nlminb(start[1,], objective = modelLLH,
                        lower = start[2,], upper = start[3,], 
                        control = control)
-          out$llh <- fit1$objective
-          out$par <- fit1$par
-          out$hessian <- optim(par = fit1$par, fn = modelLLH, 
-                               method = "Nelder-Mead", hessian = TRUE)$hessian
-    }
-    if (any(c("sqp", "sqp.restriction") == algorithm))
+        fit1 <- optim(par = fit1.partial$par, fn = modelLLH, 
+                      method = "Nelder-Mead", hessian = TRUE)
+        out$llh <- fit1$value
+        out$par <- fit1$par
+        out$hessian <- fit1$hessian
+      }
+    if (algorithm == "sqp")
     {
+        fit1 <- solnp(pars = start[1,], fun = modelLLH, 
+                    LB = start[2,], UB = start[3,], control = control)
         out$llh <- fit1$values[length(fit1$values)]
         out$par <- fit1$pars
         out$hessian <- fit1$hessian
-        if(algorithm == "sqp.restriction")
-        {
-          sizeHessian = length(out$hessian[1,])-1
-          out$hessian = out$hessian[1:sizeHessian,1:sizeHessian]
+    }
+    if (algorithm == "sqp.restriction")
+    {
+        fit1 <- solnp(pars = start[1,], fun = modelLLH, ineqfun = garch.stationarity, ineqLB = 0,
+                    ineqUB = 1-tolerance$TOLSTATIONARITY, LB = start[2,], UB = start[3,], 
+                    control = control)
+        out$llh <- fit1$values[length(fit1$values)]
+        out$par <- fit1$pars
+        out$hessian <- fit1$hessian
+        sizeHessian = length(out$hessian[1,])-1
+        out$hessian = out$hessian[1:sizeHessian,1:sizeHessian]
+    }
+    if (any(c("sqp", "sqp.restriction") == algorithm))
+    {
+        # Call the Nelder-Mead method just to calculate the hessian matrix
+        # This is due to the fact that the hessian matrix returned
+        # by the sqp routine is often difficult to invert, which does not 
+        # happen with the hessian returned by the optim routine 
+        # using the "Nelder-Mead" algorithm. Note that 
+        # we call it with only one interation, so that the algorithm does 
+        # not change the parameter values and only calculate the hessian. 
+        fit1.partial <- optim(par = fit1$par, fn = modelLLH, 
+                             method = "Nelder-Mead", hessian = TRUE,
+                             control = list(maxit = 1))
+        
+        # Check if the Nelder-Mead method changed our estimated parameters
+        if(sum(abs(fit1.partial$par-fit1$par)) == 0)
+        {   
+            out$hessian = fit1.partial$hessian
+            if(DEBUG)
+                print(abs(fit1.partial$par-fit1$par))
         }
-        out$hessian <- optim(par = fit1$par, fn = modelLLH, 
-                             method = "Nelder-Mead", hessian = TRUE)$hessian
     }
     
     if(DEBUG)

@@ -1,6 +1,4 @@
 
-# Copyrights (C) 2014 Thiago do Rego Sousa <thiagoestatistico@gmail.com>
-
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
@@ -17,16 +15,37 @@
 # MA  02111-1307  USA
 
 
+# Copyrights (C) 2015, Thiago do Rego Sousa <thiagoestatistico@gmail.com>
+# This is a modified version of the code contained inside file 
+# garch-Spec.R from package fGarch, version 3010.82.
+
+# Copyrights (C)
+# for this R-port:
+#   1999 - 2008, Diethelm Wuertz, Rmetrics Foundation, GPL
+#   Diethelm Wuertz <wuertz@itp.phys.ethz.ch>
+#   info@rmetrics.org
+#   www.rmetrics.org
+# for the code accessed (or partly included) from other R-ports:
+#   see R's copyright and license files
+# for the code accessed (or partly included) from contributed R-ports
+# and other sources
+#   see Rmetrics's copyright file
+
+
+
 ################################################################################
 # FUNCTION:               SIMULATION:
 #  gsSim            Simulates a GARCH/APARCH process with GEV or stable
-#						  conditional distribution
+#						        conditional distribution
 ################################################################################
 
 
 gsSim <-
     function(spec = garchSpec(), n = 100, n.start = 100)
 {
+    # A function originally implemented by Diethelm Wuertz and modified
+    # to be used inside package GEVStableGarch. See the latest copyright notice. 
+      
     # Description:
     #   Simulates a time series process from the GARCH family
 
@@ -52,10 +71,11 @@ gsSim <-
     #     shape - a numeric value for the shape parameter.
     #   n - an integer, the length of the series
     #   n.start - the length of the warm-up sequence to reduce the
-    #       effect of initial conditions.
+    #     effect of initial conditions.
      
     # Return:
-    #   Asdf - The asdf 
+    #   ans - An object returned by function timeDate with the simulated sample
+    #     path of the specified ARMA-GARCH/APARCH model.
     
     # FUNCTION: 
 
@@ -74,35 +94,32 @@ gsSim <-
     n = n + n.start
 
     # Create Innovations:
+	  if (spec@distribution == "stable")
+	      z = stabledist::rstable(n = n, alpha = model$shape, beta = model$skew, pm = 1)
     if (spec@distribution == "gev")
-        z <- rgev(n, xi = model$shape)
-    if (spec@distribution == "stable")
-        z <- stabledist::rstable(n = n, alpha = model$shape, beta = model$skew, pm = 2)
+        z = rgev(n, xi = model$shape)
+	  if (spec@distribution == "t3") 
+	      z = rt3(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
     if (spec@distribution == "norm")
         z = rnorm(n)
     if (spec@distribution == "std")
         z = rstd(n, nu = model$shape)
+	  if (spec@distribution == "sstd") 
+	      z = rsstd(n, nu = model$shape, xi = model$skew)
 	  if (spec@distribution == "skstd") 
 	      z = rskstd(n, nu = model$shape, xi = model$skew)
-	  if (spec@distribution == "t3") 
-	      z = rt3(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
-	  if (spec@distribution == "sstd") 
-	  z = rsstd(n, nu = model$shape, xi = model$skew)
+	  if (spec@distribution == "ged") 
+	      z = rged(n, nu = model$shape)
+
 
     # Expand to whole Sample:    NAO ENTENDI PORQUE USAR A FUNCAO rev()???
     delta = model$delta
-    if(!is.null(spec@model$alpha)){
-    	z = c(rev(spec@presample[, 1]), z)
-    	h = c(rev(spec@presample[, 2]), rep(NA, times = n))
-    	y = c(rev(spec@presample[, 3]), rep(NA, times = n))
-    	m = length(spec@presample[, 1])
-    	names(z) = names(h) = names(y) = NULL
-    } else {
-    	z = c(rev(spec@presample[, 1]), z)
-    	y = c(rev(spec@presample[, 2]), rep(NA, times = n))
-    	m = length(spec@presample[, 1])
-    	names(z) = names(y) = NULL 	
-    }
+  
+	  z = c(rev(spec@presample[, 1]), z)
+	  h = c(rev(spec@presample[, 2]), rep(NA, times = n))
+	  y = c(rev(spec@presample[, 3]), rep(NA, times = n))
+	  m = length(spec@presample[, 1])
+	  names(z) = names(h) = names(y) = NULL
     
     # Determine Coefficients:
     mu = model$mu
@@ -121,57 +138,116 @@ gsSim <-
     order.beta = length(beta)
 
     # Iterate GARCH / APARCH Model and create Sample:
-    if(!is.null(spec@model$alpha)){ # Arch, Garch or Aparch model
-    	eps = h^deltainv*z   # here the variable 'h' represents the process '(sigma_t)^delta'
-    	for (i in (m+1):(n+m)) {
-       	 	h[i] =  omega +
-            	sum(alpha*(abs(eps[i-(1:order.alpha)]) -
-                gamma*(eps[i-(1:order.alpha)]))^delta) +
-            	sum(beta*h[i-(1:order.beta)])
-        	eps[i] = h[i]^deltainv * z[i]
-        	y[i] = mu  +
-            	sum(ar*y[i-(1:order.ar)]) +
-            	sum(ma*eps[i-(1:order.ma)]) + eps[i]
-    	}
-    	# Sample:
-    	data = cbind(
-       	 	z = z[(m+1):(n+m)],
-        	sigma = h[(m+1):(n+m)]^deltainv,
-        	y = y[(m+1):(n+m)])    	
-	} else { # pure ARMA, AR or MA model.
-		eps = z
-		for (i in (m+1):(n+m)) {
-        	y[i] = mu  +
-            	sum(ar*y[i-(1:order.ar)]) +
-            	sum(ma*eps[i-(1:order.ma)]) + eps[i]
-    	}
-    	data = cbind(
-       	 	z = z[(m+1):(n+m)],
-        	y = y[(m+1):(n+m)])  
-	}
+	  # print(c(omega,alpha,gamma,beta,delta))
+  	eps = h^deltainv*z   # here the variable 'h' represents the process '(sigma_t)^delta'
+  	for (i in (m+1):(n+m)) {
+     	 	h[i] =  omega +
+          	sum(alpha*(abs(eps[i-(1:order.alpha)]) -
+              gamma*(eps[i-(1:order.alpha)]))^delta) +
+          	sum(beta*h[i-(1:order.beta)])
+        
+          
+          
+      	eps[i] = h[i]^deltainv * z[i]
+      	y[i] = mu  +
+          	sum(ar*y[i-(1:order.ar)]) +
+          	sum(ma*eps[i-(1:order.ma)]) + eps[i]
+  	}
+  	# Sample:
+  	data = cbind(
+     	 	z = z[(m+1):(n+m)],
+      	sigma = h[(m+1):(n+m)]^deltainv,
+      	y = y[(m+1):(n+m)])    	
     
     rownames(data) = as.character(1:n)
     if(n.start > 0)
-    	data = data[-(1:n.start),]
+    	  data = data[-(1:n.start),]
 
 
     # Return Values:
     from <-
         timeDate(format(Sys.time(), format = "%Y-%m-%d")) - NROW(data)*24*3600
     charvec  <- timeSequence(from = from, length.out = NROW(data))
-    if(!is.null(spec@model$alpha)){
-    	ans <- timeSeries(data = data[, c(3,2,1)], charvec = charvec)
-    	colnames(ans) <- c("garch", "sigma", "eps")
-	} else {
-		ans <- timeSeries(data = data[, c(2,1)], charvec = charvec)		
-	    colnames(ans) <- c("series", "eps")
-	}
-    
+    ans <- timeSeries(data = data[, c(3,2,1)], charvec = charvec)
+    colnames(ans) <- c("Series", "Volatility", "Innovations")    
     attr(ans, "control") <- list(garchSpec = spec)
 
     # Return Value:
     ans
 }
+
+
+
+
+
+
+
+
+garchSim2 = function (spec = garchSpec(), n = 100, n.start = 100, extended = FALSE) 
+{
+  stopifnot(class(spec) == "fGARCHSPEC")
+  model = spec@model
+  if (spec@rseed != 0) 
+    set.seed(spec@rseed)
+  n = n + n.start
+  if (spec@distribution == "norm") 
+    z = rnorm(n)
+  if (spec@distribution == "ged") 
+    z = rged(n, nu = model$shape)
+  if (spec@distribution == "std") 
+    z = rstd(n, nu = model$shape)
+  if (spec@distribution == "snorm") 
+    z = rsnorm(n, xi = model$skew)
+  if (spec@distribution == "sged") 
+    z = rsged(n, nu = model$shape, xi = model$skew)
+  if (spec@distribution == "sstd") 
+    z = rsstd(n, nu = model$shape, xi = model$skew)
+  delta = model$delta
+  z = c(rev(spec@presample[, 1]), z)
+  h = c(rev(spec@presample[, 2]), rep(NA, times = n))
+  y = c(rev(spec@presample[, 3]), rep(NA, times = n))
+  m = length(spec@presample[, 1])
+  names(z) = names(h) = names(y) = NULL
+  mu = model$mu
+  ar = model$ar
+  ma = model$ma
+  omega = model$omega
+  alpha = model$alpha
+  gamma = model$gamma
+  beta = model$beta
+  deltainv = 1/delta
+  order.ar = length(ar)
+  order.ma = length(ma)
+  order.alpha = length(alpha)
+  order.beta = length(beta)
+  eps = h^deltainv * z
+  
+  #print(c(omega,alpha,gamma,beta,delta))
+  for (i in (m + 1):(n + m)) {
+    h[i] = omega + sum(alpha * (abs(eps[i - (1:order.alpha)]) - 
+                                  gamma * (eps[i - (1:order.alpha)]))^delta) + sum(beta * 
+                                                                                     h[i - (1:order.beta)])
+    eps[i] = h[i]^deltainv * z[i]
+    y[i] = mu + sum(ar * y[i - (1:order.ar)]) + sum(ma * 
+                                                      eps[i - (1:order.ma)]) + eps[i]
+  }
+  data = cbind(z = z[(m + 1):(n + m)], sigma = h[(m + 1):(n + 
+                                                            m)]^deltainv, y = y[(m + 1):(n + m)])
+  rownames(data) = as.character(1:n)
+  data = data[-(1:n.start), ]
+  from <- timeDate(format(Sys.time(), format = "%Y-%m-%d")) - 
+    NROW(data) * 24 * 3600
+  charvec <- timeSequence(from = from, length.out = NROW(data))
+  ans <- timeSeries(data = data[, c(3, 2, 1)], charvec = charvec)
+  colnames(ans) <- c("garch", "sigma", "eps")
+  ans <- if (extended) 
+    ans
+  else ans[, "garch"]
+  attr(ans, "control") <- list(garchSpec = spec)
+  ans
+}
+
+
 
 
 ################################################################################

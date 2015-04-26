@@ -23,12 +23,21 @@
 #  gsSelect                Find best fitted model according to AIC criterion
 ################################################################################
 
-gsSelect <- 
-    function(data,mMAX=1,nMAX=1,pMAX=1,qMAX=1, 
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
-    algorithm = "sqp", APARCH = FALSE, intercept = TRUE,control = NULL)
+gsSelect <-
+  function(
+    data,
+    order.max = c(1,1,1,1),
+    selection.criteria = c("AIC", "AICc", "BIC"),
+    is.aparch = FALSE,
+    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
+    include.mean = TRUE, 
+    algorithm = c("sqp", "sqp.restriction", "nlminb+nm"),
+    ...)
 {
       
+    
+    # TESTING
+    #data = x; order.max = c(1,1,1,1); is.aparch = TRUE; cond.dist = "norm"; algorithm = "sqp"
     # Description:
     #   Estimate several models using GSgarch.Fit function and evaluates
     #   the AIC to decide which one is the best model
@@ -49,34 +58,48 @@ gsSelect <-
     # FUNCTION:      
       
     # error treatment on input parameters
-    cond.dist = match.arg(cond.dist)    
+    cond.dist = match.arg(cond.dist)
+    algorithm = match.arg(algorithm)
+    selection.criteria = match.arg(selection.criteria)
     if( !is.numeric(data) || !is.vector(data))
         stop("data set must be a numerical one dimensional vector")
     
     # begin of function
-    T <- length(data)
-    aic.min <- 1e10
-    aic <- 1e10
+    aic.min <- 1e99
+    aic <- 1e99
     fit.min <- list()
     fit <- list()
-    aic.list <- GSgarch.GetOrder(mMAX,nMAX,pMAX,qMAX)
+    aic.list <- .getOrder(order.max = order.max)
     aic.list.size <- length(aic.list[,1])
     for( i in 1:aic.list.size)
     {
-        fit = GSgarch.Fit(data, m = aic.list[i,1],n = aic.list[i,2],
-                          p = aic.list[i,3],q = aic.list[i,4], cond.dist = cond.dist, 
-                          APARCH = APARCH, algorithm = algorithm, 
-                          intercept = intercept, control = control)
-        nParam <- length(fit$par)
-        aic  = 2*fit$llh + 2*nParam 
-        aicc = 2*fit$llh + 2*nParam*T/(T - nParam - 1)
-        bic =  2*fit$llh + nParam*log(T)
-        cat(aic.list[i,],"-llh:",fit$llh,"AIC:",aic," AICC:",aicc," BIC:",bic,"\n")
+        m = aic.list[i,1]; n = aic.list[i,2]; p = aic.list[i,3]; q = aic.list[i,4]
+        
+        if(is.aparch == TRUE)
+        {   
+            formula = as.formula(paste ("~ arma(",m,", ",n,") + aparch(",p,", ",q,")", sep = "", 
+                                      collapse = NULL))
+        }
+        else {   
+          formula = as.formula(paste ("~ arma(",m,", ",n,") + garch(",p,", ",q,")", sep = "", 
+                                      collapse = NULL))
+        }
+        cat("\n------------------------------------------------------------------------------------------\n")
+        cat(paste("Model: ", paste(formula)[2], " with '", 
+            cond.dist, "' conditional distribution",sep = ""))
+        cat("\n------------------------------------------------------------------------------------------\n")
+        fit = gsFit (data = data, formula = formula, cond.dist = cond.dist, 
+                     algorithm = algorithm,...)
+        
+        aic  = fit@fit$ics["AIC"]
+        aicc = fit@fit$ics["AICc"]
+        bic =  fit@fit$ics["BIC"]
+        # cat(paste(formula)[2],":  -llh:",fit@fit$llh,"AIC:",aic," AICC:",aicc," BIC:",bic,"\n")
         if (aic < aic.min)
         {
             fit.min <- fit
-            fit.min$order <- aic.list[i,]
-            aic.min <- aic
+            # fit.min$order <- aic.list[i,]
+            aic.min <- fit@fit$ics[selection.criteria]
         }
     }
     return(fit.min)

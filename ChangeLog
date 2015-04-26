@@ -2,7 +2,23 @@ See the package activity on Github at:
 https://github.com/thiagopod17/GEVStableGarch
 
 
+  ----------------------------
+  date: 2015/04/25;  
+  author: ThiagoSousa;
+  Description: 
+  1 - gsSelect function implemented
+  2 - function gsFit and gsSpec tested
+  ----------------------------
 
+
+  ----------------------------
+  date: 2015/04/23;  
+  author: ThiagoSousa;
+  Description: 
+  1 - .getStart function changed and improved
+  2 - sqp.restriction algorithm tested
+  3 - Changed the nlminb algorithm to nlminb + nm
+  ----------------------------
 
 
   ----------------------------

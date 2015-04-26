@@ -53,7 +53,7 @@
         stop("Error: Vectors 'z' and 'hh' have different length.")
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
     {
-        warning("NA or zero element found in vector hh")
+        # warning("NA or zero element found in vector hh")
         return(1e99)
     }
     
@@ -134,25 +134,31 @@
     {
 #         if(abs(shape) < 1e-6)
 #           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
-        sig <- hh
-        xi <- shape
-        arg <- z/sig
-        y <- 1 + xi * arg
-        if(sum(is.na(y)) || sum(is.nan(y)) ||
-             sum(is.infinite(y))) 
-          return(1e99)
-        gev.cond.gD <- any(y < TOLG ) || abs(xi) < 1e-6
-        if(gev.cond.gD)
-        {
-          return(1e99)
-        }
-        llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
-        print(llh)
-        return(llh)
-          #xi = shape
-          # Result
-          #result = -sum(log(dgev(x = z/hh, xi = xi)/hh))
-          #return(result)
+#        sig <- hh
+#        xi <- shape
+#        arg <- z/sig
+#        y <- 1 + xi * arg
+#        if(sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))) 
+#	  {
+#            print("sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))")
+#            return(1e99)
+#        }
+#        gev.cond.gD <- any( y < TOLG ) || abs(xi) < 1e-6
+#        if(gev.cond.gD)
+#        {
+#          print("any( y < TOLG ) || abs(xi) < 1e-6")
+#          #return(1e99)
+#        }
+#        llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
+        # print(llh)
+ #       return(llh)
+         xi = shape
+         result = -sum(log(dgev(x = z/hh, xi = xi)/hh))
+         # print("==============")
+          #print(result)
+	    #print(z/hh)
+          #print(xi)
+          return(result)
     }
     
     # stable conditional distribution

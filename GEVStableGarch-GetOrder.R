@@ -26,7 +26,7 @@
 
 
 .getOrder <- 
-    function(m,n,p,q)
+    function(order.max = c(1,1,1,1))
 {
       
     # Description:
@@ -43,6 +43,7 @@
     # FUNCTION:            
       
     # error treatment on input parameters
+    m = order.max[1]; n = order.max[2]; p = order.max[3]; q = order.max[4] 
     if(m%%1 != 0 || n%%1 != 0 || p%%1 != 0 || q%%1 != 0 || 
         any (c(m,n,p,q) < 0) || (p == 0 && q != 0) ||
         any (c(m,n,p,q) > 10) ) 

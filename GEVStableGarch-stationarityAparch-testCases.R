@@ -435,7 +435,7 @@ summary(error)
 spec <- gsSpec(model = list(alpha = 1.3), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
 # GARCH(1,0)-stable
-spec <- gsSpec(model = list(alpha = 1.3, delta = 1, shape = 4), 
+spec <- gsSpec(model = list(alpha = 1.3, delta = 1, shape = 1.5, skew = 0), 
                     presample = NULL,cond.dist = c("stable"), rseed = 3)
 # GARCH(1,0)-t3
 spec <- gsSpec(model = list(alpha = 1.3, delta = 2, shape = c(3,3)), 
@@ -459,7 +459,7 @@ spec <- gsSpec(model = list(alpha = 1.3, delta = 2, shape = 4),
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
 # GARCH(1,1)-stable
-spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 1, shape = 4), 
+spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 1, shape = 1.5), 
                     presample = NULL,cond.dist = c("stable"), rseed = 3)
 # GARCH(1,1)-t3
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = c(3,3)), 
@@ -522,7 +522,7 @@ spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = run
                                  shape = runif(1,0,100)), 
                     presample = NULL,cond.dist = c("std"), rseed = 3)
 # APARCH(1,0)-sstd
-spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1), 
+spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(5,-1,1), 
                                  shape = runif(1,0,5), skew = runif(1,0,5)), 
                     presample = NULL,cond.dist = c("sstd"), rseed = 3)
 # APARCH(1,0)-ged
@@ -551,7 +551,7 @@ spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = run
                     presample = NULL,cond.dist = c("std"), rseed = 3)
 # APARCH(5,1)-sstd
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1), 
-                                 shape = runif(1,0,5), skew = runif(1,0,5)), 
+                                 shape = 3, skew = 2), 
                     presample = NULL,cond.dist = c("sstd"), rseed = 3)
 # APARCH(5,1)-ged
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1), shape = 4), 
@@ -562,6 +562,31 @@ spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = run
 .stationarityAparch(model = list(alpha = spec@model$alpha, beta = spec@model$beta, gm = spec@model$gm, 
                                  delta = spec@model$delta, skew = spec@model$skew, shape = spec@model$shape), 
                     formula = .getFormula(spec@formula), cond.dist = spec@distribution)
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for function gsMomentAparch
+# ------------------------------------------------------------------------------
+
+gsMomentAparch(cond.dist = "stable", shape = 1.1, skew = 0, delta = 1.01, gm = 0.99999)
+
+gsMomentAparch(cond.dist = "gev", shape = -4, skew = 0, delta = 1.4, gm = 0)
+
+gsMomentAparch(cond.dist = "t3", shape = c(1.9,2.3), skew = 0.5, delta = 0.4, gm = 0)
+
+gsMomentAparch(cond.dist = "norm", shape = c(1.9,2.3), skew =1, delta = 11.4, gm = -0.999)
+
+gsMomentAparch(cond.dist = "std", shape = 2.001, skew = -0.5, delta = 2, gm = -0.99)
+
+gsMomentAparch(cond.dist = "sstd", shape = 2.001, skew = 0.11, delta = 2, gm = -0.99)
+
+gsMomentAparch(cond.dist = "skstd", shape = 5.001, skew = 0.11, delta = 3, gm = -0.5)
+
+gsMomentAparch(cond.dist = "ged", shape = 6, skew = 0.11, delta = 5.11, gm = -0.5)
+
+
+
 
 
 

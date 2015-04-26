@@ -1,6 +1,4 @@
 
-# Copyrights (C) 2014 Thiago do Rego Sousa <thiagoestatistico@gmail.com>
-
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
@@ -17,28 +15,48 @@
 # MA  02111-1307  USA
 
 
+# Copyrights (C) 2015, Thiago do Rego Sousa <thiagoestatistico@gmail.com>
+# This is a modified version of the code contained inside file 
+# garch-Spec.R from package fGarch, version 3010.82.
+
+# Copyrights (C)
+# for this R-port:
+#   1999 - 2008, Diethelm Wuertz, Rmetrics Foundation, GPL
+#   Diethelm Wuertz <wuertz@itp.phys.ethz.ch>
+#   info@rmetrics.org
+#   www.rmetrics.org
+# for the code accessed (or partly included) from other R-ports:
+#   see R's copyright and license files
+# for the code accessed (or partly included) from contributed R-ports
+# and other sources
+#   see Rmetrics's copyright file
+
+
 ################################################################################
 # FUNCTION:               SPECIFICATION:
 #  gsSpec               Creates a 'fGEVSTABLEGARCHSPEC' object from scratch
 ################################################################################
 
 
-# gsSpec function
 gsSpec <-
     function (model = list(), presample = NULL,
     cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
     rseed = NULL)
-{	
+{
+      
+    # A function originally implemented by Diethelm Wuertz and modified
+    # to be used inside package GEVStableGarch. See the latest copyright notice.       
+      
     # Description:
     #   Creates a "gsSpec" object.
-
+    
     # Arguments:
     #   model - a list with the model parameters as entries
     #     omega - the variance value for GARCH/APARCH
     #       specification,
     #     alpha - a vector of autoregressive coefficients
     #       of length p for the GARCH/APARCH specification,
-    #     gm - a vector of leverage coefficients of
+    #     gamma - a vector of leverage coefficients of
     #       length p for the APARCH specification,
     #     beta - a vector of moving average coefficients of
     #       length q for the GARCH/APARCH specification,
@@ -81,25 +99,25 @@ gsSpec <-
       
     # Skewness Parameter Settings:
     skew = list(
-        "dstable" = 0,
-        "dgev" = NULL,
-        "dt3" = 1,
-        "dnorm" = NULL,
-        "dstd" = NULL,
-        "dsstd" = 0.9,
-        "dskstd" = 1,
-        "dged" = NULL)
+        "stable" = 0,
+        "gev" = NULL,
+        "t3" = 1,
+        "norm" = NULL,
+        "std" = NULL,
+        "sstd" = 0.9,
+        "skstd" = 1,
+        "ged" = NULL)
 
     # Shape Parameter Settings:
     shape = list(
-      "dstable" = 1.7,
-      "dgev" = 0.3,
-      "dt3" = c(3,1),
-      "dnorm" = NULL,
-      "dstd" = 4,
-      "dsstd" = 4,
-      "dskstd" = 4,
-      "dged" = 4)
+      "stable" = 1.7,
+      "gev" = 0.3,
+      "t3" = c(3,1),
+      "norm" = NULL,
+      "std" = 4,
+      "sstd" = 4,
+      "skstd" = 4,
+      "ged" = 2)
 
     # Conditional distribution
     cond.dist = match.arg(cond.dist)
@@ -108,7 +126,7 @@ gsSpec <-
     initialDelta = NULL
     if(!is.null(model$alpha) && is.null(model$delta)) # Garch model
     {
-        if(cond.dist == "dstable")
+        if(cond.dist == "stable")
             initialDelta = 1
         else 
             initialDelta = 2
@@ -117,7 +135,7 @@ gsSpec <-
     control = list(
         omega = 1,
         alpha = NULL,
-        gm = NULL,
+        gamma = NULL,
         beta = NULL,
         mu = NULL,
         ar = NULL,
@@ -150,15 +168,15 @@ gsSpec <-
       	stop("The parameter 'delta' must be > 0.")
     }
     
-    if( (length(model$gm) != 0) && (length(model$alpha) != 0)) # means aparch model
+    if( (length(model$gamma) != 0) && (length(model$alpha) != 0)) # means aparch model
     {
-      if(length(model$alpha) != length(model$gm))
-        stop("'alpha' and 'gm' must have the same size for APARCH models")    
+      if(length(model$alpha) != length(model$gamma))
+        stop("'alpha' and 'gamma' must have the same size for APARCH models")    
     }
    
-    if(!is.null(model$gm)){
-    	if(sum(!(abs(model$gm)<1)) > 0) # all gm in (-1,1)
-        stop("The parameter 'gm' must be in the range -1 < gm < 1")     	
+    if(!is.null(model$gamma)){
+    	if(sum(!(abs(model$gamma)<1)) > 0) # all gamma in (-1,1)
+        stop("The parameter 'gamma' must be in the range -1 < gamma < 1")     	
     }
              
     if(sum(model$alpha < 0) > 0) # all alpha in [0,+infty)
@@ -179,16 +197,18 @@ gsSpec <-
        stop("The parameter delta should be only specified for a GARCH or APARCH model.")
        
         # if we have a presample check if it has the correct range.       
-    if(is.matrix(presample) && !is.null(presample) && !is.null(model$alpha) ){
-    	if((dim(presample)[1] != order.max) || (dim(presample)[2] != 3) )
-    	   stop("The presample object should be a matrix with three columns representing the innovations, conditional variance and the time series, respectively. The program expects a matrix of dimensions l x 3, where l = max(m,n,p,q)")
-    } 
-    if(is.matrix(presample) && !is.null(presample) && is.null(model$alpha) ){
-    	if((dim(presample)[1] != order.max) || (dim(presample)[2] != 2) )
-    	   stop("The presample object should be an array with the time series. The program expects an array with dimensions l x 2, where l = max(m,n,p,q)")
-    }       
-       
-       	
+    if(is.matrix(presample) && !is.null(presample)){
+    	if( dim(presample)[2] != 3 || dim(presample)[1] < order.max)
+    	   stop(cat("The presample object should be a matrix with three columns formated as: \n [Innovations, Conditional Variance, Time Series] with dimensions \n l x 3, where l = max(m,n,p,q). "))
+    	if( dim(presample)[1] != order.max )
+    	{
+          warning(cat("The number of columns of the Presample matrix is \n bigger than l = max(m,n,p,q). The simulated series \n will use only the first 'l' columns"))
+          presample = as.matrix ( presample[1:order.max,] )
+          if(order.max == 1)
+              presample = t(presample)
+    	}
+    }
+      	
     # Compose Mean Formula Object:
     formula.mean = ""
     if (order.ar == 0 && order.ma == 0) {
@@ -217,12 +237,12 @@ gsSpec <-
     if (order.alpha > 0 && order.beta == 0) formula.var = "garch"
     if (order.alpha > 0 && order.beta > 0) formula.var = "garch"   
     if(!is.null(model$alpha)){
-    	if (!is.null(model$gm)){
-    		if(sum(model$gm == 0) != length(model$gm))
+    	if (!is.null(model$gamma)){
+    		if(sum(model$gamma == 0) != length(model$gamma))
     		   formula.var = "aparch"
     	}
     	if (model$delta != 2 && cond.dist != "stable") 
-          formula.var = "aparch" # gm = 0 and delta != 0 we get powergarch model   	
+          formula.var = "aparch" # gamma = 0 and delta != 0 we get powergarch model   	
     	if (model$delta != 1 && cond.dist == "stable") 
     	    formula.var = "aparch" 
     }
@@ -254,21 +274,27 @@ gsSpec <-
         formula = as.formula(paste("~", formula.mean, "+", formula.var))
     }
 
+
+    # Stop if the user specified a pure arma model
+    if(formula.var == "")
+        stop("Pure ARMA model not allowed")
+
+
     # Add NULL default entries:
     if (is.null(model$mu)) model$mu = 0
     if (is.null(model$ar)) model$ar = 0
     if (is.null(model$ma)) model$ma = 0
-    if (is.null(model$gm)) model$gm = rep(0, times = order.alpha)
+    if (is.null(model$gamma)) model$gamma = rep(0, times = order.alpha)
 
     # Seed:
     if (is.null(rseed)) {
-        rseed = 0
-    } else {
-        set.seed(rseed)
+      rseed = 0
+    }
+    else {
+      set.seed(rseed)
     }
 
-    # Define Missing Presample:
-    if(formula.var != ""){
+   # Define Missing Presample:
 	 persistency = 1-sum(model$alpha)-sum(model$beta)
 	 if(persistency*(1-persistency) < 0) # avoid to construct a presample with negative conditional variance.
 	    persistency = 0.1 
@@ -284,26 +310,14 @@ gsSpec <-
 	     y = rep(model$mu, times = order.max)
 	 }
 	 presample = cbind(z, h, y)
-    }else{	
-       if(!is.null(presample))
-       {
-	     z = presample[, 1]
-	     y = presample[, 2]          
-       }
-       else
-       {
-       	 z = rnorm(n = order.max)
-         y = rep(0,order.max)
-       }
-       presample = cbind(z,y)
-    }
+
     
     # Result: 
     new("fGEVSTABLEGARCHSPEC",
         call = match.call(),
         formula = formula,
         model = list(omega = model$omega, alpha = model$alpha,
-            gm = model$gm, beta = model$beta, mu = model$mu,
+            gamma = model$gamma, beta = model$beta, mu = model$mu,
             ar = model$ar, ma = model$ma, delta = model$delta,
             skew = model$skew, shape = model$shape),
         presample = as.matrix(presample),

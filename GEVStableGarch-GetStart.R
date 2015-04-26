@@ -148,7 +148,7 @@
     
     alpha.start = list(
       "stable" = rep(0.1/p, p),
-      "gev" = rep(0.1/p, p),
+      "gev" = rep(0.05/p, p),
       "t3" = rep(0.1/p, p),
       "norm" = rep(0.1/p, p),
       "std" = rep(0.1/p, p),
@@ -158,7 +158,7 @@
     
     beta.start = list(
       "stable" = rep(0.8/q, q),
-      "gev" = rep(0.4/q, q),
+      "gev" = rep(0.8/q, q),
       "t3" = rep(0.8/q, q),
       "norm" = rep(0.8/q, q),
       "std" = rep(0.8/q, q),
@@ -188,7 +188,7 @@
     
     shape.start = list(
       "stable" = 1.9,
-      "gev" = -0.3,
+      "gev" = 0,
       "t3" = c(2, 4),
       "norm" = 1,
       "std" = 4,
@@ -237,9 +237,9 @@
        
     # UPPER BOUNDS
     
-    mu.upper = + 100 * abs ( mu.start )
-    arma.upper = rep ( + 100, m + n )
-    omega.upper = 1000
+    mu.upper = 100 * abs ( mu.start )
+    arma.upper = rep ( 100, m + n )
+    omega.upper = 100 * abs ( Dispersion )
     alpha.upper = rep ( 1 - TOLG, p )
     beta.upper = rep ( 1 - TOLG, q )
     gm.upper = rep (1 - TOLG, p)

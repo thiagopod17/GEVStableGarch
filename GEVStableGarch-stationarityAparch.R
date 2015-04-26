@@ -142,7 +142,7 @@
         
         if(cond.dist == "stable")
             kappa = try(.stableMomentPowerGarch (shape = shape, skew = skew, 
-                                                      delta = 2, gm = 0), silent = TRUE)
+                                                      delta = 1), silent = TRUE)
         
         if(cond.dist == "t3")
            kappa = try(.t3MomentAparch(shape = shape, skew = skew, 
@@ -184,7 +184,7 @@
             if(cond.dist == "ged")
               kappa[i] = try(.gedMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)     
         }
-        if( is.numeric(kappa))
+        if( is.numeric(kappa) )
             return(sum(kappa*alpha) + sum(beta))  
         else 
             return(1e99)

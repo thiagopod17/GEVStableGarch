@@ -1,21 +1,15 @@
 #   Things to do on Package now
-    - Configure the sqp.restriction method for all distribution functions.
-    - Test the gsFit to with the new .getStart function.
-    - Find a better way to compute the hessian matrix, instead of using the nelder-mead algorithm
-    - Test gsAparchMoments function.
-    - TOLSTATIONARITY nao pode ser menor que 0.1
-    - Arrumar Sim function 
-    - Arrumar AIC function
-    - Implement method SHOW ver pacote fGarch
-    - Test GEV density to see why qsi < 0 i somewhat frrequent in real data Notce that the Zhao paper has qsi > 0.
-    - avoid to estimate a model the user cant.
-
-# Mudancas criticas para fazer e ir testando...
-- Configure lower, upper and start values in function GSgarch.GetStart (see upper bound of omega)
-
-  
+    - Implement method SHOW ver pacote fGarch for: gsFit, gsSim, gsSpec
 
 
+# More tests if you have time. hahaha
+    - SIM function
+
+# Before submiting to CRAN
+
+    - Plan a wise test for function gsFit and gsSelect
+    - Clear unnecessary comments
+    - Put copyrights 2015.
 
 
 
@@ -35,6 +29,7 @@ filter.Aparch.Forloop     .filterAparchForLoop
 filter1.garch11Fit
 gsGetOrder    .getOrder
 gsGetStart     .getStart
+changed variable name from 'gm' to 'gamma'
 
 
 

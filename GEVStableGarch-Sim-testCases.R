@@ -18,10 +18,10 @@
                     
                     
 ################################################################################
-# TEST CASES FOF FUNCTION:               SPECIFICATION:
-#  gsSim               Useful for finding erros. Please add the expected 
-#  						 output of the test case whenever possible. 
-#							 This will help to trace erros during debugging.
+# TEST CASE FOF FUNCTION:               SPECIFICATION:
+#  gsSim                        Useful for finding erros. Please add the expected 
+#  						                  output of the test case whenever possible. 
+#							                  This will help to trace erros during debugging.
 ################################################################################
 # required packages to run test cases.
 library("fGarch")
@@ -30,42 +30,12 @@ library("stabledist")
 library("skewt")
 library("Rsolnp")
 
-# Simulate AR(1)-GARCH(1,1) with conditional GEV distr.
-spec <- gsSpec(model = list(ar = 0.1, alpha = 0.3, beta = 0.2, delta = 2), 
-                    presample = NULL,cond.dist = "gev",rseed = NULL)  
-sim <- gsSim(spec, n = 1000, n.start = 0)
-plot(sim)
 
 
-# Simulate AR(1)-GARCH(1,1) with conditional dt3 distr.
-spec <- gsSpec(model = list(ar = 0.1, alpha = 0.3, beta = 0.2, delta = 2,
-                                 shape = c(1,2), skew = 1), 
-                    presample = NULL,cond.dist = "t3",rseed = NULL)  
-sim <- gsSim(spec, n = 1000, n.start = 0)
-plot(sim)
+# ------------------------------------------------------------------------------
+# Compare with the garchSim function using a presample matrix
+# ------------------------------------------------------------------------------
 
-# Simulate GARCH(1,1) with conditional stable distr.
-spec <- gsSpec(model = list(alpha = 0.05, beta = 0.01, omega = 0.01, delta = 2,shape = 1.2), 
-                    presample = NULL,cond.dist = "stable",rseed = NULL)  
-sim <- gsSim(spec, n = 100, n.start = 0)
-plot(sim)
-
-# Simulate with small sample size: Expect error about size of n.
-# spec <- gsSpec(model = list(alpha = 0.05, beta = 0.01, omega = 0.01, delta = 2,shape = 1.2), 
-#presample = NULL,cond.dist = "stable",rseed = NULL)  
-#sim <- gsSim(spec, n = 1, n.start = 0)
-
-# simulate pure ARMA(1,1) with conditional stable distribution
-spec <- gsSpec(model = list(ar = 0.05, ma = 0.01,shape = 1.5,skew = -0.5), 
-                    presample = NULL,cond.dist = "stable",rseed = NULL)  
-sim <- gsSim(spec, n = 100, n.start = 0)
-plot(sim)
-
-# simulate pure ARMA(2,2) with conditional stable distribution
-spec <- gsSpec(model = list(ar = c(0.05,0.3), ma = c(0.01,0.02),shape = 0.5,skew = -0.5), 
-                    presample = NULL,cond.dist = "nor",rseed = NULL)  
-sim <- gsSim(spec, n = 100, n.start = 0)
-plot(sim)
 
 # simulate GARCH(1,1) with conditional stable norm and compare with garchSim from fGarch.
 # Note that the garchSim function from package fGarch has a somewhat strange instruction 
@@ -73,58 +43,68 @@ plot(sim)
 # we obtain a time series with size (n-1). Therefore, in order to compare our modified
 # function gsSpec we need to put n.start > 0. 
 presampleMatrix = matrix(c(0.1,0.5,0),1,3)
-spec1 <- gsSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), 
-                     presample = presampleMatrix,cond.dist = "std",rseed = 1001)  
-sim1 <- gsSim(spec1, n = 100, n.start = 1)
+spec1 <- gsSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), rseed = 1001, 
+                     presample = presampleMatrix,cond.dist = "std")  
+sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
 
 spec2 <- garchSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), 
                    presample = presampleMatrix,cond.dist = "std",rseed = 1001)  
-sim2 <- garchSim(spec2, n = 100, n.start = 1, extended = TRUE)
+sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
 # These means must be equal
 mean(sim1)
 mean(sim2)
 
-# Simulate AR(1) with conditional stable distribution
-spec <- gsSpec(model = list(ar = 0.4), 
-                     presample = NULL,cond.dist = "stable",rseed = 1001)  
-sim <- gsSim(spec, n = 100, n.start = 1)
 
-# Simulate an i.i.d sequence of stable random variables. 
-# Notice here that the columns 'series' and 'eps' are the same.
-spec <- gsSpec(model = list(ar = 0), 
-                    presample = NULL,cond.dist = "stable",rseed = 1001)  
-sim <- gsSim(spec, n = 100, n.start = 1)
+# Test bigger matrix as a presample
+presampleMatrix = matrix(c(0.1,-0.4,0.3,0.5,0,4),2,3)
+spec1 <- gsSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), rseed = 1001, 
+                presample = presampleMatrix,cond.dist = "std")  
+sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
 
-# Simulate an ARMA(0,2) with GEV random variables. 
-spec <- gsSpec(model = list(ar = 0, ma = c(0.3,0.4)), 
-                    presample = NULL,cond.dist = "gev",rseed = 1001)  
-sim <- gsSim(spec, n = 100, n.start = 1)
-plot(sim)
-
-# Simulate an ARMA(1,1) with normal innovations and uses 
-# the arima function to estimate the model parameters
-spec <- gsSpec(model = list(ar = 0.9, ma = 0.1), 
-                    presample = NULL,cond.dist = "norm",rseed = 1001)  
-sim <- gsSim(spec, n = 100000, n.start = 1)
-arima(sim[,1], order = c(1,0,1))
-
-# Simulate an ARMA(1,1) with normal innovations and uses 
-# the arima function to estimate the model parameters. The estimated
-# parameters must agree with the simulated ones.
-# Here the estimated intercept equals to mu/(1-0.9) = mu/0.1
-spec <- gsSpec(model = list(mu = 3, ar = 0.9, ma = 0.1), 
-                    presample = NULL,cond.dist = "norm",rseed = 1001)  
-sim <- gsSim(spec, n = 1000, n.start = 1)
-plot(sim)
-arima(sim[,1], order = c(1,0,1))
-
-# Simulate an ARMA(1,1) with stable innovation
-spec <- gsSpec(model = list(mu = 3, ar = 0.9, ma = 0.1,shape = 1.1, skew = 0), 
-                    presample = NULL,cond.dist = "stable",
-                    rseed = 1003)  
-sim <- gsSim(spec, n = 1000, n.start = 1)
-plot(sim)
-arima(sim[,1], order = c(1,0,1))
+spec2 <- garchSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), 
+                   presample = presampleMatrix,cond.dist = "std",rseed = 1001)  
+sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
+# These means must be equal
+mean(sim1)
+mean(sim2)
 
 
-                    
+presampleMatrix = matrix(c(0.1,-0.4,-0.4,0.1,0.3,0.5,0,4,-4),3,3)
+spec1 <- gsSpec(model = list(ar = c(-0.3,0.3), mu = -0.3, omega = 0.1, gamma = c(-0.3), alpha = c(0.05), 
+               beta = c(0.02,0.3,0.3), delta = 0.5), rseed = 1001, 
+               presample = presampleMatrix,cond.dist = "std")  
+sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
+
+spec2 <- garchSpec(model = list(ar = c(-0.3,0.3), mu = -0.3, omega = 0.1, gamma = c(-0.3), alpha = c(0.05), 
+                                beta = c(0.02,0.3,0.3), delta = 0.5), 
+                   presample = presampleMatrix,cond.dist = "std",rseed = 1001)  
+sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
+# These means must be equal
+mean(sim1)
+mean(sim2)
+
+# ------------------------------------------------------------------------------
+# Simulate GARCH(1,1) with several conditional distributions using 
+# a set of parameters that makes the innovation and the simulated series
+# be the same.
+# ------------------------------------------------------------------------------
+presample.matrix = matrix(c(0,1,0),1,3)
+cond.dist.list = c("norm", "std", "sstd", "ged")
+for( i in 1:length(cond.dist.list) )
+{
+    spec1 <- gsSpec(model = list(omega = 1, alpha = 0, beta = 0), rseed = 1001, 
+                    presample = presampleMatrix,cond.dist = cond.dist.list[i])  
+    sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
+    
+    spec2 <- garchSpec(model = list(omega = 1, alpha = 0, beta = 0), rseed = 1001, 
+                       presample = presampleMatrix,cond.dist = cond.dist.list[i])
+    sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
+    
+    if (sum( sim1 == sim2 ) != 15)
+        stop("sim1 != sim2") 
+}
+
+
+
+
+               
