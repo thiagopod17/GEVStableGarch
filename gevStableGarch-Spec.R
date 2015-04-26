@@ -40,7 +40,7 @@
 
 gsSpec <-
     function (model = list(), presample = NULL,
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
     rseed = NULL)
 {
       
@@ -101,7 +101,7 @@ gsSpec <-
     skew = list(
         "stable" = 0,
         "gev" = NULL,
-        "t3" = 1,
+        "GAt" = 1,
         "norm" = NULL,
         "std" = NULL,
         "sstd" = 0.9,
@@ -112,7 +112,7 @@ gsSpec <-
     shape = list(
       "stable" = 1.7,
       "gev" = 0.3,
-      "t3" = c(3,1),
+      "GAt" = c(3,1),
       "norm" = NULL,
       "std" = 4,
       "sstd" = 4,

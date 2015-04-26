@@ -1,6 +1,6 @@
 #   Things to do on Package now
-    - Implement method SHOW ver pacote fGarch for: gsFit, gsSim, gsSpec
 
+    
 
 # More tests if you have time. hahaha
     - SIM function
@@ -9,7 +9,7 @@
 
     - Plan a wise test for function gsFit and gsSelect
     - Clear unnecessary comments
-    - Put copyrights 2015.
+    - Atualizar copyrights
 
 
 
@@ -53,6 +53,11 @@ changed variable name from 'gm' to 'gamma'
     - Correct the formula for the calculation of the stable.moment general (in the paper). Just change the expressions (1-gm)^delta and (1+gm)^delta.
 - Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
 - Make sure the definition of stable distr. is the 1-parameterization
+- Dizer no artigo que no caso da gev temos que iniciar o algoritmo com qsui igual azero, por causa do suporte da distribuicao muda a medida que mudamos os dados.
+- Dizer que temos que iniciar o algormtio em um ponto de estacionariedade e que a funcao faz isso internamente para garantir isso.
+- Dizer que a stable eh usada awui na sua parametrizacao 1 .
+- Falar no artigo que retornamos valores grandes no algoritmo sqp na funcao que calcula momentos.
+
 
 
 
@@ -65,8 +70,8 @@ changed variable name from 'gm' to 'gamma'
     - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
     - How to cite the code I used from package fGarch: Sim and garchSpec functions.
     - Prediction methods using the results of Brockwell for stable prediction.
-
-
+    - Advices professor Paolella. (email)
+  
 
 
 

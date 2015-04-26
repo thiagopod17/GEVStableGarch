@@ -18,22 +18,22 @@
 
 
 ################################################################################
-# FUNCTION:              t3 DISTRIBUTION PROPOSED IN PAOLELLA (1997)
-#  pt3                   Probability function for the t3
-#  dt3                   Density for the t3-distribution 
-#  qt3                   Quantile function for the t3
-#  rt3                   Random Number Generator for the t3
+# FUNCTION:              t3 (now called GAt) DISTRIBUTION PROPOSED IN PAOLELLA (1997)
+#  pGAt                   Probability function for the GAt
+#  dGAt                   Density for the GAt-distribution 
+#  qGAt                   Quantile function for the GAt
+#  rGAt                   Random Number Generator for the GAt
 ################################################################################
 
 
-dt3 <- 
+dGAt <- 
   function(x, mean = 0, sd = 1, nu = 3, d = 2, xi = 1, log = FALSE)
   {   
     # A function implemented by Thiago Sousa
     
     # Description:
     #   Compute the density for the 
-    #   so called t3-distribution defined in Paolella (1997).
+    #   so called t3-distribution (now called GAt) defined in Paolella (1997).
     #   Reference: Paolella M 0886. Tail Estimation and Conditional Modeling 
     #   of Heteroscedastic Time!Series. PhD thesis.
     #   Institute of Statistics and Econometrics. Christian Albrechts University at Kiel
@@ -91,14 +91,14 @@ dt3 <-
 
 # ------------------------------------------------------------------------------
 
-pt3 <- 
+pGAt <- 
   function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
   {   
     # A function imlemented by Thiago Sousa
     
     # Description:
     #   Compute the distribution for the 
-    #   so called t3-distribution
+    #   so called t3-distribution (now called GAt)
     #   Parameters: mean in R; sd > 0; nu > 0; d > 0; xi > 0; 
     
     # FUNCTION:
@@ -154,10 +154,10 @@ pt3 <-
   }
 
 
-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
-
-qt3 <- 
+  
+qGAt <- 
   function(p, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
     
@@ -181,7 +181,7 @@ qt3 <-
     }
     
     # Compute quantiles located at (-Inf,0] and at (0,+Inf)
-    F0 = pt3(0, mean = 0, sd = 1, nu = nu, d = d, xi = xi)
+    F0 = pGAt(0, mean = 0, sd = 1, nu = nu, d = d, xi = xi)
     n = length(p)
     result = rep(NA,n)
     indexLessThanF0 = which (p <= F0, arr.ind = TRUE)
@@ -217,23 +217,23 @@ qt3 <-
 # ------------------------------------------------------------------------------
 
 
-rt3 <-  
+rGAt <-  
   function(n, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
     
     # Description:
-    #   Generate t3 Random values
+    #   Generate GAt Random values
     #   using the inverse of the distribution function.
     
     # FUNCTION:
     
     randomUnif = runif(n = n, min = 0, max = 1)
-    result = qt3(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+    result = qGAt(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
     
     # Return Value:
     result
   }
 
-rt3(10)
+
 ################################################################################
 

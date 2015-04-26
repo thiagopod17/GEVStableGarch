@@ -27,7 +27,7 @@
 
 .armaGarchDist <- 
     function(z, hh, shape = 1.5, skew = 0, 
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
     TOLG = 1e-8) 
 {
     # Description:
@@ -105,8 +105,8 @@
     
     }
     
-    # t3 distribution
-    if(cond.dist == "t3")
+    # GAt distribution
+    if(cond.dist == "GAt")
     {
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
         {
@@ -117,7 +117,7 @@
         d = shape[2]
         xi = skew
         
-        return(-sum(log(dt3(x = z/hh, nu = nu, d = d, xi = xi)/hh)))        
+        return(-sum(log(dGAt(x = z/hh, nu = nu, d = d, xi = xi)/hh)))        
     }
     
     # GED conditional distribution.

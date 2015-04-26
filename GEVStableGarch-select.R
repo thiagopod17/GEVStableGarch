@@ -29,7 +29,7 @@ gsSelect <-
     order.max = c(1,1,1,1),
     selection.criteria = c("AIC", "AICc", "BIC"),
     is.aparch = FALSE,
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb+nm"),
     ...)

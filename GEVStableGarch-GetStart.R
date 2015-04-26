@@ -26,7 +26,7 @@
 
 
 .getStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
-                         cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
+                         cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
                          TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   
@@ -85,7 +85,7 @@
     
     # Initial variable declaration
     cond.dist = match.arg(cond.dist)
-    cond.dist.list = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged")
+    cond.dist.list = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
     Mean <- mean(data)
     Var <- var(data)
     Dispersion <- mean(abs(x-Mean))
@@ -139,7 +139,7 @@
     omega.start = list(
       "stable" = 0.1 * Dispersion,
       "gev" = 0.1 * Var,
-      "t3" = 0.1 * Var,
+      "GAt" = 0.1 * Var,
       "norm" = 0.1 * Var,
       "std" = 0.1 * Var,
       "sstd" = 0.1 * Var,
@@ -149,7 +149,7 @@
     alpha.start = list(
       "stable" = rep(0.1/p, p),
       "gev" = rep(0.05/p, p),
-      "t3" = rep(0.1/p, p),
+      "GAt" = rep(0.1/p, p),
       "norm" = rep(0.1/p, p),
       "std" = rep(0.1/p, p),
       "sstd" = rep(0.1/p, p),
@@ -159,7 +159,7 @@
     beta.start = list(
       "stable" = rep(0.8/q, q),
       "gev" = rep(0.8/q, q),
-      "t3" = rep(0.8/q, q),
+      "GAt" = rep(0.8/q, q),
       "norm" = rep(0.8/q, q),
       "std" = rep(0.8/q, q),
       "sstd" = rep(0.8/q, q),
@@ -169,7 +169,7 @@
     delta.start = list(
       "stable" = 1.05,
       "gev" = 2,
-      "t3" = 2,
+      "GAt" = 2,
       "norm" = 2,
       "std" = 2,
       "sstd" = 2,
@@ -179,7 +179,7 @@
     skew.start = list(
       "stable" = 0,
       "gev" = 1,
-      "t3" = 1,
+      "GAt" = 1,
       "norm" = 1,
       "std" = 1,
       "sstd" = 1,
@@ -189,7 +189,7 @@
     shape.start = list(
       "stable" = 1.9,
       "gev" = 0,
-      "t3" = c(2, 4),
+      "GAt" = c(2, 4),
       "norm" = 1,
       "std" = 4,
       "sstd" = 4,
@@ -208,7 +208,7 @@
     delta.lower = list(
       "stable" = 1,
       "gev" = TOLG,
-      "t3" = TOLG,
+      "GAt" = TOLG,
       "norm" = TOLG,
       "std" = TOLG,
       "sstd" = TOLG,
@@ -218,7 +218,7 @@
     skew.lower = list(
       "stable" = - 1 + TOLSTABLE,
       "gev" = 0,
-      "t3" = TOLG,
+      "GAt" = TOLG,
       "norm" = 0,
       "std" = 0,
       "sstd" = TOLG,
@@ -228,7 +228,7 @@
     shape.lower = list(
       "stable" = 1 + TOLSTABLE,
       "gev" = - 100,
-      "t3" = c ( TOLG, TOLG),
+      "GAt" = c ( TOLG, TOLG),
       "norm" = 0,
       "std" = 2 + TOLG,
       "sstd" = 2 + TOLG,
@@ -247,7 +247,7 @@
     delta.upper = list(
       "stable" = 2 - TOLG,
       "gev" = 100,
-      "t3" = 100,
+      "GAt" = 100,
       "norm" = 100,
       "std" = 100,
       "sstd" = 100,
@@ -257,7 +257,7 @@
     skew.upper = list(
       "stable" = 1 - TOLSTABLE,
       "gev" = 2,
-      "t3" = 100,
+      "GAt" = 100,
       "norm" = 2,
       "std" = 2,
       "sstd" = 100,
@@ -267,7 +267,7 @@
     shape.upper = list(
       "stable" = 2 - TOLSTABLE,
       "gev" = 100,
-      "t3" = c ( 100, 100),
+      "GAt" = c ( 100, 100),
       "norm" = 2,
       "std" = 100,
       "sstd" = 100,
@@ -324,7 +324,7 @@
 
 
 .getStartOld <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
-                         cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"), 
+                         cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
                          TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   # Description:
@@ -497,7 +497,7 @@
     shape.init <- 4
     shape.lower <- 0 + TOLG; shape.upper <- 20   
   }
-  if (cond.dist == "t3")
+  if (cond.dist == "GAt")
   {   
     shape.init <- c(4,1)
     shape.lower <- rep(0 + TOLG,2)

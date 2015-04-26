@@ -20,27 +20,29 @@
 ################################################################################
 # TEST CASES FOF FUNCTIONS: 
 #                
-#  pt3
-#  dt3
+#  pGAt
+#  dGAt
+#  qGAt
+#  rGAt
 ################################################################################
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for the density function dt3
+# Test Cases for the density function dGAt
 # ------------------------------------------------------------------------------
 
 # Test invalid input parameters 
-dt3(rnorm(1000), mean = 0, sd = -1, nu = 2, d = 3, xi = 1)
-dt3(rnorm(1000), mean = 0, sd = 3, nu = 0, d = -1, xi = 1)
-dt3(rnorm(1000), mean = 0, sd = 3, nu = 1, d = -0.1, xi = 1)
-dt3(rnorm(1000), mean = 0, sd = 3, nu = 0.001, d = 0.1, xi = 1)
+dGAt(rnorm(1000), mean = 0, sd = -1, nu = 2, d = 3, xi = 1)
+dGAt(rnorm(1000), mean = 0, sd = 3, nu = 0, d = -1, xi = 1)
+dGAt(rnorm(1000), mean = 0, sd = 3, nu = 1, d = -0.1, xi = 1)
+dGAt(rnorm(1000), mean = 0, sd = 3, nu = 0.001, d = 0.1, xi = 1)
 
 
 # Test efficiency of implementation and compare with the dnorm function.
 n = 1e7; mean = rnorm(1,mean = 10); sd = runif(1,0,10); nu = runif(1,0,10); 
 d = runif(1,0,10); xi = runif(1,0,10); x = rnorm(n)
 system.time(
-  dt3(x,  mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+  dGAt(x,  mean = mean, sd = sd, nu = nu, d = d, xi = xi)
   )
 system.time(
   rnorm(n)
@@ -66,7 +68,7 @@ integrationValues = rep(NA,n)
 trueValues = 1
 for(i in 1:n)
 {
-  integrationValues[i] = as.numeric(integrate(dt3 , lower = -Inf, upper = Inf, 
+  integrationValues[i] = as.numeric(integrate(dGAt , lower = -Inf, upper = Inf, 
                          mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                          d = dValues[i], xi = xiValues[i])[1])
 }
@@ -78,14 +80,14 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for the Distribution function pt3
+# Test Cases for the Distribution function pGAt
 # ------------------------------------------------------------------------------
 
 
 # Plot some graphs for the distribution function:
 n = 1e4; mean = rnorm(1,mean = 10); sd = runif(1,0,10); nu = runif(1,0,10); 
 d = runif(1,0.1,10); xi = runif(1,0,1); x = sort(runif(n,-50,50))
-y = pt3(x = x, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+y = pGAt(x = x, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
 plot(x,y, type = "l")
 
 # Boundary tests:
@@ -105,23 +107,23 @@ sdValues = runif(n,1,Smax)
 nuValues = runif(n,Smin,Smax)
 dValues = runif(n,0.3,Smax)
 xiValues = runif(n,Smin,1)
-pt3LargeX = rep(NA,n)
-pt3SmallX = rep(NA,n)
+pGAtLargeX = rep(NA,n)
+pGAtSmallX = rep(NA,n)
 for(i in 1:n)
 {
-    pt3SmallX[i] = pt3 (smallX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+    pGAtSmallX[i] = pGAt (smallX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                       d = dValues[i], xi = xiValues[i])
-    pt3LargeX[i] = pt3 (largeX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+    pGAtLargeX[i] = pGAt (largeX, mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
     d = dValues[i], xi = xiValues[i])  
 }
-errorSmall = 100*abs((pt3SmallX - 0))
-errorLarge = 100*abs((pt3LargeX - 1))
+errorSmall = 100*abs((pGAtSmallX - 0))
+errorLarge = 100*abs((pGAtLargeX - 1))
 summary(errorSmall)
 summary(errorLarge)
-cbind(meanValues,sdValues,nuValues,dValues,xiValues,pt3SmallX,pt3LargeX)[which(errorSmall > 0.05),]
+cbind(meanValues,sdValues,nuValues,dValues,xiValues,pGAtSmallX,pGAtLargeX)[which(errorSmall > 0.05),]
 
 # Test the computation of probability using the distribution function: 
-# We will test the following property: integral( pt3, a, b) = pt3(b) - pt3(a)
+# We will test the following property: integral( pGAt, a, b) = pGAt(b) - pGAt(a)
 # Note: small values of 'd' may lead to numerical problems when computing the 
 # probability with the 'integrate' routine from R.
 # Indeed, when the density is very concentrated on some interval the integration routine
@@ -142,12 +144,12 @@ integrationValues = rep(NA,n)
 trueValues = rep(NA,n)
 for(i in 1:n)
 {
-  integrationValues[i] = as.numeric(integrate(dt3 , lower = aValues[i], upper = bValues[i], 
+  integrationValues[i] = as.numeric(integrate(dGAt , lower = aValues[i], upper = bValues[i], 
                                               mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                                               d = dValues[i], xi = xiValues[i])[1])
-  trueValues[i] = pt3 (bValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+  trueValues[i] = pGAt (bValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                       d = dValues[i], xi = xiValues[i]) - 
-                  pt3 (aValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+                  pGAt (aValues[i], mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                   d = dValues[i], xi = xiValues[i])
 }
 error = 100*abs((integrationValues - trueValues))
@@ -157,7 +159,7 @@ cbind(meanValues,sdValues,nuValues,dValues,xiValues,aValues,bValues,trueValues,i
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for the Quantile function qt3
+# Test Cases for the Quantile function qGAt
 # ------------------------------------------------------------------------------
 
 
@@ -177,9 +179,9 @@ CalculatedValues = matrix(NA,nrow = n, ncol = nQuantiles)
 error = matrix(NA,nrow = n, ncol = nQuantiles)
 for(i in 1:n)
 {
-  quantileValues[i,] = qt3(p,mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+  quantileValues[i,] = qGAt(p,mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                                               d = dValues[i], xi = xiValues[i])
-  CalculatedValues[i,] = pt3(quantileValues[i,],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
+  CalculatedValues[i,] = pGAt(quantileValues[i,],mean = meanValues[i], sd = sdValues[i], nu = nuValues[i],
                            d = dValues[i], xi = xiValues[i])
   error[i,] = 100*abs(CalculatedValues[i,] - p)/p
 }
@@ -188,7 +190,7 @@ summary(as.vector(error))
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for the random number generation function rt3
+# Test Cases for the random number generation function rGAt
 # ------------------------------------------------------------------------------
 
 # Plot of density and histogram
@@ -202,7 +204,7 @@ histPlot <- function(x, ...) {
   sd = sd(X)
   xlim = range(H$breaks)
   s = seq(xlim[1], xlim[2], length = 201)
-  lines(s, dt3(s, ...), lwd = 2, col = "brown")
+  lines(s, dGAt(s, ...), lwd = 2, col = "brown")
   abline(v = mean, lwd = 2, col = "orange")
   Text = paste("Mean:", signif(mean, 3))
   mtext(Text, side = 4, adj = 0, col = "darkgrey", cex = 0.7)
@@ -210,10 +212,10 @@ histPlot <- function(x, ...) {
   invisible(s)
 }
 mean = 0; sd = 1; nu = 1; d = 5; xi = 1
-histPlot(rt3(1000,mean = mean,sd = sd,nu = nu,d = d,xi = xi),
+histPlot(rGAt(1000,mean = mean,sd = sd,nu = nu,d = d,xi = xi),
          mean = mean, sd = sd, nu = nu, d = d, xi = xi)
 
-# implementar a t3 junto com o garch e utilizar essa funcao para ajustar dados simulados.
+# implementar a GAt junto com o garch e utilizar essa funcao para ajustar dados simulados.
 
 
 

@@ -46,7 +46,7 @@
 #
 #  .gedMomentAparch                Exact APARCH moments for the standard GED distribution
 
-#  .t3MomentAparch                 Exact APARCH moments for the standard t3 distribution
+#  .GAtMomentAparch                 Exact APARCH moments for the standard GAt distribution
 #
 #  .stableMomentAparch             Exact APARCH moments for the location zero and unit scale
 #                                   in S1 parametrization (see Nolan (1999)).
@@ -67,7 +67,7 @@
 .stationarityAparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"))
+            cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"))
 {
     
     # Description: 
@@ -82,7 +82,7 @@
     #   stable model where delta = 1.
     #   The expectation  E[ |z| ] is equal to one for the following 
     #   distributions: norm, std, sstd and ged.
-    #   For the t3, gev and stable conditional distribution we need to 
+    #   For the GAt, gev and stable conditional distribution we need to 
     #   calculate this expectation, even for the GARCH model.  
     
     
@@ -144,8 +144,8 @@
             kappa = try(.stableMomentPowerGarch (shape = shape, skew = skew, 
                                                       delta = 1), silent = TRUE)
         
-        if(cond.dist == "t3")
-           kappa = try(.t3MomentAparch(shape = shape, skew = skew, 
+        if(cond.dist == "GAt")
+           kappa = try(.GAtMomentAparch(shape = shape, skew = skew, 
                                        delta = 2, gm = 0), silent = TRUE)   
         
         if(cond.dist == "skstd")
@@ -169,8 +169,8 @@
             if(cond.dist == "gev")
               kappa[i] = try(.gevMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
-            if(cond.dist == "t3")
-              kappa[i] = try(.t3MomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
+            if(cond.dist == "GAt")
+              kappa[i] = try(.GAtMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
             
             if(cond.dist == "norm")
               kappa[i] = try(.normMomentAparch (delta = delta, gm = gm[i]), silent = TRUE)
@@ -198,7 +198,7 @@
 
 
 gsMomentAparch <- function(
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
     shape = 1.5, 
     skew = 0,
     delta = 1,
@@ -214,8 +214,8 @@ gsMomentAparch <- function(
     if(cond.dist == "gev")
       kappa = .gevMomentAparch(shape = shape, delta = delta, gm = gm)
     
-    if(cond.dist == "t3")
-      kappa = .t3MomentAparch(shape = shape, delta = delta, skew = skew, gm = gm)  
+    if(cond.dist == "GAt")
+      kappa = .GAtMomentAparch(shape = shape, delta = delta, skew = skew, gm = gm)  
     
     if(cond.dist == "norm")
       kappa = .normMomentAparch (delta = delta, gm = gm)
@@ -315,7 +315,7 @@ gsMomentAparch <- function(
     # reparametrization introduced by Wurtz et al. (2006).
     # but theThe point here is that the SPLUS FinMetrics
     # also uses this distribution without reparametrization. 
-    # Indeed, Mittnik et al. (2000) also uses his t3-distribution without such
+    # Indeed, Mittnik et al. (2000) also uses his t3-distribution (GAt) without such
     # reparametrization. These distributions are in fact standardized, but the 
     # point is that the assymetry parameter plays a crucial role in the calculation
     # of the APARCH moments.   
@@ -342,10 +342,10 @@ gsMomentAparch <- function(
 
 
 
-.t3MomentAparch <- function(shape = c(3,1), skew = 1, delta = 1.2, gm = 0)
+.GAtMomentAparch <- function(shape = c(3,1), skew = 1, delta = 1.2, gm = 0)
 {
   # Description:
-  #   Returns the following Expectation for a standard t3 distribution
+  #   Returns the following Expectation for a standard GAt distribution
   #   E[ (|z|-gm*z)^delta.
   #   Reference: Mittnik -  (2000) - Conditional Density and Value-at-Risk 
   #   Prediction of Asian Currency Exchange Rates.

@@ -27,7 +27,7 @@ gsFit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("stable", "gev", "t3", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb+nm"),
     control = NULL,
@@ -111,6 +111,9 @@ function(
     if( tolerance$TOLSTATIONARITY > 0.05)
         stop("TOLSTATIONARITY can not be > 0.05")
     
+    if(is.null(title))
+        title = "ARMA-GARCH modelling"
+    
     # Getting order model from object formula
     formula.input <- formula
     formula <- .getFormula(formula)
@@ -175,7 +178,7 @@ function(
     out$cond.dist <- cond.dist
     out$data <- data
     optim.finished <- FALSE
-    if(cond.dist == "t3")
+    if(cond.dist == "GAt")
         lengthShape = 2
     else
         lengthShape = 1
@@ -286,8 +289,8 @@ function(
         shape <- parm[(4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape)]
         
         
-        # Configure 'shape' for the 't3' distribution
-        #if(cond.dist == "t3")
+        # Configure 'shape' for the 'GAt' distribution
+        #if(cond.dist == "GAt")
         #    shape <- parm[4+m+n+2*p+q+1,4+m+n+2*p+q+1+1]
         
         # Configuring delta and gamma for Garch estimation
@@ -533,8 +536,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stable","t3")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","skstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stable","GAt")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","skstd","ged","GAt")  == cond.dist)) 
                       (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -545,8 +548,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stable","t3")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","skstd","ged","t3")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stable","GAt")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stable","sstd","skstd","ged","GAt")  == cond.dist)) 
                       (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
@@ -559,8 +562,8 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stable","t3","skstd")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd","ged","t3","skstd")  == cond.dist)) 
+                  if(any(c("sstd","stable","GAt","skstd")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stable","sstd","ged","GAt","skstd")  == cond.dist)) 
                     paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     
