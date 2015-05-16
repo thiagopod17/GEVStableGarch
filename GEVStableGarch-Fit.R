@@ -27,7 +27,7 @@ gsFit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb+nm"),
     control = NULL,
@@ -65,7 +65,7 @@ function(
     #         x: data set. It is the time series that will be modelled as ARMA-GARCH
     #         xi: GEV shape parameter. xi > -0.5 (llh) and < 0.5 (finiteness of variance, see Zhao et al. (2011))
     #         AR, MA: if AR (or MA) equals TRUE, then the model has AR (or MA) order equals to zero.
-    #         param or pm (stabledist): Parametrization of stable distributions as chosen to be 2.  
+    #         Stable distributions can be specified in all parametrizations: S0, S1 and S2.
     #         Even for stable distribution llh, there's a problem for finding the estimators for
     #         alpha near to 2 and beta > 0. The bad performance on the ARMA-GARCH model was
     #         similar to the single llh estimation of i.i.d samples of stable distribution. 
@@ -86,8 +86,7 @@ function(
     #   m, n, p, q - model order as in ARMA(m,n)-GARCH/APARCH(p,q)
     #   include.mean - a logical, should the mean value be estimated ? 
     #   algorithm - 
-    #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd, ged 
+    #   cond.dist - name of the conditional distribution
     #   title - a character string which allows for a project title
     #   description - a character string which allows for a project description
     
@@ -135,8 +134,12 @@ function(
     
     # Stop if the algorithm is not supported
     if(algorithm == "sqp.restriction")
-        if(formula.var == "")
-            stop("sqp.restriction should only be used with GARCH/APARCH models.")
+     {   
+          if(formula.var == "")
+              stop("sqp.restriction should only be used with GARCH/APARCH models.")
+          if( any ( cond.dist == c("stableS0", "stableS2") ) )
+              stop("sqp.restriction algorithm can only be used with \n stable distribution in S1 parametrization, i.e., cond.dist = 'stableS1'.")
+    }
     
     # Stop if the user specified a pure arma model
     if(formula.var == "")
@@ -219,7 +222,7 @@ function(
         if (include.mean == FALSE)
           mu <- 0
          
-        if( cond.dist == "stable")
+        if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
         {
             if( shape-delta < tolerance$TOLSTABLE || abs(shape) < tolerance$TOLSTABLE ||
                   !(abs(skew) < 1) || !((shape - 2) < 0) )
@@ -298,7 +301,7 @@ function(
         { 
             gm = rep(0,p);
             delta = 2; 
-            if( cond.dist == "stable" ) 
+            if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) ) 
                 delta = 1
         }
         
@@ -536,8 +539,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stable","GAt")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","skstd","ged","GAt")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stableS0","stableS1","stableS2","GAt")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stableS0","stableS1","stableS2","sstd","skstd","ged","GAt")  == cond.dist)) 
                       (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -548,8 +551,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stable","GAt")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stable","sstd","skstd","ged","GAt")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stableS0", "stableS1", "stableS2","GAt")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","skstd","ged","GAt")  == cond.dist)) 
                       (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
@@ -562,8 +565,8 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stable","GAt","skstd")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stable","sstd","ged","GAt","skstd")  == cond.dist)) 
+                  if(any(c("sstd","stableS0", "stableS1", "stableS2","GAt","skstd")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","ged","GAt","skstd")  == cond.dist)) 
                     paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     

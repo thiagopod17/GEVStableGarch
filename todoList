@@ -1,15 +1,23 @@
 #   Things to do on Package now
-
+    - put control for sqp.restriction
+      control = list(tol = 1e-4)
     
 
 # More tests if you have time. hahaha
     - SIM function
+    - FIT function
+    
+
+# Improvements 
+    - GEV estimation fails when there are outliers, i.e. max-min is big.
+    - sqp.restriction algorithm must be tested with others datasets.
 
 # Before submiting to CRAN
 
     - Plan a wise test for function gsFit and gsSelect
     - Clear unnecessary comments
     - Atualizar copyrights
+    - Test the onAttach function.
 
 
 
@@ -50,15 +58,16 @@ changed variable name from 'gm' to 'gamma'
 
 # Changes on papper:
 
-    - Correct the formula for the calculation of the stable.moment general (in the paper). Just change the expressions (1-gm)^delta and (1+gm)^delta.
-- Write a better deffinition of stable distribution, see def. 1.6 Nolan - chapter 1.
-- Make sure the definition of stable distr. is the 1-parameterization
+    - Write aparch moment gev and its proof.
 - Dizer no artigo que no caso da gev temos que iniciar o algoritmo com qsui igual azero, por causa do suporte da distribuicao muda a medida que mudamos os dados.
 - Dizer que temos que iniciar o algormtio em um ponto de estacionariedade e que a funcao faz isso internamente para garantir isso.
-- Dizer que a stable eh usada awui na sua parametrizacao 1 .
 - Falar no artigo que retornamos valores grandes no algoritmo sqp na funcao que calcula momentos.
 
+- Sugestao para o abstract: The results suggest that this kind of distributions clearly outperforms the Gaussian case. However, when a-stable and Students t distributions are compared, a general conclusion should be avoided as the goodness-of-fit measures favor the a-stable distribution in the case of S&P 500 returns and the 
 
+
+- COmentar os valores da llh ajustada para stable com varias parametrizacoes. 
+- Rathie et al (2013) artigo tem densidades stable.
 
 
 
@@ -68,7 +77,7 @@ changed variable name from 'gm' to 'gamma'
     - Implement the ARMA dist function for every distribution. 
     - Currently the code is working for ARMA(1,1) ARMA(p,1) ARMA(1,n) models with condtional normal. 
     - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
-    - How to cite the code I used from package fGarch: Sim and garchSpec functions.
+    - Advices of professor Doctor Paolella.
     - Prediction methods using the results of Brockwell for stable prediction.
     - Advices professor Paolella. (email)
   

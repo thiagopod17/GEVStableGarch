@@ -28,10 +28,10 @@
 #  .gedMomentAparch                
 #  .GAtMomentAparch 
 #  .gevMomentAparch
-#  .stableMomentAparch            
-#  .stableSymmetricMomentGarch    
-#  .stableSymmetricMomentAparch   
-#  .stableMomentPowerGarch
+#  .stableS1MomentAparch            
+#  .stableS1SymmetricMomentGarch    
+#  .stableS1SymmetricMomentAparch   
+#  .stableS1MomentPowerGarch
 ################################################################################
 
 
@@ -232,11 +232,11 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function .stableSymmetricMomentGarch
+# Test Cases for function .stableS1SymmetricMomentGarch
 # ------------------------------------------------------------------------------
 
 # E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
-.stableSymmetricMomentGarch(shape = 2)
+.stableS1SymmetricMomentGarch(shape = 2)
 sqrt(2)*.normMomentAparch (delta = 1, gm = 0)
 
 # Comparison with simulated data - OK
@@ -251,8 +251,8 @@ for(i in 1:n)
   z = stabledist::rstable(n=nSimulations,alpha=shapeValues[i],beta = 0,
                           gm=1,delta=0,pm=1)
   error[i] = abs((mean(abs(z)) - 
-                    .stableSymmetricMomentGarch(shapeValues[i]))/
-                   .stableSymmetricMomentGarch(shapeValues[i]))
+                    .stableS1SymmetricMomentGarch(shapeValues[i]))/
+                   .stableS1SymmetricMomentGarch(shapeValues[i]))
 }
 plot(error, ylab = "error In percentage")
 summary(error)
@@ -269,7 +269,7 @@ for(i in 1:n)
 {
   trueValues[i] = as.numeric(.trueAparchMomentsWurtz("dstable",gm = 0, delta = 1,
                                                     alpha = shapeValues[i], beta = 0,pm = 1)[1])
-  functionValues[i] = .stableSymmetricMomentGarch(shapeValues[i])
+  functionValues[i] = .stableS1SymmetricMomentGarch(shapeValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
 plot(error, main = "Error (% TrueValues-numerical integration)", type = "l", col = "red")
@@ -283,12 +283,12 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for functions .stableMomentPowerGarch (Mittnik et al. (2002))
+# Test Cases for functions .stableS1MomentPowerGarch (Mittnik et al. (2002))
 # ------------------------------------------------------------------------------
 
 # E(|z|^1) = E(|x|^1) where x ~ N(0,sd = sqrt(2)) see Mittnik et al. (2002) - OK
-.stableMomentPowerGarch(shape = 2, skew = 0, delta = 1)
-.stableSymmetricMomentGarch(shape = 2)
+.stableS1MomentPowerGarch(shape = 2, skew = 0, delta = 1)
+.stableS1SymmetricMomentGarch(shape = 2)
 sqrt(2)*.normMomentAparch (delta = 1, gm = 0)
 
 # Comparison with symmetric stable garch model - OK
@@ -297,9 +297,9 @@ shapeValues = runif(n, 1, 2)
 error = rep(NA,n)
 for(i in 1:n)
 {
-  error[i] = abs((.stableMomentPowerGarch(shape=shapeValues[i],skew=0,delta=1) - 
-                    .stableSymmetricMomentGarch(shape=shapeValues[i]) )/
-                   .stableSymmetricMomentGarch(shape=shapeValues[i]))
+  error[i] = abs((.stableS1MomentPowerGarch(shape=shapeValues[i],skew=0,delta=1) - 
+                    .stableS1SymmetricMomentGarch(shape=shapeValues[i]) )/
+                   .stableS1SymmetricMomentGarch(shape=shapeValues[i]))
 }
 plot(error, ylab = "error In percentage", ylim = c(0,1e-15))
 summary(error)
@@ -321,7 +321,7 @@ for(i in 1:n)
 {
   trueValues[i] = as.numeric(.trueAparchMomentsWurtz("dstable",gm = 0, delta = deltaValues[i],
                                                     alpha = shapeValues[i], beta = skewValues[i],pm = 1)[1])
-  functionValues[i] = .stableMomentPowerGarch(shape = shapeValues[i], skew = skewValues[i],
+  functionValues[i] = .stableS1MomentPowerGarch(shape = shapeValues[i], skew = skewValues[i],
                                                 delta = deltaValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -332,7 +332,7 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for functions .stableMomentAparch (GEVStableGarch papper)
+# Test Cases for functions .stableS1MomentAparch (GEVStableGarch papper)
 # ------------------------------------------------------------------------------
 
 # E(z^1) = E(x^1), where x ~ N(0,2) see Mittnik et al. (2002) - OK
@@ -340,9 +340,9 @@ z = stabledist::rstable(n=10^7,alpha=1.999,beta = 0,
                         gm=1,delta=0,pm=0)
 lambdaSim = mean((abs(z)-gm*z)^delta)
 lambdaSim
-.stableMomentAparch(shape = 1.999999,skew = skew,delta = delta,gm = gm)
+.stableS1MomentAparch(shape = 1.999999,skew = skew,delta = delta,gm = gm)
 
-# Comparison with .stableMomentPowerGarch function - OK
+# Comparison with .stableS1MomentPowerGarch function - OK
 # from Mittnik et al. (2002)
 n = 10000
 shapeValues = runif(n, 1+0.1, 2)
@@ -354,9 +354,9 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-  trueValues[i] = .stableMomentPowerGarch(shape = shapeValues[i], skew = skewValues[i],
+  trueValues[i] = .stableS1MomentPowerGarch(shape = shapeValues[i], skew = skewValues[i],
                                             delta = deltaValues[i])
-  functionValues[i] = .stableMomentAparch(shape = shapeValues[i], skew = skewValues[i],
+  functionValues[i] = .stableS1MomentAparch(shape = shapeValues[i], skew = skewValues[i],
                                            delta = deltaValues[i], gm = 0)
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -364,7 +364,7 @@ plot(error, main = "Error (% GEVStableGarch eq. VS Mittnik)", type = "l", col = 
 cbind(deltaValues,shapeValues,skewValues,trueValues,functionValues)
 summary(error)
 
-# Comparison with simulated data - OK
+# Comparison with the numerical integration - OK
 # Works really well for all values with errors around 0.005%!!!
 n = 100
 shapeValues = runif(n, 1+0.1, 2)
@@ -380,7 +380,7 @@ for(i in 1:n)
   trueValues[i] = as.numeric(.trueAparchMomentsWurtz("dstable",gm = gmValues[i], 
                                                     delta = deltaValues[i],alpha = shapeValues[i], beta = skewValues[i],
                                                     pm = 1)[1])
-  functionValues[i] = .stableMomentAparch(shape = shapeValues[i], skew = skewValues[i],
+  functionValues[i] = .stableS1MomentAparch(shape = shapeValues[i], skew = skewValues[i],
                                            delta = deltaValues[i], gm = gmValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -391,10 +391,103 @@ summary(error)
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function .stableSymmetricMomentAparch (Diongue papper)
+# Test Cases for functions .stableS0MomentAparch (GEVStableGarch papper)
+# ------------------------------------------------------------------------------
+.stableS0MomentAparch(shape = 1.5, skew = 0.5, delta = 1.3, gm = 0)
+
+# Comparison with simulated data
+
+n = 100
+nSimulations = 100000
+shapeValues = runif(n, 1.8, 2) # the mean of simulated values is more well behaved.
+skewValues = rep(0.5,n)
+gmValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.05)
+error = rep(NA,n)
+integrationValue = rep(NA,n)
+integrationValueS1 = rep(NA,n)
+simulatedValue= rep(NA,n)
+for(i in 1:n)
+{
+  z = stable::rstable(n=nSimulations,alpha=shapeValues[i],
+		beta =skewValues[i], param = 0)
+  simulatedValue[i] = mean( ( abs(z) - gmValues[i] * z ) ^ deltaValues[i] )
+  integrationValue[i] = .stableS0MomentAparch(shape = shapeValues[i], 
+         skew = skewValues[i], delta =  deltaValues[i], gm = gmValues[i])
+  integrationValueS1[i] = .stableS1MomentAparch(shape = shapeValues[i], 
+         skew = skewValues[i], delta =  deltaValues[i], gm = gmValues[i])
+ 
+}
+error1 = 100 * abs( simulatedValue - integrationValue ) / simulatedValue 
+error2 = 100 * abs( simulatedValue - integrationValueS1 ) / simulatedValue 
+plot(error, type = 'l')
+cbind(simulatedValue, integrationValue, integrationValueS1)
+plot(simulatedValue, type = 'l')
+lines(integrationValue, col = 2)
+lines(integrationValueS1, col = 3)
+
+
+sum(error1)
+sum(error2)
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for functions .stableS2MomentAparch (GEVStableGarch papper)
 # ------------------------------------------------------------------------------
 
-# Comparison with stable.moment.garch function 
+# Comparison with simulated data
+
+n = 100
+nSimulations = 100000
+shapeValues = runif(n, 1.05, 1.5) # the mean of simulated values is more well behaved.
+skewValues = rep(-0.5,n)
+gmValues = runif(n,-1,1)
+deltaValues = rep(NA,n)
+for(i in 1:n) 
+  deltaValues[i] = runif(n=1,1,shapeValues[i]-0.05)
+error = rep(NA,n)
+integrationValue = rep(NA,n)
+integrationValueS1 = rep(NA,n)
+simulatedValue= rep(NA,n)
+for(i in 1:n)
+{
+  z = stable::rstable(n=nSimulations,alpha=shapeValues[i],
+		beta =skewValues[i], param = 2)
+  simulatedValue[i] = mean( ( abs(z) - gmValues[i] * z ) ^ deltaValues[i] )
+  integrationValue[i] = .stableS0MomentAparch(shape = shapeValues[i], 
+         skew = skewValues[i], delta =  deltaValues[i], gm = gmValues[i])
+  integrationValueS1[i] = .stableS1MomentAparch(shape = shapeValues[i], 
+         skew = skewValues[i], delta =  deltaValues[i], gm = gmValues[i])
+ 
+}
+error1 = 100 * abs( simulatedValue - integrationValue ) / simulatedValue 
+error2 = 100 * abs( simulatedValue - integrationValueS1 ) / simulatedValue 
+plot(error, type = 'l')
+cbind(simulatedValue, integrationValue, integrationValueS1)
+plot(simulatedValue, type = 'l')
+lines(integrationValue, col = 2)
+lines(integrationValueS1, col = 3)
+
+
+sum(error1)
+sum(error2)
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------------------------------------
+# Test Cases for function .stableS1SymmetricMomentAparch (Diongue papper)
+# ------------------------------------------------------------------------------
+
+# Comparison with stableS1.moment.garch function 
 # from GEVStableGarch papper on JSS - OK
 # Error around 1e-9%!!!
 n = 100000
@@ -407,9 +500,9 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-  trueValues[i] = .stableMomentAparch(shape = shapeValues[i], skew = 0,
+  trueValues[i] = .stableS1MomentAparch(shape = shapeValues[i], skew = 0,
                                        delta = deltaValues[i], gm = gmValues[i])
-  functionValues[i] = .stableSymmetricMomentAparch(shape = shapeValues[i],
+  functionValues[i] = .stableS1SymmetricMomentAparch(shape = shapeValues[i],
                                                      delta = deltaValues[i], gm = gmValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -434,9 +527,9 @@ summary(error)
 # GARCH(1,0)-gev
 spec <- gsSpec(model = list(alpha = 1.3), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
-# GARCH(1,0)-stable
+# GARCH(1,0)-stableS1
 spec <- gsSpec(model = list(alpha = 1.3, delta = 1, shape = 1.5, skew = 0), 
-                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+                    presample = NULL,cond.dist = c("stableS1"), rseed = 3)
 # GARCH(1,0)-GAt
 spec <- gsSpec(model = list(alpha = 1.3, delta = 2, shape = c(3,3)), 
                     presample = NULL,cond.dist = c("GAt"), rseed = 3)
@@ -458,9 +551,9 @@ spec <- gsSpec(model = list(alpha = 1.3, delta = 2, shape = 4),
 # GARCH(1,1)-gev
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
-# GARCH(1,1)-stable
+# GARCH(1,1)-stableS1
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 1, shape = 1.5), 
-                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+                    presample = NULL,cond.dist = c("stableS1"), rseed = 3)
 # GARCH(1,1)-GAt
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = c(3,3)), 
                     presample = NULL,cond.dist = c("GAt"), rseed = 3)
@@ -482,9 +575,9 @@ spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = 4),
 # GARCH(5,1)-gev
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
-# GARCH(5,1)-stable
+# GARCH(5,1)-stableS1
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 1, shape = 4), 
-                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+                    presample = NULL,cond.dist = c("stableS1"), rseed = 3)
 # GARCH(5,1)-GAt
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = c(3,3)), 
                     presample = NULL,cond.dist = c("GAt"), rseed = 3)
@@ -506,10 +599,10 @@ spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape =
 # APARCH(1,0)-gev
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1)), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
-# APARCH(1,0)-stable
+# APARCH(1,0)-stableS1
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
                                  shape = runif(1,0,5), skew = runif(1,0,5) ), 
-                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+                    presample = NULL,cond.dist = c("stableS1"), rseed = 3)
 # APARCH(1,0)-GAt
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
                                  shape = runif(2,0,5), skew = runif(1,0,5)), 
@@ -534,10 +627,10 @@ spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = run
 # APARCH(5,1)-gev
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1)), 
                     presample = NULL,cond.dist = c("gev"), rseed = 3)
-# APARCH(5,1)-stable
+# APARCH(5,1)-stableS1
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
                                  shape = runif(1,0,5), skew = runif(1,0,5) ), 
-                    presample = NULL,cond.dist = c("stable"), rseed = 3)
+                    presample = NULL,cond.dist = c("stableS1"), rseed = 3)
 # APARCH(5,1)-GAt
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
                                  shape = runif(2,0,5), skew = runif(1,0,5)), 
@@ -569,7 +662,7 @@ spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = run
 # Test Cases for function gsMomentAparch
 # ------------------------------------------------------------------------------
 
-gsMomentAparch(cond.dist = "stable", shape = 1.1, skew = 0, delta = 1.01, gm = 0.99999)
+gsMomentAparch(cond.dist = "stableS1", shape = 1.1, skew = 0, delta = 1.01, gm = 0.99999)
 
 gsMomentAparch(cond.dist = "gev", shape = -4, skew = 0, delta = 1.4, gm = 0)
 

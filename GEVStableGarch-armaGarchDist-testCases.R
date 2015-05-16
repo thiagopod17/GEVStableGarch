@@ -26,9 +26,11 @@
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for function gsGarchDist
+# Test Cases for function armaGarchDist
 # ------------------------------------------------------------------------------
 library(skewt)
 plot(function(x)dskt(x,df = 0.3,gamma = 2),-3,1)
+.armaGarchDist(2, 2, shape = 1.5, skew = 0, 
+           cond.dist = c("stableS2")) 
 
 

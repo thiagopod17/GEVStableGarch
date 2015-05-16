@@ -94,20 +94,33 @@ gsSim <-
     n = n + n.start
 
     # Create Innovations:
-	  if (spec@distribution == "stable")
+	  if (spec@distribution == "stableS0")
+	      z = stabledist::rstable(n = n, alpha = model$shape, beta = model$skew, pm = 0)
+  
+	  if (spec@distribution == "stableS1")
 	      z = stabledist::rstable(n = n, alpha = model$shape, beta = model$skew, pm = 1)
+  
+	  if (spec@distribution == "stableS2")
+	      z = stabledist::rstable(n = n, alpha = model$shape, beta = model$skew, pm = 2)
+  
     if (spec@distribution == "gev")
         z = rgev(n, xi = model$shape)
+  
 	  if (spec@distribution == "GAt") 
 	      z = rGAt(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
+  
     if (spec@distribution == "norm")
         z = rnorm(n)
+  
     if (spec@distribution == "std")
         z = rstd(n, nu = model$shape)
+  
 	  if (spec@distribution == "sstd") 
 	      z = rsstd(n, nu = model$shape, xi = model$skew)
+  
 	  if (spec@distribution == "skstd") 
 	      z = rskstd(n, nu = model$shape, xi = model$skew)
+  
 	  if (spec@distribution == "ged") 
 	      z = rged(n, nu = model$shape)
 

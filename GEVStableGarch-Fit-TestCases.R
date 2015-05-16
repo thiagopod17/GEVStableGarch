@@ -26,9 +26,30 @@
 library(fGarch)
 library(GEVStableGarch)
 library(Rsolnp)
+library(stable)
+library(stabledist)
 library(skewt)
 data(dem2gbp)
 x = dem2gbp[,1]
+
+
+
+# ------------------------------------------------------------------------------
+# Test different arma-garch/aparch models with several conditional distributions
+# ------------------------------------------------------------------------------
+garch(1,1)
+garch(1,0)
+garch(2,2)
+arma(0,1)
+arma(1,0)
+arma(1,1)
+arma(2,2)
+
+
+
+
+
+
 
 # ------------------------------------------------------------------------------
 # Testing different type of datasets as input
@@ -460,18 +481,18 @@ cbind(model1@fit$par,model2@fit$par,model3@fit$par)
 # ------------------------------------------------------------------------------
 
 
-
+library(stable)
 library(fGarch)
 data(dem2gbp)
 library(skewt)
 x = dem2gbp[, 1]
-# c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+# c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
 
 
-# garch(1,1)-stable-intercept-NAO FIZ AINDA
+# garch(1,1)-stableS1-intercept-NAO FIZ AINDA
 fit1 <- gsFit(data = x, formula = ~garch(1,1),
-              cond.dist = "stable", include.mean = TRUE, 
-              algorithm = "sqp.restriction", control = list( trace = 3, tol = 1e-5))
+              cond.dist = "stableS2", include.mean = TRUE, 
+              algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
 
 
 # garch(1,1)-gev-intercept
@@ -482,7 +503,7 @@ fit1 <- gsFit(data = x, formula = ~garch(1,1),
 
 fit1 <- gsFit(data = x, formula = ~garch(1,1),
               cond.dist = "gev", include.mean = TRUE, 
-              algorithm = "sqp", control = list ( trace = 3) )
+              algorithm = "sqp")
 
 
 
@@ -578,6 +599,52 @@ fit1 <- gsFit(data = x, formula = ~garch(1,1),
 0.117935 + 0.881065
 0.143533 + 0.816467
 0.138609 + 0.826391
+
+
+
+
+
+
+# ------------------------------------------------------------------------------
+# Fitting models with GEV conditional distribution and several datasets
+# ------------------------------------------------------------------------------
+# SET CURRENT DATASET FOLDER
+mac.folder = "/Users/thiago/Desktop/dataset/"
+windows.folder = "c:/dataset/"
+data.set.folder = mac.folder
+
+# JOSE DATASETS
+returnCACjose = read.csv(paste(data.set.folder,"jose/DAX.csv", sep = ""), sep = ";")[,2]
+returnDJIAjose = read.csv(paste(data.set.folder,"jose/DJIA.csv", sep = ""), sep = ";")[,2]
+returnPSI20jose = read.csv(paste(data.set.folder,"jose/PSI20.csv", sep = ""), sep = ";")[,2]
+
+# CFRAIN DATASETS
+returnDAXcfrain = read.table(file=paste(data.set.folder,"cfrain/DAX.dat", sep = ""),skip = 1)[1:11502,4]
+returnFTSEcfrain = read.table(file=paste(data.set.folder,"cfrain/FTSE.dat", sep = ""),skip = 1)[1:4982,4]
+
+
+
+data(dem2gbp)
+x = dem2gbp[, 1]
+x = returnCACjose
+x = returnDJIAjose
+x = returnPSI20jose
+x = returnDAXcfrain
+x = returnFTSEcfrain
+x = (x^2*sign(x))
+x = atan(x)
+x = cos(x)
+x = exp(x)
+# garch(1,1)-gev-intercept
+
+fit1 = gsFit(data = x, formula = ~garch(1,1),
+              cond.dist = "gev", include.mean = TRUE, 
+              algorithm = "sqp", DEBUG = TRUE)
+
+fit2 = garchFit(data = x, formula = ~garch(1,1),
+         cond.dist = "ged", include.mean = TRUE, algorithm = "nlminb")
+
+
 # ------------------------------------------------------------------------------
 # Fitting pure ARMA process 
 # ------------------------------------------------------------------------------

@@ -48,14 +48,15 @@
 
 #  .GAtMomentAparch                 Exact APARCH moments for the standard GAt distribution
 #
-#  .stableMomentAparch             Exact APARCH moments for the location zero and unit scale
+#  .stableS1MomentAparch             Exact APARCH moments for the location zero and unit scale
 #                                   in S1 parametrization (see Nolan (1999)).
 #
-#  .stableSymmetricMomentGarch    Exact GARCH moments ( E |zt| for the symmetric stable distribution
+#  .stableS1SymmetricMomentGarch    Exact GARCH moments ( E |zt| for the symmetric stable (S1)
+#                                   distribution (S1 parametrization)
 #
-#  .stableSymmetricMomentAparch   Exact APARCH moments for the symmetric stable distribution
+#  .stableS1SymmetricMomentAparch   Exact APARCH moments for the symmetric stable (S1) distribution
 #
-#  .stableMomentPowerGarch        Exact power-GARCH moments for the asymmetric stable distribution
+#  .stableS1MomentPowerGarch        Exact power-GARCH moments for the asymmetric stable (S1) distribution
 #
 #  .trueAparchMomentsWurtz           Function that evaluate moments with numerical integration.
 #                                   This function was used only to test the mathematical 
@@ -67,7 +68,7 @@
 .stationarityAparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"))
+            cond.dist = c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"))
 {
     
     # Description: 
@@ -140,8 +141,8 @@
         if(cond.dist == "gev")
             kappa = try(.gevMomentAparch(shape = shape, delta = 2, gm = 0), silent = TRUE)
         
-        if(cond.dist == "stable")
-            kappa = try(.stableMomentPowerGarch (shape = shape, skew = skew, 
+        if(cond.dist == "stableS1")
+            kappa = try(.stableS1MomentPowerGarch (shape = shape, skew = skew, 
                                                       delta = 1), silent = TRUE)
         
         if(cond.dist == "GAt")
@@ -163,8 +164,8 @@
         
         for( i in 1:length(alpha))
         {
-            if(cond.dist == "stable")
-               kappa[i] = try(.stableMomentAparch (shape = shape, skew = skew,
+            if(cond.dist == "stableS1")
+               kappa[i] = try(.stableS1MomentAparch (shape = shape, skew = skew,
                                                   delta = delta, gm = gm[i]), silent = TRUE)
             if(cond.dist == "gev")
               kappa[i] = try(.gevMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
@@ -198,7 +199,7 @@
 
 
 gsMomentAparch <- function(
-    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
     shape = 1.5, 
     skew = 0,
     delta = 1,
@@ -208,8 +209,8 @@ gsMomentAparch <- function(
     cond.dist = match.arg(cond.dist)
 
     
-    if(cond.dist == "stable")
-      kappa = .stableMomentAparch (shape = shape, skew = skew,
+    if(cond.dist == "stableS1")
+      kappa = .stableS1MomentAparch (shape = shape, skew = skew,
                                            delta = delta, gm = gm)
     if(cond.dist == "gev")
       kappa = .gevMomentAparch(shape = shape, delta = delta, gm = gm)
@@ -474,10 +475,10 @@ gsMomentAparch <- function(
 
 
 
-.stableMomentAparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
+.stableS1MomentAparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
 {
   # Description: 
-  #   Returns the following Expectation for a standard normal distribution
+  #   Returns the following Expectation for a standard stable distribution in S1 parametrization
   #   E[ (|z|-gm*z)^delta.
   #   This formula uses S(alpha,skew,1,0;pm) where pm = 1.
   #   Reference: The GEVStableGarch papper on JSS. 
@@ -508,8 +509,132 @@ gsMomentAparch <- function(
 
 
 
+
+
+
+
+
+
 # ------------------------------------------------------------------------------
-.stableSymmetricMomentGarch <- function(shape = 1.5)
+
+
+
+
+
+.stableS0MomentAparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
+{
+  # Description: 
+  #   Returns the following Expectation for standard stable distribution in S0 parametrization
+  #   E[ (|z|-gm*z)^delta.
+  #   This formula uses S(alpha,skew,1,0;pm) where pm = 0.
+  #   Reference: The GEVStableGarch papper on JSS. 
+  
+  # Error treatment of input parameters
+  if( (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
+      (delta >= shape))
+    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+         The following conditions cannot be true.
+         (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
+         (delta <= 1) || (delta >= shape)
+         Note: This function do not accept the normal case, i.e, alpha = 2")
+  
+  # Compute Moment by Integration
+    e = function(x, gm, delta) {
+      (abs(x)-gm*x)^delta * stable::dstable.quick(x = x, alpha = shape,
+                      beta = skew, param = 0)
+    }
+	
+    I = integrate(e, lower = -Inf, upper = +Inf, subdivisions = 1000,
+                  rel.tol = .Machine$double.eps^0.25,
+                  gm = gm, delta = delta)
+    
+    # Return
+    as.numeric(I[1])
+}
+
+
+.stableS2MomentAparch <- function(shape = 1.5, skew = 0.5, delta = 1.2, gm = 0)
+{
+  # Description: 
+  #   Returns the following Expectation for standard stable distribution in S2 parametrization
+  #   E[ (|z|-gm*z)^delta.
+  #   This formula uses S(alpha,skew,1,0;pm) where pm = 2.
+  #   Reference: The GEVStableGarch papper on JSS. 
+  
+  # Error treatment of input parameters
+  if( (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
+      (delta >= shape))
+    stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+         The following conditions cannot be true.
+         (shape <= 1) || (shape > 2) || ( abs(skew) > 1) || (abs(gm) >= 1) || 
+         (delta <= 1) || (delta >= shape)
+         Note: This function do not accept the normal case, i.e, alpha = 2")
+  
+  # Compute Moment by Integration
+    e = function(x, gm, delta) {
+      (abs(x)-gm*x)^delta * stable::dstable.quick(x = x, alpha = shape,
+                      beta = skew, param = 2)
+    }
+	
+    I = integrate(e, lower = -Inf, upper = +Inf, subdivisions = 1000,
+                  rel.tol = .Machine$double.eps^0.25,
+                  gm = gm, delta = delta)
+    
+    # Return
+    as.numeric(I[1])
+}
+
+
+
+
+
+
+.gevMomentAparch <- function(shape = 0.3, delta = 1.2, gm = 0)
+{
+  
+    # FIND A BETTER WAY TO CALCULATE IT INSTEAD OF USING THE INTEGRATION FUNCTION
+  
+  
+    # Description:
+    #   Returns the following Expectation for a standard (location zero and scale 1) 
+    #   GEV distribution 
+    #   E[ (|z|-gm*z)^delta.
+    #   Reference: GEVStableGarch papper
+    
+    if( ( abs( gm ) >= 1 ) || ( delta <= 0 )) 
+    # if( ( abs( gm ) >= 1 ) || ( delta <= 0 ) || ( shape <= -0.5 ) ) 
+      stop("Invalid parameters to calculate the expression E[ (|z|-gm*z)^delta ].
+           The following conditions cannot be true
+           ( abs( gm ) >= 1 ) || ( delta <= 0 )")
+    
+    xi = shape
+    
+    e = function(x, gm, delta) {
+      (abs(x)-gm*x)^delta * dgev(x, xi = xi)
+    }
+    
+    # Compute Moment by Integration
+    I = integrate(e, lower = -Inf, upper = +Inf, subdivisions = 1000,
+                  rel.tol = .Machine$double.eps^0.25,
+                  gm = gm, delta = delta)
+    
+    # Return
+    as.numeric(I[1])
+}
+
+# ------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------------------------------------
+.stableS1SymmetricMomentGarch <- function(shape = 1.5)
 {
   # See Mittinik et al. (1995) for the definition of 
   # the stable garch model with conditional symmetric stable distribution
@@ -528,7 +653,7 @@ gsMomentAparch <- function(
 # ------------------------------------------------------------------------------
 
 
-.stableSymmetricMomentAparch <- function(shape = 1.5, delta = 1.2, gm = 0)
+.stableS1SymmetricMomentAparch <- function(shape = 1.5, delta = 1.2, gm = 0)
 {
   # See Diongue - 2008 (An investigation of the stable-Paretian Asymmetric Power GARCH model)
   # This formula uses S(alpha,0,1,0;pm) where pm = 1. 
@@ -557,7 +682,7 @@ gsMomentAparch <- function(
 
 
 # ------------------------------------------------------------------------------
-.stableMomentPowerGarch <- function(shape = 1.5, skew = 0.5, delta = 1.2)
+.stableS1MomentPowerGarch <- function(shape = 1.5, skew = 0.5, delta = 1.2)
 {
     # See Mittnik et al. (2002) - Stationarity of stable power-GARCH processes
     # This formula uses S(alpha,skew,1,0;pm) where pm = 1 (tests reveald) 

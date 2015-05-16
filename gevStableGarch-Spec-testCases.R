@@ -39,9 +39,6 @@ presample = NULL,cond.dist = ,rseed = NULL)
 spec <- gsSpec(model = list(ar = 1, alpha = 4, beta = 3, delta = 2), 
 presample = NULL,cond.dist = NULL,rseed = NULL)      
 spec <- gsSpec(model = list(mu = 3,ar = 1, alpha = 4, beta = 3, delta = 2), 
-presample = NULL,cond.dist = c("norm"),rseed = 3)
-# ARMA(1,1)
-spec <- gsSpec(model = list(mu = 3,ar = 1, ma = 4), 
 presample = NULL,cond.dist = c("norm"),rseed = 3)         
 # ARMA(1,1)-ARCH(1)
 spec <- gsSpec(model = list(mu = 3,ar = 1, ma = 4,alpha = 3,delta = 2), 
@@ -114,19 +111,7 @@ pre <- matrix(4,nrow = 3,ncol = 3)
 pre[1,2] = 0
 spec <- gsSpec(model = list(alpha = c(0.4,3,4), delta = 0.4), 
 presample = pre, cond.dist = c("gev"),rseed = 4)
-# presample for AR(1): expect an error because the dimensions are big
-pre <- matrix(4,nrow = 1,ncol = 2)
-pre[1,2] = 0
-spec <- gsSpec(model = list(ar = c(0.4)), 
-presample = pre, cond.dist = c("gev"),rseed = 4)
-# presample for AR(1): OK
-pre <- matrix(-3,nrow = 1,ncol = 2)
-pre[1,1] = 0
-spec <- gsSpec(model = list(ar = c(0.4)), 
-presample = pre, cond.dist = c("gev"),rseed = 4)
-# presample for AR(1): Expect the program generate a correct presample matrix
-spec <- gsSpec(model = list(ar = c(0.4,0,4,5)), 
-presample = NULL, cond.dist = c("gev"),rseed = 4)
+
 
 ################################################################################
 

@@ -27,7 +27,7 @@
 
 .armaGarchDist <- 
     function(z, hh, shape = 1.5, skew = 0, 
-    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
     TOLG = 1e-8) 
 {
     # Description:
@@ -40,8 +40,7 @@
     # Arguments:
     #   z - vector of points to calculate the llh.
     #   h - vector of conditional variances ????? BETTER DESCRIPTION NEEDED.
-    #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd
+    #   cond.dist - name of the conditional distribution
     #   TOLG - general tolerance for arma-garch parameters. 
     #   In the beggining it was set to 1e-5
       
@@ -53,7 +52,6 @@
         stop("Error: Vectors 'z' and 'hh' have different length.")
     if(sum(is.na(hh)) > 0 || min(hh) == 0)
     {
-        # warning("NA or zero element found in vector hh")
         return(1e99)
     }
     
@@ -65,25 +63,16 @@
     if(cond.dist == "std")
     {
         if(!(shape > 2))
-            stop("Invalid shape in std distribution. shape > 2")
-        nu = shape
-        return(-sum(log(dstd(x = z/hh, nu = nu)/hh)))
+            return(Inf)
+        return(-sum(log(dstd(x = z/hh, nu = shape)/hh)))
     }
     
     # skew t-student conditional (standardized version defined in Wurtz)
     if(cond.dist == "sstd")
     {
         if(!(shape > 2) || !(skew > 0))
-        {
-            #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
-            return(1e99)
-        }
-          
-        gm = skew
-        xi = gm
-        nu = shape
-        
-        return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi)/hh)))        
+            return(1e99)       
+        return(-sum(log(dsstd(x = z/hh, nu = shape, xi = skew)/hh)))        
  
 #         M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
 #           gamma((shape-1)/2)
@@ -96,11 +85,7 @@
     if(cond.dist == "skstd")
     {
       if(!(shape > 2) || !(skew > 0))
-      {
-        #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
-        return(1e99)
-      }
-      
+          return(1e99)     
       return(-sum(log(dskstd(x = z/hh, nu = shape, xi = skew)/hh)))        
     
     }
@@ -109,29 +94,31 @@
     if(cond.dist == "GAt")
     {
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
-        {
-          return(1e99)
-        }
-        
-        nu = shape[1]
-        d = shape[2]
-        xi = skew
-        
-        return(-sum(log(dGAt(x = z/hh, nu = nu, d = d, xi = xi)/hh)))        
+           return(1e99)    
+        return(-sum(log(dGAt(x = z/hh, nu = shape[1], d = shape[2], xi = skew)/hh)))        
     }
     
     # GED conditional distribution.
     if(cond.dist == "ged")
     {
       if(!(shape > 0))
-        stop("Invalid shape in std distribution. shape > 0")
-      nu = shape
-      return(-sum(log(dged(x = z/hh, nu = nu)/hh)))
+          return(1e99)
+      return(-sum(log(dged(x = z/hh, nu = shape)/hh)))
     }
     
     # GEV conditional distribution
     if(cond.dist == "gev")
     {
+       if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) # to ensure good mle properties and finiteness of the variance
+            return(Inf)
+       #if(sum(is.na(z/hh)) || sum(is.nan(z/hh)) || sum(is.infinite(z/hh))) 
+       #     return(Inf)
+        result = -sum(log( (dgev(x = z/hh, xi = shape[1]) + shape[2])/hh))
+        #print("==============")
+        #print(result)
+        #print(shape)
+        #print(sum(z/hh))
+        return(result)
 #         if(abs(shape) < 1e-6)
 #           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
 #        sig <- hh
@@ -152,35 +139,46 @@
 #        llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
         # print(llh)
  #       return(llh)
-         xi = shape
-         result = -sum(log(dgev(x = z/hh, xi = xi)/hh))
-         # print("==============")
-          #print(result)
-	    #print(z/hh)
-          #print(xi)
-          return(result)
     }
     
     # stable conditional distribution
-    if(cond.dist == "stable")
+    if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
     {
+        # Return Big Values if we are out of parameter space
+
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
-          return(1e99)
-            # stop("Invalid shape or skew in stable parameters. 1 < shape < 2 and |skew| < 1")
-        sig <- hh
-        alpha.stable <- shape
-        beta.stable <- skew
-        arg <- z/sig
-        y <- arg
+            return(1e99)        
+
+        y <- z/hh
         if(sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y)))
             return(1e99)
-        dens.stable <- stable::dstable.quick(y,alpha = alpha.stable, 
-        beta = beta.stable, gamma = 1, delta = 0, param = 1)
-        #dens.stable <- GSgarch.dstable(y,alpha = alpha.stable,
-        #               beta = beta.stable, gamma = 1,delta = 0, param = 2)
-        llh <- sum(log(sig[sig>0])) - 
-            sum(log(dens.stable[dens.stable>0]))
-        return(llh)
+        
+        # Compute density either using "stable" or "stabledist" package
+        #dens.stable = stable::dstable.quick
+        
+        if(cond.dist == "stableS0")
+            result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+                      beta = skew, param = 0)/hh))
+        
+        if(cond.dist == "stableS1")
+          result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+                                        beta = skew, param = 1)/hh))
+        
+        if(cond.dist == "stableS2")
+          result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+                                        beta = skew, param = 2)/hh))
+        
+        # Result 
+        return(result)
+        
+        
+#         dens.stable <- stable::dstable.quick(y,alpha = shape, 
+#         beta = skew, gamma = 1, delta = 0, param = 1)
+#         #dens.stable <- GSgarch.dstable(y,alpha = shape,
+#         #               beta = skew, gamma = 1,delta = 0, param = 2)
+#         llh <- sum(log(sig[sig>0])) - 
+#             sum(log(dens.stable[dens.stable>0]))
+#         return(llh)
     }
 }
 

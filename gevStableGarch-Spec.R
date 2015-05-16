@@ -40,8 +40,8 @@
 
 gsSpec <-
     function (model = list(), presample = NULL,
-    cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
-    rseed = NULL)
+              cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+              rseed = NULL)
 {
       
     # A function originally implemented by Diethelm Wuertz and modified
@@ -99,7 +99,9 @@ gsSpec <-
       
     # Skewness Parameter Settings:
     skew = list(
-        "stable" = 0,
+        "stableS0" = 0,
+        "stableS1" = 0,
+        "stableS2" = 0,
         "gev" = NULL,
         "GAt" = 1,
         "norm" = NULL,
@@ -110,14 +112,16 @@ gsSpec <-
 
     # Shape Parameter Settings:
     shape = list(
-      "stable" = 1.7,
-      "gev" = 0.3,
-      "GAt" = c(3,1),
-      "norm" = NULL,
-      "std" = 4,
-      "sstd" = 4,
-      "skstd" = 4,
-      "ged" = 2)
+        "stableS0" = 1.7,
+        "stableS1" = 1.7,
+        "stableS2" = 1.7,
+        "gev" = 0.3,
+        "GAt" = c(3,1),
+        "norm" = NULL,
+        "std" = 4,
+        "sstd" = 4,
+        "skstd" = 4,
+        "ged" = 2)
 
     # Conditional distribution
     cond.dist = match.arg(cond.dist)
@@ -126,7 +130,7 @@ gsSpec <-
     initialDelta = NULL
     if(!is.null(model$alpha) && is.null(model$delta)) # Garch model
     {
-        if(cond.dist == "stable")
+        if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
             initialDelta = 1
         else 
             initialDelta = 2
@@ -241,9 +245,9 @@ gsSpec <-
     		if(sum(model$gamma == 0) != length(model$gamma))
     		   formula.var = "aparch"
     	}
-    	if (model$delta != 2 && cond.dist != "stable") 
+    	if (model$delta != 2 && any ( cond.dist == c("stableS0", "stableS1", "stableS2") )) 
           formula.var = "aparch" # gamma = 0 and delta != 0 we get powergarch model   	
-    	if (model$delta != 1 && cond.dist == "stable") 
+    	if (model$delta != 1 && any ( cond.dist == c("stableS0", "stableS1", "stableS2") )) 
     	    formula.var = "aparch" 
     }
    

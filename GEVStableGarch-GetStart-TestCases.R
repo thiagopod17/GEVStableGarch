@@ -31,7 +31,7 @@ library(fExtremes); library(skewt)
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-mylist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+mylist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
 for( i in 1:length(mylist) )
 {
     start = .getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
@@ -39,6 +39,7 @@ for( i in 1:length(mylist) )
                  cond.dist = mylist[i]) 
     print(mylist[i])
     print(start)
+    cat("\n\n")
 } 
 
 # Test the output for the arma(3,3)-aparch(3,3) model

@@ -26,8 +26,8 @@
 
 
 .getStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
-                         cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
-                         TOLG = 1e-7, TOLSTABLE = 2e-2)
+                      cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+                      TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   
     # Description:
@@ -137,7 +137,9 @@
     gm.start = rep(0, p)
     
     omega.start = list(
-      "stable" = 0.1 * Dispersion,
+      "stableS0" = 0.1 * Dispersion,
+      "stableS1" = 0.1 * Dispersion,
+      "stableS2" = 0.1 * Dispersion,
       "gev" = 0.1 * Var,
       "GAt" = 0.1 * Var,
       "norm" = 0.1 * Var,
@@ -147,7 +149,9 @@
       "ged" = 0.1 * Var)
     
     alpha.start = list(
-      "stable" = rep(0.1/p, p),
+      "stableS0" = rep(0.1/p, p),
+      "stableS1" = rep(0.1/p, p),
+      "stableS2" = rep(0.1/p, p),
       "gev" = rep(0.05/p, p),
       "GAt" = rep(0.1/p, p),
       "norm" = rep(0.1/p, p),
@@ -157,8 +161,10 @@
       "ged" = rep(0.1/p, p))
     
     beta.start = list(
-      "stable" = rep(0.8/q, q),
-      "gev" = rep(0.8/q, q),
+      "stableS0" = rep(0.8/q, q),
+      "stableS1" = rep(0.8/q, q),
+      "stableS2" = rep(0.8/q, q),
+      "gev" = rep(0.7/q, q),
       "GAt" = rep(0.8/q, q),
       "norm" = rep(0.8/q, q),
       "std" = rep(0.8/q, q),
@@ -167,7 +173,9 @@
       "ged" = rep(0.8/q, q))
     
     delta.start = list(
-      "stable" = 1.05,
+      "stableS0" = 1.05,
+      "stableS1" = 1.05,
+      "stableS2" = 1.05,
       "gev" = 2,
       "GAt" = 2,
       "norm" = 2,
@@ -177,7 +185,9 @@
       "ged" = 2)
     
     skew.start = list(
-      "stable" = 0,
+      "stableS0" = 0,
+      "stableS1" = 0,
+      "stableS2" = 0,
       "gev" = 1,
       "GAt" = 1,
       "norm" = 1,
@@ -187,7 +197,9 @@
       "ged" = 1)
     
     shape.start = list(
-      "stable" = 1.9,
+      "stableS0" = 1.9,
+      "stableS1" = 1.9,
+      "stableS2" = 1.9,
       "gev" = 0,
       "GAt" = c(2, 4),
       "norm" = 1,
@@ -198,7 +210,7 @@
         
     # LOWER BOUNDS
     
-    mu.lower = - 100 * abs ( mu.start )
+    mu.lower = min(- 100 * abs ( mu.start ), -100)
     arma.lower = rep ( - 100, m + n )
     omega.lower = TOLG
     alpha.lower = rep ( TOLG, p )
@@ -206,7 +218,9 @@
     gm.lower = rep( - 1 + TOLG, p)
     
     delta.lower = list(
-      "stable" = 1,
+      "stableS0" = 1,
+      "stableS1" = 1,
+      "stableS2" = 1,
       "gev" = TOLG,
       "GAt" = TOLG,
       "norm" = TOLG,
@@ -216,7 +230,9 @@
       "ged" = TOLG)
     
     skew.lower = list(
-      "stable" = - 1 + TOLSTABLE,
+      "stableS0" = - 1 + TOLSTABLE,
+      "stableS1" = - 1 + TOLSTABLE,
+      "stableS2" = - 1 + TOLSTABLE,
       "gev" = 0,
       "GAt" = TOLG,
       "norm" = 0,
@@ -226,18 +242,20 @@
       "ged" = 0)
     
     shape.lower = list(
-      "stable" = 1 + TOLSTABLE,
-      "gev" = - 100,
+      "stableS0" = 1 + TOLSTABLE,
+      "stableS1" = 1 + TOLSTABLE,
+      "stableS2" = 1 + TOLSTABLE,
+      "gev" = - 0.5 + TOLG, # to ensure good MLE properties. See Jondeau et al. 
       "GAt" = c ( TOLG, TOLG),
       "norm" = 0,
       "std" = 2 + TOLG,
       "sstd" = 2 + TOLG,
-      "skstd" = 2 + TOLG,
+      "skstd" = 2 + TOLG, # to ensure finiteness of variance
       "ged" = TOLG)
        
     # UPPER BOUNDS
     
-    mu.upper = 100 * abs ( mu.start )
+    mu.upper = max( 100 * abs ( mu.start ), 100)
     arma.upper = rep ( 100, m + n )
     omega.upper = 100 * abs ( Dispersion )
     alpha.upper = rep ( 1 - TOLG, p )
@@ -245,7 +263,9 @@
     gm.upper = rep (1 - TOLG, p)
 
     delta.upper = list(
-      "stable" = 2 - TOLG,
+      "stableS0" = 2 - TOLSTABLE,
+      "stableS1" = 2 - TOLSTABLE,
+      "stableS2" = 2 - TOLSTABLE,
       "gev" = 100,
       "GAt" = 100,
       "norm" = 100,
@@ -255,7 +275,9 @@
       "ged" = 100)
     
     skew.upper = list(
-      "stable" = 1 - TOLSTABLE,
+      "stableS0" = 1 - TOLSTABLE,
+      "stableS1" = 1 - TOLSTABLE,
+      "stableS2" = 1 - TOLSTABLE,
       "gev" = 2,
       "GAt" = 100,
       "norm" = 2,
@@ -265,8 +287,10 @@
       "ged" = 2)
     
     shape.upper = list(
-      "stable" = 2 - TOLSTABLE,
-      "gev" = 100,
+      "stableS0" = 2 - TOLSTABLE,
+      "stableS1" = 2 - TOLSTABLE,
+      "stableS2" = 2 - TOLSTABLE,
+      "gev" = 0.5 - TOLG, # to ensure finiteness of the variance and mean. 
       "GAt" = c ( 100, 100),
       "norm" = 2,
       "std" = 100,
@@ -274,18 +298,21 @@
       "skstd" = 100,
       "ged" = 100)    
 
-    # CHECK IF THE STARTING MODELS IS STATIONARY
-    start.model.persistency = 1
-    start.model.persistency = sum( alpha.start[[cond.dist]] * gsMomentAparch( 
-          cond.dist = cond.dist, shape = shape.start[[cond.dist]], 
-          skew = skew.start[[cond.dist]], delta = delta.start[[cond.dist]], gm = 0) ) + 
-          sum ( beta.start[[cond.dist]] )
-    # The real condition is 1 but we let the user to set the limit between 0.95 and 0.999...
-    if(start.model.persistency >= 0.95)
-    {
-      print(start.model.persistency)
-      print(paste("The starting model with conditional",cond.dist.list[i], " is not stationary."))
-      stop("Change the starting value of the parameters for the reported model.")
+    # CHECK IF THE STARTING MODELS IS STATIONARY ( ONLY FOR THE sqp.restriction ALGORITHM )
+    if( ! any ( cond.dist == c("stableS0", "stableS2") ) ){
+      
+        start.model.persistency = 1
+        start.model.persistency = sum( alpha.start[[cond.dist]] * gsMomentAparch( 
+              cond.dist = cond.dist, shape = shape.start[[cond.dist]], 
+              skew = skew.start[[cond.dist]], delta = delta.start[[cond.dist]], gm = 0) ) + 
+              sum ( beta.start[[cond.dist]] )
+        # The real condition is 1 but we let the user to set the limit between 0.95 and 0.999...
+        if(start.model.persistency >= 0.95)
+        {
+            print(start.model.persistency)
+            print(paste("The starting model with conditional",cond.dist.list[i], " is not stationary."))
+            stop("Change the starting value of the parameters for the reported model.")
+        }
     }
     
     # CONSTRUCT THE RESULT
