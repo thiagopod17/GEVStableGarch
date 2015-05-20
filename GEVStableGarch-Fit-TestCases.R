@@ -505,7 +505,7 @@ fit1 <- gsFit(data = x, formula = ~garch(1,1),
               cond.dist = "gev", include.mean = TRUE, 
               algorithm = "sqp")
 
-
+?solnp
 
 # garch(1,1)-GAt-intercept
 fit1 <- gsFit(data = x, formula = ~garch(1,1),

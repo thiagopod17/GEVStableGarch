@@ -110,35 +110,37 @@
     if(cond.dist == "gev")
     {
        if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) # to ensure good mle properties and finiteness of the variance
-            return(Inf)
+            return(1e99)
        #if(sum(is.na(z/hh)) || sum(is.nan(z/hh)) || sum(is.infinite(z/hh))) 
        #     return(Inf)
-        result = -sum(log( (dgev(x = z/hh, xi = shape[1]) + shape[2])/hh))
+       result = -sum(log((dgev(x = z/hh, xi = shape[1]))/hh))
+       return(result)
         #print("==============")
         #print(result)
         #print(shape)
         #print(sum(z/hh))
-        return(result)
+        #return(result)
 #         if(abs(shape) < 1e-6)
-#           stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
+#           #stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
+#           return(1e99)
 #        sig <- hh
 #        xi <- shape
 #        arg <- z/sig
 #        y <- 1 + xi * arg
 #        if(sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))) 
-#	  {
+# 	  {
 #            print("sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))")
 #            return(1e99)
 #        }
 #        gev.cond.gD <- any( y < TOLG ) || abs(xi) < 1e-6
 #        if(gev.cond.gD)
 #        {
-#          print("any( y < TOLG ) || abs(xi) < 1e-6")
+#          #print("any( y < TOLG ) || abs(xi) < 1e-6")
 #          #return(1e99)
 #        }
 #        llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
-        # print(llh)
- #       return(llh)
+#         #print(llh)
+#        return(llh)
     }
     
     # stable conditional distribution

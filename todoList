@@ -59,7 +59,9 @@ changed variable name from 'gm' to 'gamma'
 # Changes on papper:
 
     - Write aparch moment gev and its proof.
-- Dizer no artigo que no caso da gev temos que iniciar o algoritmo com qsui igual azero, por causa do suporte da distribuicao muda a medida que mudamos os dados.
+- Dizer no artigo que no caso da gev temos que iniciar o algoritmo com qsui igual azero, por causa do suporte da distribuicao muda a medida que mudamos os dados. Comentar no Zhao que embora comecamos a serie com parametros
+0.8 e 0.1 o algoritmo muda para 0.8 e 0.02...
+Comentar Zhao que ele colocou distribuicoes a Priori muito informativas...
 - Dizer que temos que iniciar o algormtio em um ponto de estacionariedade e que a funcao faz isso internamente para garantir isso.
 - Falar no artigo que retornamos valores grandes no algoritmo sqp na funcao que calcula momentos.
 

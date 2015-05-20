@@ -370,23 +370,6 @@ function(
             hh <- filteredSeries[,2]          
           
         }
-          # CURRENT FILTERING THAT WORKS REALLY GOOD FOR PURE APARCH PROCESS
-        
-#         # if only garch(p,0) or aparch(p,0)
-#         if(GARCH == TRUE)
-#           beta = 0
-#         Mean.z <- mean(abs(z)^delta)
-#         for( i in 1:p)
-#         {
-#           edelta <- alpha[i]*(c(rep(Mean.z,p),((abs(z)-gm[i]*z)^delta)[1:(N-1)]))
-#           edeltat = edeltat +  edelta[(p-(i-1)):(p+N-i)]
-#         }
-#         edeltat = omega + edeltat
-#         
-#         h <- filter(edeltat, filter = beta,
-#                     method = "recursive", init = rep(Mean.z,q))
-#         hh <- abs(h)^(1/delta)
-
 
 
         # get output Residuals
@@ -453,19 +436,6 @@ function(
     else 
         modelLLH <- garchLLH
 
-
-    # colnames(start) = NULL
-
-#     if (algorithm == "nlminb+nm")
-#     {              
-#       fit1 <- nlminb(start[1,], objective = modelLLH,
-#                      lower = start[2,], upper = start[3,], 
-#                      control = control)
-#       out$llh <- fit1$objective
-#       out$par <- fit1$par
-#       out$hessian <- optim(par = fit1$par, fn = modelLLH, 
-#                            method = "Nelder-Mead", hessian = TRUE)$hessian
-#     }
       if (algorithm == "nlminb+nm")
       {              
         fit1.partial <- nlminb(start[1,], objective = modelLLH,
@@ -496,7 +466,7 @@ function(
         sizeHessian = length(out$hessian[1,])-1
         out$hessian = out$hessian[1:sizeHessian,1:sizeHessian]
     }
-    if (any(c("sqp", "sqp.restriction") == algorithm))
+    if (any(c("sqp", "sqp.restriction") == algorithm) && !is.numeric(try(sqrt(diag(solve(out$hessian))), silent = TRUE)))
     {
         # Call the Nelder-Mead method just to calculate the hessian matrix
         # This is due to the fact that the hessian matrix returned
