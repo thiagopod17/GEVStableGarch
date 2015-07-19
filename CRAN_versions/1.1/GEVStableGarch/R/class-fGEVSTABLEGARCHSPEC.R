@@ -18,12 +18,22 @@
 
 
 ################################################################################
-# TEST CASES FOF FUNCTION: 
-# 
-#  gsSelect                
+# FUNCTION:               SPECIFICATION: 
+#  fGARCHSPEC              S4 fGEVSTABLEGARCHSPEC Class representation 
 ################################################################################
 
-model = gsSelect (data = returnPSI20jose, order.max = c(0,0,1,1), is.aparch = FALSE, 
-          algorithm = "sqp", cond.dist = "norm", selection.criteria = "BIC")
+
+# S4 GEVStableGarchSpec Class
+setClass("fGEVSTABLEGARCHSPEC",
+representation(
+         call = "call",
+        formula = "formula",
+         model = "list",
+        presample = "matrix",
+        distribution = "character",
+        rseed = "numeric")
+)
+
 
 ################################################################################
+

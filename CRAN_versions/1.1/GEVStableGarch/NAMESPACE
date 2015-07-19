@@ -1,0 +1,8 @@
+exportPattern("^[[:alpha:]]+")
+exportMethods(
+    "show" 
+)
+exportClasses(
+    "fGEVSTABLEGARCH",
+     "fGEVSTABLEGARCHSPEC" 
+)

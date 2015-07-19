@@ -33,24 +33,6 @@ data(dem2gbp)
 x = dem2gbp[,1]
 
 
-
-# ------------------------------------------------------------------------------
-# Test different arma-garch/aparch models with several conditional distributions
-# ------------------------------------------------------------------------------
-garch(1,1)
-garch(1,0)
-garch(2,2)
-arma(0,1)
-arma(1,0)
-arma(1,1)
-arma(2,2)
-
-
-
-
-
-
-
 # ------------------------------------------------------------------------------
 # Testing different type of datasets as input
 # ------------------------------------------------------------------------------
@@ -145,7 +127,7 @@ fit1 <- garchFit(data = x, formula = ~garch(1,1),
                  algorithm = "nlminb+nm")
 model1 <- gsFit(data = x , formula = ~garch(1,1),
                       cond.dist = "norm", include.mean = TRUE, 
-                      algorithm = "nlminb+nm")
+                      algorithm = "sqp.restriction")
 fit1@fit$par-model1@fit$par
 fit1@fit$llh
 model1@fit$llh
@@ -643,81 +625,6 @@ fit1 = gsFit(data = x, formula = ~garch(1,1),
 
 fit2 = garchFit(data = x, formula = ~garch(1,1),
          cond.dist = "ged", include.mean = TRUE, algorithm = "nlminb")
-
-
-# ------------------------------------------------------------------------------
-# Fitting pure ARMA process 
-# ------------------------------------------------------------------------------
-
-
-
-# Notes:
-# The "sigma" parameter is the square root of the sigma2 parameter estimated
-# by function "arima".
-# works really well for arma(1,1), arma(m,1), arma(0,n),  arma(1,n), arma(0,n)
-library(fGarch)
-library(Rsolnp)
-library(FitARMA)
-data(dem2gbp)
-x = dem2gbp[, 1]+10
-# arma(1,1)-norm-intercept-nlminb+nm
-m <- 2
-n <- 2
-
-fit1 <- gsFit(data = x, 
-              formula = as.formula(paste ("~ arma(",m,", ",n,")", sep = "", collapse = NULL)),
-              cond.dist = "norm", include.mean = TRUE, 
-              algorithm = "sqp", DEBUG = FALSE, control = list(trace = 3))
-model1 <- arima(x, order = c(m, 0, n))
-model2 <- FitARMA(x, order = c(m,0,n))
-par.result <- cbind(model1$coef[c(m+n+1,1:(m+n))],model1$coef[c(m+n+1,1:(m+n))],fit1@fit$par[1:(1+m+n)])
-colnames(par.result) = c("arima","FitARMA","gsFit")
-par.result
-absoluteError <- abs((fit1@fit$par[1:(1+m+n)]-model1$coef[c(m+n+1,1:(m+n))])/fit1@fit$par[1:(1+m+n)])
-absoluteError
-fit1@fit$llh
-model1$loglik
-
-
-
-# arma(1,1)-std
-fit1 <- gsFit(data = x, formula = ~arma(1,1),
-              cond.dist = "sstd", include.mean = TRUE, 
-              algorithm = "nlminb+nm")
-
-model1 <- gsFit(data = x, formula = ~arma(1,1),
-                cond.dist = "std", include.mean = TRUE, 
-                algorithm = "sqp")
-
-abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
-
-# arma(0,1)-norm
-fit1 <- gsFit(data = x, formula = ~arma(0,1),
-              cond.dist = "norm", include.mean = TRUE, 
-              algorithm = "nlminb+nm")
-
-model1 <- gsFit(data = x, formula = ~arma(0,1),
-                cond.dist = "norm", include.mean = TRUE, 
-                algorithm = "sqp")
-
-abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
-
-
-# aparch(2,2)-std
-fit1 <- gsFit(data = x, formula = ~aparch(2,2),
-              cond.dist = "std", include.mean = TRUE, 
-              algorithm = "nlminb+nm")
-
-model1 <- gsFit(data = x, formula = ~aparch(2,2),
-                cond.dist = "std", include.mean = TRUE, 
-                algorithm = "sqp")
-
-model2 <- garchFit(data = x, formula = ~aparch(2,2),
-                   cond.dist = "std", include.mean = TRUE, 
-                   algorithm = "nlminb+nm")
-
-abs((model1@fit$par-fit1@fit$par)/fit1@fit$par)
-abs((model2@fit$par-model1@fit$par)/model1@fit$par)
 
 
 

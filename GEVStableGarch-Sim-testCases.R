@@ -49,7 +49,7 @@ sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
 
 spec2 <- garchSpec(model = list(omega = 0.1, alpha = c(0.05), beta = c(0.02)), 
                    presample = presampleMatrix,cond.dist = "std",rseed = 1001)  
-sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
+sim2 <- .garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
 # These means must be equal
 mean(sim1)
 mean(sim2)
@@ -105,6 +105,23 @@ for( i in 1:length(cond.dist.list) )
 }
 
 
+# ------------------------------------------------------------------------------
+# Testing the formula object 
+------------------------------------------------------------------------------
 
+# Expect a aparch model
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5, delta = 1), cond.dist = "norm")
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5, gamma = c(0.1)), cond.dist = "stableS1")
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5, gamma = c(0.1)), cond.dist = "stableS1")
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5, delta = 2), cond.dist = "stableS0")
 
+# Expect a garch model
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5, gamma = c(-0)), cond.dist = "stableS1")
+spec = gsSpec(model = list(omega = 1, alpha = c(0.2), beta = c(0.5), 
+	 skew = -0.5, shape = 1.5), cond.dist = "stableS1")
                

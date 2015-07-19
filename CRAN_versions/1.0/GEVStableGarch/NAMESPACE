@@ -1,0 +1,17 @@
+################################################
+## packages
+################################################
+
+import("fGarch")
+import("fExtremes")
+import("stabledist")
+import("skewt")
+import("Rsolnp")
+
+################################################
+## functions
+################################################
+
+export("GSgarch.Fit",
+	   "GSgarch.FitAIC",
+	   "GSgarch.Sim")

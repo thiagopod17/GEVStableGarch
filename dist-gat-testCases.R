@@ -215,8 +215,6 @@ mean = 0; sd = 1; nu = 1; d = 5; xi = 1
 histPlot(rGAt(1000,mean = mean,sd = sd,nu = nu,d = d,xi = xi),
          mean = mean, sd = sd, nu = nu, d = d, xi = xi)
 
-# implementar a GAt junto com o garch e utilizar essa funcao para ajustar dados simulados.
-
 
 
 ################################################################################
