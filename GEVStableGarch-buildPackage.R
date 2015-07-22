@@ -25,21 +25,34 @@
 
 
 
-# Clean the Environment
+
+--------------------------------------------------------------
+# STEP: Clean the Environment
 rm(list=ls()) 
 
-# Declare directory that contain the files
+
+--------------------------------------------------------------
+# STEP: Declare directory that contain the files
 my.files.directory = '/Users/thiago/dropbox/Pappers/GEVStableGarch/GEVStableGarch/'
 
-# Declare directory that will contain the package
+
+--------------------------------------------------------------
+# STEP: Declare directory that will contain the package
 cran.directory = '/Users/thiago/dropbox/Pappers/GEVStableGarch/GEVStableGarch/CRAN_versions/'
 
-# Version of package
+
+--------------------------------------------------------------
+# STEP: Version of package
 my.version = '1.1'
 
-# Create a folder with this name at
+
+--------------------------------------------------------------
+# STEP: Create a folder with this name at
 # '/Users/thiago/dropbox/Pappers/GEVStableGarch/CRAN_versions/'
 
+  
+--------------------------------------------------------------
+# STEP: Create the Package Structure (man pages, function files, Description, etc)
 # Declare list of files that will be contained inside the package
 # If you include/delete a new file in the package do not forget to update this list
 my.list.of.files = c("class-fGEVSTABLEGARCH.R",
@@ -62,8 +75,38 @@ my.list.of.files = c("class-fGEVSTABLEGARCH.R",
 
 my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, sep = '')
 
-package.skeleton(name='GEVStableGarch',
-                 path = paste(cran.directory,my.version,sep = ''),
-                 code_files = my.list.of.files.complete.adress,
-                 force = TRUE)
+# DO NOT RUN IT TWICE BECAUSE YOU CAN LOOSE YOUR WORK 
+#    package.skeleton(name='GEVStableGarch',
+#                 path = paste(cran.directory,my.version,sep = ''),
+#                 code_files = my.list.of.files.complete.adress,
+#                 force = FALSE)
 
+
+--------------------------------------------------------------
+# STEP: Make necessary modification on files
+  # Put DEBUG = FALSE in gsFit function and take it off
+  # from the function parameters
+
+--------------------------------------------------------------
+# STEP: Fill in the package documentation
+  # Help pages ( .Rd files)
+  # DESCRIPTION
+  # NAMESPACE
+
+  
+  
+  
+--------------------------------------------------------------
+# STEP: Create the tar.gz file by executing the two commands on the terminal
+#  < cd /Users/thiago/dropbox/pappers/GEVStableGarch/GEVStableGarch/CRAN_versions/1.1 > 
+#  < R --vanilla CMD build GEVStableGarch > 
+  
+  
+# STEP: Check your package by running the command
+#  < R --vanilla CMD check GEVStableGarch_1.1.tar.gz > 
+# Correct possible errors
+  
+  
+
+  
+  

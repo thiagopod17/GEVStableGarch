@@ -1,0 +1,286 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "GEVStableGarch"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('GEVStableGarch')
+Loading required package: fGarch
+Loading required package: timeDate
+Loading required package: timeSeries
+Loading required package: fBasics
+Loading required package: MASS
+
+Attaching package: ‘fBasics’
+
+The following object is masked from ‘package:base’:
+
+    norm
+
+Loading required package: fExtremes
+Loading required package: fTrading
+Loading required package: stabledist
+Loading required package: skewt
+Loading required package: Rsolnp
+Loading required package: truncnorm
+Loading required package: parallel
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("fGEVSTABLEGARCH-class")
+> ### * fGEVSTABLEGARCH-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: fGEVSTABLEGARCH-class
+> ### Title: Class '"fGEVSTABLEGARCH"'
+> ### Aliases: fGEVSTABLEGARCH-class show,fGEVSTABLEGARCH-method
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("fGEVSTABLEGARCH")
+Class "fGEVSTABLEGARCH" [package "GEVStableGarch"]
+
+Slots:
+                                                                              
+Name:         call     formula      method convergence    messages        data
+Class:        call     formula   character     numeric        list     numeric
+                                                                              
+Name:          fit   residuals         h.t     sigma.t       title description
+Class:        list     numeric     numeric     numeric   character   character
+> 
+> 
+> 
+> cleanEx()
+> nameEx("fGEVSTABLEGARCHSPEC-class")
+> ### * fGEVSTABLEGARCHSPEC-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: fGEVSTABLEGARCHSPEC-class
+> ### Title: Class '"fGEVSTABLEGARCHSPEC"'
+> ### Aliases: fGEVSTABLEGARCHSPEC-class show,fGEVSTABLEGARCHSPEC-method
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("fGEVSTABLEGARCHSPEC")
+Class "fGEVSTABLEGARCHSPEC" [package "GEVStableGarch"]
+
+Slots:
+                                                                       
+Name:          call      formula        model    presample distribution
+Class:         call      formula         list       matrix    character
+                   
+Name:         rseed
+Class:      numeric
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsFit")
+> ### * gsFit
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsFit
+> ### Title: Estimation of ARMA-GARCH/APARCH models
+> ### Aliases: gsFit
+> 
+> ### ** Examples
+> 
+> # This examples uses the dataset of the package fGarch to estimate
+> # an ARMA(1,1)-GARCH(1,1) with GEV conditional distribution.
+> library(fGarch)
+> data(dem2gbp)
+> x = dem2gbp[, 1]
+> gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "norm")
+
+Iter: 1 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
+Iter: 2 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
+solnp--> Completed in 2 iterations
+
+Final Estimate of the Negative LLH:
+-LLH: 1106.608
+Coefficient(s):
+        Estimate  Std. Error  t value Pr(>|t|)    
+mu     -0.006191    0.008100 -0.76424 0.444727    
+omega   0.010761    0.002824  3.81063 0.000139 ***
+alpha1  0.153131    0.026217  5.84092  < 2e-16 ***
+beta1   0.805979    0.033229 24.25557  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsMomentAparch")
+> ### * gsMomentAparch
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsMomentAparch
+> ### Title: Evaluate the moments expression E( |Z| - gamma * Z) ^ delta
+> ### Aliases: gsMomentAparch
+> ### Keywords: ~kwd1 ~kwd2
+> 
+> ### ** Examples
+> 
+> ##---- Should be DIRECTLY executable !! ----
+> ##-- ==>  Define data, use random,
+> ##--	or do  help(data=index)  for the standard data sets.
+> 
+> ## The function is currently defined as
+> function (cond.dist = c("stableS1", "gev", "GAt", "norm", "std", 
++     "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, 
++     gm = 0) 
++ {
++     cond.dist = match.arg(cond.dist)
++     if (cond.dist == "stableS1") 
++         kappa = .stableS1MomentAparch(shape = shape, skew = skew, 
++             delta = delta, gm = gm)
++     if (cond.dist == "gev") 
++         kappa = .gevMomentAparch(shape = shape, delta = delta, 
++             gm = gm)
++     if (cond.dist == "GAt") 
++         kappa = .GAtMomentAparch(shape = shape, delta = delta, 
++             skew = skew, gm = gm)
++     if (cond.dist == "norm") 
++         kappa = .normMomentAparch(delta = delta, gm = gm)
++     if (cond.dist == "std") 
++         kappa = .stdMomentAparch(shape = shape, delta = delta, 
++             gm = gm)
++     if (cond.dist == "sstd") 
++         kappa = .sstdMomentAparch(shape = shape, skew = skew, 
++             delta = delta, gm = gm)
++     if (cond.dist == "skstd") 
++         kappa = .skstdMomentAparch(shape = shape, skew = skew, 
++             delta = delta, gm = gm)
++     if (cond.dist == "ged") 
++         kappa = .gedMomentAparch(shape = shape, delta = delta, 
++             gm = gm)
++     kappa
++   }
+function (cond.dist = c("stableS1", "gev", "GAt", "norm", "std", 
+    "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, 
+    gm = 0) 
+{
+    cond.dist = match.arg(cond.dist)
+    if (cond.dist == "stableS1") 
+        kappa = .stableS1MomentAparch(shape = shape, skew = skew, 
+            delta = delta, gm = gm)
+    if (cond.dist == "gev") 
+        kappa = .gevMomentAparch(shape = shape, delta = delta, 
+            gm = gm)
+    if (cond.dist == "GAt") 
+        kappa = .GAtMomentAparch(shape = shape, delta = delta, 
+            skew = skew, gm = gm)
+    if (cond.dist == "norm") 
+        kappa = .normMomentAparch(delta = delta, gm = gm)
+    if (cond.dist == "std") 
+        kappa = .stdMomentAparch(shape = shape, delta = delta, 
+            gm = gm)
+    if (cond.dist == "sstd") 
+        kappa = .sstdMomentAparch(shape = shape, skew = skew, 
+            delta = delta, gm = gm)
+    if (cond.dist == "skstd") 
+        kappa = .skstdMomentAparch(shape = shape, skew = skew, 
+            delta = delta, gm = gm)
+    if (cond.dist == "ged") 
+        kappa = .gedMomentAparch(shape = shape, delta = delta, 
+            gm = gm)
+    kappa
+}
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSelect")
+> ### * gsSelect
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSelect
+> ### Title: Selects the best model according to goodness-of-fit
+> ### Aliases: gsSelect
+> 
+> ### ** Examples
+> 
+> # AIC fit using models from ARMA(0,0)-GARCH(1,0) to ARMA(1,1)-GARCH(1,1)
+> # with GEV conditional distribution
+> #library(fGarch)
+> #data(dem2gbp)
+> #x = dem2gbp[, 1]
+> # GSgarch.FitAIC(data = x,1,0,1,0,cond.dist = "gev")
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSim")
+> ### * gsSim
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSim
+> ### Title: Simulation of ARMA-GARCH/APARCH process
+> ### Aliases: gsSim
+> 
+> ### ** Examples
+> 
+> # Simulation of a ARMA-APARCH process with stable conditional distribution
+> #x <- GSgarch.Sim(N = 2500, mu = 0.1,a = c(0.2,0.3),b = c(0.2,0.5),
+> #omega = 0.1, alpha = c(0.1,0.2),beta = c(0.1,0.1),gm=c(0.3,-0.3),
+> #delta = 1,skew = 0.3,shape = 1.9, cond.dis = "stable")
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSpec")
+> ### * gsSpec
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSpec
+> ### Title: Specification of ARMA-GARCH/APARCH models
+> ### Aliases: gsSpec
+> ### Keywords: ~kwd1 ~kwd2
+> 
+> ### ** Examples
+> 
+> ##---- Should be DIRECTLY executable !! ----
+> ##-- ==>  Define data, use random,
+> ##--	or do  help(data=index)  for the standard data sets.
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  2.35 0.032 2.39 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

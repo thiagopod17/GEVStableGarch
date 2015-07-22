@@ -1,0 +1,17 @@
+GAt                     Generalized Asymmetric t Distribution
+GEVStableGarch-package
+                        ARMA-GARCH/APARCH modelling with GEV and stable
+                        distributions
+fGEVSTABLEGARCH-class   Class '"fGEVSTABLEGARCH"'
+fGEVSTABLEGARCHSPEC-class
+                        Class '"fGEVSTABLEGARCHSPEC"'
+gsFit                   Estimation of ARMA-GARCH/APARCH models
+gsMomentAparch          Evaluate the moments expression E( |Z| - gamma
+                        * Z) ^ delta
+gsSelect                Selects the best model according to
+                        goodness-of-fit
+gsSim                   Simulation of ARMA-GARCH/APARCH process
+gsSpec                  Specification of ARMA-GARCH/APARCH models
+show-methods            ~~ Methods for Function 'show' ~~
+skstd                   Skew Student's t Distribtuion from Fernandez
+                        and Steel (2002)

@@ -223,18 +223,6 @@ gsSpec <-
             as.character(order.ma), ")", sep = "")
     }
     
-    
-#     if (order.ar > 0 && order.ma == 0) {
-#         formula.mean = paste ("ar(", as.character(order.ar), ")", sep = "")
-#     }
-#     if (order.ar == 0 && order.ma > 0) {
-#         formula.mean = paste ("ma(", as.character(order.ma), ")",  sep = "")
-#     }
-#     if (order.ar > 0 && order.ma > 0) {
-#         formula.mean = paste ("arma(", as.character(order.ar), ", ",
-#             as.character(order.ma), ")", sep = "")
-#     }
-
     # Compose Variance Formula Object:
     formula.var = ""
     if (order.alpha > 0) formula.var = "garch" 

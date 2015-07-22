@@ -17,14 +17,10 @@ Version: \tab 1.0\cr
 Date: \tab 2014-03-09\cr
 License: \tab GPL(>=2)\cr
 }
-This package contains functions for estimating and simulating combined ARMA-GARCH 
-or ARMA-APARCH models with error distributions following GEV or stable densities. The estimation 
-of these models is done by finding i.i.d. sequences by inverse filtering the model equations and 
-then using MLE technique to perform optimization (see Wurtz et al., 2006). 
+This package contains functions for estimating and simulating combined ARMA-GARCH or ARMA-APARCH models with error distributions following GEV or stable densities. 
+The current version has a new algorithm that allows the user to enforce stationarity during estimation. 
 The package also allows the user to estimate
-several models and choose the best one according to the Akaike Information Criterion (AIC).
-Apart from GEV and stable distribution, the user can also use normal, t-student or skew t-student
-conditional distributions. 
+several models and choose the best one according to a goodness-of-fit Criteria.
 }
 \author{
 Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
@@ -56,6 +52,8 @@ value models with Bayesian inference. Mathematics an Computers
 in Simulation, Vol. 81, Issue 7, 1430-1440. 2011.
 }
 \keyword{ stable distribution }
-\keyword{ GEV}
+\keyword{ GEV }
+\keyword{ GAt }
+\keyword{ t3-distribution }
 \keyword{ ARMA-GARCH }
 \keyword{ ARMA-APARCH }

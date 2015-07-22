@@ -200,7 +200,7 @@
       "stableS0" = 1.9,
       "stableS1" = 1.9,
       "stableS2" = 1.9,
-      "gev" = 0,
+      "gev" = 0.01,
       "GAt" = c(2, 4),
       "norm" = 1,
       "std" = 4,

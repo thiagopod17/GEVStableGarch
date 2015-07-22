@@ -13,7 +13,7 @@
 ###########################
 ###  Time series model  ###
 # According to Wurtz et al. (2006) 
-# xt = µ + a(B)xt + b(B)et,
+# xt = ? + a(B)xt + b(B)et,
 # et = zt * sigmat
 # zt ~ Dv(0, 1)
 # sigmat^2 = omega + sum(alphai(e(t-i))^2) + sum(betaj*sigmat-j^2)
@@ -324,7 +324,8 @@ GSgarch.Dist = function(z, hh, shape = 4, skew = 0.1, cond.dist = "sstd", GStol 
 ##################
 GSgarch.Fit <- function(data, m,n,p,q, intercept = TRUE, printRes = FALSE, 
                 cond.dist = "norm", APARCH = FALSE, algorithm = "sqp",
-                get.res = FALSE, control = NULL, GSstable.tol = 1e-2, GStol = 1e-8)
+                get.res = FALSE, control = NULL, GSstable.tol = 1e-2, GStol = 1e-8,
+                DEBUG = TRUE)
 {  
     # Error Control: Stop if some conditions are not met
     #if (!is.numeric(data) || is.NA(data) || is.NULL(data) || is.Inf(data))
@@ -469,6 +470,8 @@ GSgarch.Fit <- function(data, m,n,p,q, intercept = TRUE, printRes = FALSE,
     # Performing optimization
     start <- GSgarch.GetStart(data = data,m = m,n = n,p = p,q = q,AR = AR,
              MA = MA, cond.dist = cond.dist)
+    if (DEBUG)
+       print(start)
     rest <- function(parm)
     {
         mu <- parm[1];

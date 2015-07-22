@@ -73,12 +73,7 @@
         if(!(shape > 2) || !(skew > 0))
             return(1e99)       
         return(-sum(log(dsstd(x = z/hh, nu = shape, xi = skew)/hh)))        
- 
-#         M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
-#           gamma((shape-1)/2)
-#         M2 = 1
-#         return(-sum(log(dsstd(x = z/hh, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
-#                sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/hh)))
+
     }
     
     # skew t-student from Fernandez, C. and Steel, M. F. J. (1998)
@@ -109,38 +104,14 @@
     # GEV conditional distribution
     if(cond.dist == "gev")
     {
-       if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) # to ensure good mle properties and finiteness of the variance
+        # to ensure good mle properties and finiteness of the variance
+        # we require shape > -0.5 ( See Jondeau et al. (XXX))
+        if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) 
             return(1e99)
-       #if(sum(is.na(z/hh)) || sum(is.nan(z/hh)) || sum(is.infinite(z/hh))) 
-       #     return(Inf)
-       result = -sum(log((dgev(x = z/hh, xi = shape[1]))/hh))
-       return(result)
-        #print("==============")
-        #print(result)
-        #print(shape)
-        #print(sum(z/hh))
-        #return(result)
-#         if(abs(shape) < 1e-6)
-#           #stop("shape parameter from GEV is to small. abs(shape) < 1e-6")
-#           return(1e99)
-#        sig <- hh
-#        xi <- shape
-#        arg <- z/sig
-#        y <- 1 + xi * arg
-#        if(sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))) 
-# 	  {
-#            print("sum(is.na(y)) || sum(is.nan(y)) || sum(is.infinite(y))")
-#            return(1e99)
-#        }
-#        gev.cond.gD <- any( y < TOLG ) || abs(xi) < 1e-6
-#        if(gev.cond.gD)
-#        {
-#          #print("any( y < TOLG ) || abs(xi) < 1e-6")
-#          #return(1e99)
-#        }
-#        llh <- sum(log(sig)) + sum(y^(-1/xi)) + sum(log(y))*(1/xi + 1)
-#         #print(llh)
-#        return(llh)
+        sig <- hh
+        y <- 1 + shape * (z/hh)
+        llh <- sum(log(sig)) + sum(y^(-1/shape)) + sum(log(y))*(1/shape + 1)
+            return(llh)
     }
     
     # stable conditional distribution
@@ -156,7 +127,6 @@
             return(1e99)
         
         # Compute density either using "stable" or "stabledist" package
-        #dens.stable = stable::dstable.quick
         
         if(cond.dist == "stableS0")
             result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
@@ -172,15 +142,6 @@
         
         # Result 
         return(result)
-        
-        
-#         dens.stable <- stable::dstable.quick(y,alpha = shape, 
-#         beta = skew, gamma = 1, delta = 0, param = 1)
-#         #dens.stable <- GSgarch.dstable(y,alpha = shape,
-#         #               beta = skew, gamma = 1,delta = 0, param = 2)
-#         llh <- sum(log(sig[sig>0])) - 
-#             sum(log(dens.stable[dens.stable>0]))
-#         return(llh)
     }
 }
 

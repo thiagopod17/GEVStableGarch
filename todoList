@@ -1,6 +1,5 @@
 #   Things to do on Package now
-    - put control for sqp.restriction
-      control = list(tol = 1e-4)
+    - test the package    
     
 
 # More tests if you have time. hahaha

@@ -39,24 +39,19 @@
     options(.stableIsLoaded=TRUE)	
   if(getOption('.stableIsLoaded', default = FALSE) == TRUE)
   {
-    GSgarch.dstable <<- function(x,alpha,beta = 0, gamma = 1, 
-                                 delta = 0, param = 1)
+    GSgarch.dstable <<- function(param, ...)
     {
-      return(stable::dstable.quick(x, alpha, beta, gamma, 
-                                   delta, param))
+      return(stable::dstable.quick(param = param, ...))
     }
   }
   if(getOption('.stableIsLoaded', default = FALSE) == FALSE)
   {
-    GSgarch.dstable <<- function(x,alpha,beta = 0, gamma = 1, 
-                                 delta = 0, param = 1)
+    GSgarch.dstable <<- function(param, ...)
     {
-      return(stabledist::dstable(x, alpha, beta, gamma, 
-                                 delta, pm = param))
+      return(stabledist::dstable(pm = param, ...))
     }
   }
 }
-
 
 ################################################################################
 

@@ -714,38 +714,6 @@ gsMomentAparch <- function(
 
 
 
-# test input parametesr
-formula = ~ garch(1,1)
-cond.dist = "norm"
-garch.stationarity <- function(parm)
-{
-
-  # Getting parameters from parm vector 
-  # mu <- parm[1];
-  # a <- parm[(1+1):(2+m-1)]
-  # b <- parm[(1+m+1):(2+m+n-1)]
-  omega <- parm[1+m+n+1]
-  alpha <- parm[(2+m+n+1):(3+m+n+p-1)]
-  gm <- parm[(2+m+n+p+1):(3+m+n+p+p-1)]
-  beta <- parm[(2+m+n+2*p+1):(3+m+n+2*p+q-1)]
-  delta <- parm[2+m+n+2*p+q+1] 
-  skew <- parm[3+m+n+2*p+q+1]
-  shape <- parm[(4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape)]
-  
-  model = list(omega, alpha, beta, delta, skew, shape)
-  
-  # Return
-  .stationarityAparch(model = model, 
-              formula = formula,
-              cond.dist = cond.dist)
-}
-
-
-
-
-
-
-
 # ------------------------------------------------------------------------------
 .trueAparchMomentsWurtz <- 
   function(fun = "norm", gm = 0, delta = 1, lower = -Inf, upper = Inf, ...)
