@@ -87,7 +87,7 @@ dskstd <-
 
 
 pskstd <- 
-  function(x, mean = 0, sd = 1, nu = 3, xi = 1)
+  function(q, mean = 0, sd = 1, nu = 3, xi = 1)
   {   
     # A function implemented by Thiago Sousa
     
@@ -96,7 +96,7 @@ pskstd <-
     #   skewed version of the sandard t-Student.
     
     # INPUT PARAMETERS:
-    #  x - the points in which the function will be evaluated
+    #  q - the points in which the function will be evaluated
     #  mean - the location parameter
     #  sd - the scale parameter 
     #  nu - the shape parameter ( degrees of freedom) ( > 0)
@@ -119,7 +119,7 @@ pskstd <-
            sd <= 0  || nu <= 0 || xi <= 0")
     
     # Compute probability points:
-    z = (x - mean ) / sd
+    z = (q - mean ) / sd
     result = pskt( z * sqrt( nu / ( nu - 2 ) ), df = nu, gamma = xi)
     
     # Return Value

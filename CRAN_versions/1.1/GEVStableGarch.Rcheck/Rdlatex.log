@@ -4,8 +4,8 @@ This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format
  restricted \write18 enabled.
 entering extended mode
 
-(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/Rtmpv79l0v/Rd2pdf69c3
-3680ff9/Rd2.tex
+(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/RtmpRUbP17/Rd2pdf150c
+4803f389/Rd2.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
 
@@ -86,51 +86,49 @@ Overfull \hbox (1.55684pt too wide) in paragraph at lines 81--84
 []\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
 ion of ARMA mod-els with GARCH/APARCH
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [2]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [3]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1027.78088pt too wide) in paragraph at lines 244--244
- []\T1/zi4/m/n/10 gsFit(formula = ~garch(1, 1), data, cond.dist = c("stableS0",
- "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
-include.mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+
-nm"), control = NULL, tolerance = NULL, title = NULL, description = NULL)[] 
-[4] [5]
-Overfull \hbox (1.55684pt too wide) in paragraph at lines 346--349
+Overfull \hbox (1.2491pt too wide) in paragraph at lines 254--256
+[]\T1/zi4/m/n/10 signature(object = "fGEVSTABLEGARCHSPEC")\T1/ptm/m/n/10 : prin
+ts an ob-ject of class 'fGEVSTABLE-
+
+Overfull \hbox (24.71617pt too wide) in paragraph at lines 274--275
+[]\T1/ptm/m/n/10 Wuertz D, Cha-l-abi Y, Luk-san L (2009). "Pa-ram-e-ter Es-ti-m
+a-tion of ARMA Mod-els with GARCH/APARCH
+
+Overfull \hbox (42.91547pt too wide) in paragraph at lines 274--275
+\T1/ptm/m/n/10 URL http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResou
+rces/GarchAndR/WurtzEtAlGarch.pdf. 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [4]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 482--485
+
+[7]
+Overfull \hbox (1.55684pt too wide) in paragraph at lines 558--561
 []\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
 ion of ARMA mod-els with GARCH/APARCH
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (263.78088pt too wide) in paragraph at lines 376--376
- []\T1/zi4/m/n/10 gsMomentAparch(cond.dist = c("stableS1", "gev", "GAt", "norm"
-, "std", "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, gm = 0)[] 
-[6] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1068.78088pt too wide) in paragraph at lines 448--448
- []\T1/zi4/m/n/10 gsSelect(data, order.max = c(1, 1, 1, 1), selection.criteria 
-= c("AIC", "AICc", "BIC"), is.aparch = FALSE, cond.dist = c("stableS0", "stable
-S1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), include.
-mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"), ..
-.)[] 
-[7] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [8]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (374.78088pt too wide) in paragraph at lines 583--583
- []\T1/zi4/m/n/10 gsSpec(model = list(), presample = NULL, cond.dist = c("stabl
-eS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ge
-d"), rseed = NULL)[] 
-[9] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)pdfTeX warning 
-(ext4): destination with the same identifier (name{Rfn.show,fGEVSTABLEGARCH.Rda
-sh.method}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.613 ...thods}{show,fGEVSTABLEGARCH.Rdash.method}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{Rfn.show,fGEVSTABLEGARCHSPEC.Rdash.method}
-) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.614 ...s}{show,fGEVSTABLEGARCHSPEC.Rdash.method}
-                                                  
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [8]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [9]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [10]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [11]
+Underfull \hbox (badness 10000) in paragraph at lines 830--844
+
+[12]
+Overfull \hbox (258.18103pt too wide) in paragraph at lines 900--900
+ []\T1/zi4/m/n/9 spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061,
+ alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "s
+tableS1")[] 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (11.71938pt too wide) in paragraph at lines 927--928
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCH" 
+
+Overfull \hbox (51.71938pt too wide) in paragraph at lines 931--932
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCHSPEC" 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [13] [14]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/inconsolata/ts1zi4.fd)
 No file Rd2.ind.
-[11] (./Rd2.aux)
+[15] (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -138,34 +136,35 @@ Package rerunfilecheck Warning: File `Rd2.out' has changed.
 
  )
 (see the transcript file for additional information){/usr/local/texlive/2014/te
-xmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/
-enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/font
-s/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
-urw/helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/tim
-es/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.
-pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
-local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (11 pages, 151746 bytes).
+xmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2014/texmf-
+dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/enc/
+dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/font
+s/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/
+helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+</usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/loca
+l/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (15 pages, 164496 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2014] (kpathsea + Thai support).
-Scanning input file ./Rd2.idx....done (40 entries accepted, 0 rejected).
-Sorting entries....done (230 comparisons).
-Generating output file ./Rd2.ind....done (82 lines written, 0 warnings).
+Scanning input file ./Rd2.idx....done (38 entries accepted, 0 rejected).
+Sorting entries....done (203 comparisons).
+Generating output file ./Rd2.ind....done (79 lines written, 0 warnings).
 Output written in ./Rd2.ind.
 Transcript written in ./Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex)
  restricted \write18 enabled.
 entering extended mode
 
-(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/Rtmpv79l0v/Rd2pdf69c3
-3680ff9/Rd2.tex
+(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/RtmpRUbP17/Rd2pdf150c
+4803f389/Rd2.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
 
@@ -246,54 +245,52 @@ Overfull \hbox (1.55684pt too wide) in paragraph at lines 81--84
 ion of ARMA mod-els with GARCH/APARCH
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [2]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [3]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1027.78088pt too wide) in paragraph at lines 244--244
- []\T1/zi4/m/n/10 gsFit(formula = ~garch(1, 1), data, cond.dist = c("stableS0",
- "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
-include.mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+
-nm"), control = NULL, tolerance = NULL, title = NULL, description = NULL)[] 
-[4] [5]
-Overfull \hbox (1.55684pt too wide) in paragraph at lines 346--349
+Overfull \hbox (1.2491pt too wide) in paragraph at lines 254--256
+[]\T1/zi4/m/n/10 signature(object = "fGEVSTABLEGARCHSPEC")\T1/ptm/m/n/10 : prin
+ts an ob-ject of class 'fGEVSTABLE-
+
+Overfull \hbox (24.71617pt too wide) in paragraph at lines 274--275
+[]\T1/ptm/m/n/10 Wuertz D, Cha-l-abi Y, Luk-san L (2009). "Pa-ram-e-ter Es-ti-m
+a-tion of ARMA Mod-els with GARCH/APARCH
+
+Overfull \hbox (42.91547pt too wide) in paragraph at lines 274--275
+\T1/ptm/m/n/10 URL http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResou
+rces/GarchAndR/WurtzEtAlGarch.pdf. 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [4] [5]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [6]
+Underfull \hbox (badness 10000) in paragraph at lines 482--485
+
+[7]
+Overfull \hbox (1.55684pt too wide) in paragraph at lines 558--561
 []\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
 ion of ARMA mod-els with GARCH/APARCH
-[6] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (263.78088pt too wide) in paragraph at lines 376--376
- []\T1/zi4/m/n/10 gsMomentAparch(cond.dist = c("stableS1", "gev", "GAt", "norm"
-, "std", "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, gm = 0)[] 
-[7] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1068.78088pt too wide) in paragraph at lines 448--448
- []\T1/zi4/m/n/10 gsSelect(data, order.max = c(1, 1, 1, 1), selection.criteria 
-= c("AIC", "AICc", "BIC"), is.aparch = FALSE, cond.dist = c("stableS0", "stable
-S1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), include.
-mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"), ..
-.)[] 
-[8] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [9]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [8]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [9] [10]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [11]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (374.78088pt too wide) in paragraph at lines 583--583
- []\T1/zi4/m/n/10 gsSpec(model = list(), presample = NULL, cond.dist = c("stabl
-eS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ge
-d"), rseed = NULL)[] 
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)pdfTeX warning (ext
-4): destination with the same identifier (name{Rfn.show,fGEVSTABLEGARCH.Rdash.m
-ethod}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.613 ...thods}{show,fGEVSTABLEGARCH.Rdash.method}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{Rfn.show,fGEVSTABLEGARCHSPEC.Rdash.method}
-) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.614 ...s}{show,fGEVSTABLEGARCHSPEC.Rdash.method}
-                                                   [10]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[11]
+Underfull \hbox (badness 10000) in paragraph at lines 830--844
+
+[12]
+Overfull \hbox (258.18103pt too wide) in paragraph at lines 900--900
+ []\T1/zi4/m/n/9 spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061,
+ alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "s
+tableS1")[] 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (11.71938pt too wide) in paragraph at lines 927--928
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCH" 
+
+Overfull \hbox (51.71938pt too wide) in paragraph at lines 931--932
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCHSPEC" 
+[13] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [14]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) (./Rd2.ind
+ [15]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 34.
+(Font)              using `T1/zi4/m/n' instead on input line 31.
 
-[12]) (./Rd2.aux)
+[16]) (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -304,34 +301,35 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  )
 (see the transcript file for additional information){/usr/local/texlive/2014/te
-xmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/
-enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/font
-s/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
-urw/helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/tim
-es/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.
-pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
-local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (12 pages, 156945 bytes).
+xmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2014/texmf-
+dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/enc/
+dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/font
+s/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/
+helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+</usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/loca
+l/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (16 pages, 169327 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2014] (kpathsea + Thai support).
-Scanning input file ./Rd2.idx....done (40 entries accepted, 0 rejected).
-Sorting entries....done (230 comparisons).
-Generating output file ./Rd2.ind....done (82 lines written, 0 warnings).
+Scanning input file ./Rd2.idx....done (38 entries accepted, 0 rejected).
+Sorting entries....done (203 comparisons).
+Generating output file ./Rd2.ind....done (79 lines written, 0 warnings).
 Output written in ./Rd2.ind.
 Transcript written in ./Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex)
  restricted \write18 enabled.
 entering extended mode
 
-(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/Rtmpv79l0v/Rd2pdf69c3
-3680ff9/Rd2.tex
+(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/RtmpRUbP17/Rd2pdf150c
+4803f389/Rd2.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
 
@@ -412,75 +410,74 @@ Overfull \hbox (1.55684pt too wide) in paragraph at lines 81--84
 ion of ARMA mod-els with GARCH/APARCH
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [2]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [3]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1027.78088pt too wide) in paragraph at lines 244--244
- []\T1/zi4/m/n/10 gsFit(formula = ~garch(1, 1), data, cond.dist = c("stableS0",
- "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
-include.mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+
-nm"), control = NULL, tolerance = NULL, title = NULL, description = NULL)[] 
-[4] [5]
-Overfull \hbox (1.55684pt too wide) in paragraph at lines 346--349
+Overfull \hbox (1.2491pt too wide) in paragraph at lines 254--256
+[]\T1/zi4/m/n/10 signature(object = "fGEVSTABLEGARCHSPEC")\T1/ptm/m/n/10 : prin
+ts an ob-ject of class 'fGEVSTABLE-
+
+Overfull \hbox (24.71617pt too wide) in paragraph at lines 274--275
+[]\T1/ptm/m/n/10 Wuertz D, Cha-l-abi Y, Luk-san L (2009). "Pa-ram-e-ter Es-ti-m
+a-tion of ARMA Mod-els with GARCH/APARCH
+
+Overfull \hbox (42.91547pt too wide) in paragraph at lines 274--275
+\T1/ptm/m/n/10 URL http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResou
+rces/GarchAndR/WurtzEtAlGarch.pdf. 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [4] [5]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [6]
+Underfull \hbox (badness 10000) in paragraph at lines 482--485
+
+[7]
+Overfull \hbox (1.55684pt too wide) in paragraph at lines 558--561
 []\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
 ion of ARMA mod-els with GARCH/APARCH
-[6] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (263.78088pt too wide) in paragraph at lines 376--376
- []\T1/zi4/m/n/10 gsMomentAparch(cond.dist = c("stableS1", "gev", "GAt", "norm"
-, "std", "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, gm = 0)[] 
-[7] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (1068.78088pt too wide) in paragraph at lines 448--448
- []\T1/zi4/m/n/10 gsSelect(data, order.max = c(1, 1, 1, 1), selection.criteria 
-= c("AIC", "AICc", "BIC"), is.aparch = FALSE, cond.dist = c("stableS0", "stable
-S1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), include.
-mean = TRUE, algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"), ..
-.)[] 
-[8] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [9]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [8]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [9] [10]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [11]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (374.78088pt too wide) in paragraph at lines 583--583
- []\T1/zi4/m/n/10 gsSpec(model = list(), presample = NULL, cond.dist = c("stabl
-eS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ge
-d"), rseed = NULL)[] 
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)pdfTeX warning (ext
-4): destination with the same identifier (name{Rfn.show,fGEVSTABLEGARCH.Rdash.m
-ethod}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.613 ...thods}{show,fGEVSTABLEGARCH.Rdash.method}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{Rfn.show,fGEVSTABLEGARCHSPEC.Rdash.method}
-) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.614 ...s}{show,fGEVSTABLEGARCHSPEC.Rdash.method}
-                                                   [10]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[11]
+Underfull \hbox (badness 10000) in paragraph at lines 830--844
+
+[12]
+Overfull \hbox (258.18103pt too wide) in paragraph at lines 900--900
+ []\T1/zi4/m/n/9 spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061,
+ alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "s
+tableS1")[] 
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (11.71938pt too wide) in paragraph at lines 927--928
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCH" 
+
+Overfull \hbox (51.71938pt too wide) in paragraph at lines 931--932
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
+LEGARCHSPEC" 
+[13] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def) [14]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) (./Rd2.ind
+ [15]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 34.
+(Font)              using `T1/zi4/m/n' instead on input line 31.
 
-[12]) (./Rd2.aux)
+[16]) (./Rd2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  )
 (see the transcript file for additional information){/usr/local/texlive/2014/te
-xmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/
-enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/font
-s/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
-urw/helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/tim
-es/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.
-pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
-local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (12 pages, 157109 bytes).
+xmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2014/texmf-
+dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2014/texmf-dist/fonts/enc/
+dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2014/texmf-dist/font
+s/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/
+helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+</usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/loca
+l/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (16 pages, 169689 bytes).
 Transcript written on Rd2.log.
 Saving output to 'GEVStableGarch-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T//Rtmpv79l0v/Rd2pdf69c33680ff9'
+You may want to clean up by 'rm -rf /var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T//RtmpRUbP17/Rd2pdf150c4803f389'

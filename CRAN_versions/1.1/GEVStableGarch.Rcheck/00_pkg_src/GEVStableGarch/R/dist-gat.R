@@ -27,7 +27,7 @@
 
 
 dGAt <- 
-  function(x, mean = 0, sd = 1, nu = 3, d = 2, xi = 1, log = FALSE)
+  function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1, log = FALSE)
   {   
     # A function implemented by Thiago Sousa
     
@@ -92,7 +92,7 @@ dGAt <-
 # ------------------------------------------------------------------------------
 
 pGAt <- 
-  function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
+  function(q, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
   {   
     # A function imlemented by Thiago Sousa
     
@@ -129,7 +129,7 @@ pGAt <-
     } 
 
     # Compute auxiliary variables:
-    z = (x - mean ) / sd
+    z = (q - mean ) / sd
     n = length(z)
     arg = z
     indexLessThanZero = which (z <= 0, arr.ind = TRUE)

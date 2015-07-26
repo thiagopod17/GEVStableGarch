@@ -1,8 +1,8 @@
 GEVStableGarch-package	GEVStableGarch-package
 dGAt	dist-GAt
 dskstd	dist-skstd
-fGEVSTABLEGARCH-class	fGEVSTABLEGARCH-class
-fGEVSTABLEGARCHSPEC-class	fGEVSTABLEGARCHSPEC-class
+fGEVSTABLEGARCH-class	class-fGEVSTABLEGARCH
+fGEVSTABLEGARCHSPEC-class	class-fGEVSTABLEGARCHSPEC
 GAt	dist-GAt
 GEVStableGarch	GEVStableGarch-package
 gsFit	gsFit
@@ -16,9 +16,9 @@ qGAt	dist-GAt
 qskstd	dist-skstd
 rGAt	dist-GAt
 rskstd	dist-skstd
-show,fGEVSTABLEGARCH-method	fGEVSTABLEGARCH-class
 show,fGEVSTABLEGARCH-method	show-methods
-show,fGEVSTABLEGARCHSPEC-method	fGEVSTABLEGARCHSPEC-class
+show,fGEVSTABLEGARCH-update	class-fGEVSTABLEGARCH
 show,fGEVSTABLEGARCHSPEC-method	show-methods
+show,fGEVSTABLEGARCHSPEC-update	class-fGEVSTABLEGARCHSPEC
 show-methods	show-methods
 skstd	dist-skstd

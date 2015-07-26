@@ -41,107 +41,15 @@ packages’ of the ‘Writing R Extensions’ manual.
 .getStart: no visible binding for global variable ‘i’
 gsFit : armaLLH: no visible binding for global variable ‘delta’
 gsFit : armaLLH: no visible global function definition for ‘.armaDist’
-* checking Rd files ... WARNING
-prepare_Rd: dist-GAt.Rd:59-61: Dropping empty section \references
-prepare_Rd: dist-GAt.Rd:67-69: Dropping empty section \examples
-prepare_Rd: dist-skstd.Rd:62-64: Dropping empty section \references
-prepare_Rd: dist-skstd.Rd:70-72: Dropping empty section \examples
-prepare_Rd: fGEVSTABLEGARCH-class.Rd:8-10: Dropping empty section \description
-prepare_Rd: fGEVSTABLEGARCH-class.Rd:42-44: Dropping empty section \note
-prepare_Rd: fGEVSTABLEGARCH-class.Rd:39-41: Dropping empty section \author
-prepare_Rd: fGEVSTABLEGARCH-class.Rd:36-38: Dropping empty section \references
-prepare_Rd: fGEVSTABLEGARCH-class.Rd:48-51: Dropping empty section \seealso
-checkRd: (5) fGEVSTABLEGARCH-class.Rd:0-56: Must have a \description
-prepare_Rd: fGEVSTABLEGARCHSPEC-class.Rd:8-10: Dropping empty section \description
-prepare_Rd: fGEVSTABLEGARCHSPEC-class.Rd:36-38: Dropping empty section \note
-prepare_Rd: fGEVSTABLEGARCHSPEC-class.Rd:33-35: Dropping empty section \author
-prepare_Rd: fGEVSTABLEGARCHSPEC-class.Rd:30-32: Dropping empty section \references
-prepare_Rd: fGEVSTABLEGARCHSPEC-class.Rd:42-45: Dropping empty section \seealso
-checkRd: (5) fGEVSTABLEGARCHSPEC-class.Rd:0-50: Must have a \description
-prepare_Rd: gsMomentAparch.Rd:7-9: Dropping empty section \description
-prepare_Rd: gsMomentAparch.Rd:31-33: Dropping empty section \details
-prepare_Rd: gsMomentAparch.Rd:34-40: Dropping empty section \value
-prepare_Rd: gsMomentAparch.Rd:47-49: Dropping empty section \note
-prepare_Rd: gsMomentAparch.Rd:44-46: Dropping empty section \author
-prepare_Rd: gsMomentAparch.Rd:41-43: Dropping empty section \references
-prepare_Rd: gsMomentAparch.Rd:53-55: Dropping empty section \seealso
-checkRd: (5) gsMomentAparch.Rd:0-97: Must have a \description
-prepare_Rd: gsSpec.Rd:7-9: Dropping empty section \description
-prepare_Rd: gsSpec.Rd:28-30: Dropping empty section \details
-prepare_Rd: gsSpec.Rd:31-37: Dropping empty section \value
-prepare_Rd: gsSpec.Rd:44-46: Dropping empty section \note
-prepare_Rd: gsSpec.Rd:41-43: Dropping empty section \author
-prepare_Rd: gsSpec.Rd:38-40: Dropping empty section \references
-prepare_Rd: gsSpec.Rd:50-52: Dropping empty section \seealso
-checkRd: (5) gsSpec.Rd:0-62: Must have a \description
-* checking Rd metadata ... WARNING
-Rd files with duplicated alias 'show,fGEVSTABLEGARCH-method':
-  ‘fGEVSTABLEGARCH-class.Rd’ ‘show-methods.Rd’
-Rd files with duplicated alias 'show,fGEVSTABLEGARCHSPEC-method':
-  ‘fGEVSTABLEGARCHSPEC-class.Rd’ ‘show-methods.Rd’
+* checking Rd files ... OK
+* checking Rd metadata ... OK
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
-* checking for code/documentation mismatches ... WARNING
-Codoc mismatches from documentation object 'GAt':
-dGAt
-  Code: function(x, mean = 0, sd = 1, nu = 3, d = 2, xi = 1, log =
-                 FALSE)
-  Docs: function(x, mean = 0, sd = 1, d = 2, xi = 1, log = FALSE)
-  Argument names in code not in docs:
-    nu
-  Mismatches in argument names:
-    Position: 4 Code: nu Docs: d
-    Position: 5 Code: d Docs: xi
-    Position: 6 Code: xi Docs: log
-pGAt
-  Code: function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
-  Docs: function(q, mean = 0, sd = 1, d = 2, xi = 1)
-  Argument names in code not in docs:
-    x nu
-  Argument names in docs not in code:
-    q
-  Mismatches in argument names:
-    Position: 1 Code: x Docs: q
-    Position: 4 Code: nu Docs: d
-    Position: 5 Code: d Docs: xi
-  Mismatches in argument default values:
-    Name: 'd' Code: 3 Docs: 2
-qGAt
-  Code: function(p, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
-  Docs: function(p, mean = 0, sd = 1, d = 2, xi = 1)
-  Argument names in code not in docs:
-    nu
-  Mismatches in argument names:
-    Position: 4 Code: nu Docs: d
-    Position: 5 Code: d Docs: xi
-  Mismatches in argument default values:
-    Name: 'd' Code: 3 Docs: 2
-rGAt
-  Code: function(n, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
-  Docs: function(n, mean = 0, sd = 1, d = 2, xi = 1)
-  Argument names in code not in docs:
-    nu
-  Mismatches in argument names:
-    Position: 4 Code: nu Docs: d
-    Position: 5 Code: d Docs: xi
-  Mismatches in argument default values:
-    Name: 'd' Code: 3 Docs: 2
-
-Codoc mismatches from documentation object 'skstd':
-pskstd
-  Code: function(x, mean = 0, sd = 1, nu = 3, xi = 1)
-  Docs: function(q, mean = 0, sd = 1, nu = 3, xi = 1)
-  Argument names in code not in docs:
-    x
-  Argument names in docs not in code:
-    q
-  Mismatches in argument names:
-    Position: 1 Code: x Docs: q
-
+* checking for code/documentation mismatches ... OK
 * checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
 * checking examples ... OK
 * checking PDF version of manual ... OK
-WARNING: There were 4 warnings.
+WARNING: There was 1 warning.
 NOTE: There was 1 note.

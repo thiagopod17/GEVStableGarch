@@ -1,96 +1,85 @@
 \name{gsMomentAparch}
 \alias{gsMomentAparch}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
+
 \title{
-Evaluate the moments expression E( |Z| - gamma * Z) ^ delta
+
+Computation of moments for several conditional distribution
+
 }
+
+
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+Computation of the moments expression E( |Z| - gamma * Z) ^ delta
+
 }
+
+
 \usage{
-gsMomentAparch(cond.dist = c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, gm = 0)
+
+gsMomentAparch(cond.dist = c("stableS1", "gev", "GAt", "norm", 
+"std", "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, gm = 0)
+
 }
-%- maybe also 'usage' for other objects documented here.
+
+
 \arguments{
-  \item{cond.dist}{
-%%     ~~Describe \code{cond.dist} here~~
+
+        \item{cond.dist}{ a character string naming conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"}, \code{"stableS1"}, \code{"stableS2"}, \code{"gev"} and \code{"GAt"}. Other common distributions are also possible such as the \code{"norm"}, \code{"std"}, \code{"sstd"}, \code{"skstd"}, \code{"ged"}, but they are not the main feature of this work.
+        }
+        
+  \item{shape, skew}{
+        The shape and skew parameter for the conditional distribution.
 }
-  \item{shape}{
-%%     ~~Describe \code{shape} here~~
+
+  \item{delta, gm}{
+        The delta and gm parameteres of the ARMA-GARCH/APARCH model
 }
-  \item{skew}{
-%%     ~~Describe \code{skew} here~~
+
 }
-  \item{delta}{
-%%     ~~Describe \code{delta} here~~
-}
-  \item{gm}{
-%%     ~~Describe \code{gm} here~~
-}
-}
+
+
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+EXPLICAR COMO EH FEITO ESSES CALCULOS. COLOCAR EXPRESSOES DO ARTIGO.
 }
+
+
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+
+Returns the following expression for several conditional distributions
+E( |Z| - gamma * Z) ^ delta
+
 }
+
+
 \references{
-%% ~put references to the literature/web site here ~
+
+NOSSO ARTIGO JSS
+
+Diongue AK (2008). "An investigation of Stable-Paretian Asymmetric Power GARCH Model." Journal des Sciences, 8(4), 15-26.
+
+Mittnik S, Paolella MS (2000). "Conditional Density and Value-At-Risk Prediction of Asian Currency Exchange Rates." Journal of Forecasting, 19(4), 313-333.
+
+Mittnik S, Paolella M, Rachev S (2002). "Stationarity of Stable Power-GARCH Processes." Journal of Econometrics, 106, 97-107.
+
 }
+
+
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+
+Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
+and Silvia Regina Costa Lopes
+
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (cond.dist = c("stableS1", "gev", "GAt", "norm", "std", 
-    "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, 
-    gm = 0) 
-{
-    cond.dist = match.arg(cond.dist)
-    if (cond.dist == "stableS1") 
-        kappa = .stableS1MomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "gev") 
-        kappa = .gevMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    if (cond.dist == "GAt") 
-        kappa = .GAtMomentAparch(shape = shape, delta = delta, 
-            skew = skew, gm = gm)
-    if (cond.dist == "norm") 
-        kappa = .normMomentAparch(delta = delta, gm = gm)
-    if (cond.dist == "std") 
-        kappa = .stdMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    if (cond.dist == "sstd") 
-        kappa = .sstdMomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "skstd") 
-        kappa = .skstdMomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "ged") 
-        kappa = .gedMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    kappa
-  }
+# EXEMPLOS GSMOMENTAPARCH
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+
+
+\keyword{ aparch }
+\keyword{ moments }

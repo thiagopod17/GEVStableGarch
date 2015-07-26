@@ -57,7 +57,7 @@ my.version = '1.1'
 # If you include/delete a new file in the package do not forget to update this list
 my.list.of.files = c("class-fGEVSTABLEGARCH.R",
                      "class-fGEVSTABLEGARCHSPEC.R",
-                     "dist-dskstd.R",
+                     "dist-skstd.R",
                      "dist-gat.R",
                      "GEVStableGarch-armaGarchDist.R",
                      "GEVStableGarch-filter.R",
@@ -102,11 +102,22 @@ my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, s
 #  < R --vanilla CMD build GEVStableGarch > 
   
   
+  
+  --------------------------------------------------------------  
 # STEP: Check your package by running the command
 #  < R --vanilla CMD check GEVStableGarch_1.1.tar.gz > 
 # Correct possible errors
-  
+
   
 
   
-  
+--------------------------------------------------------------  
+# ADIVICES FOR CORRECTING SOME ERRORS
+--------------------------------------------------------------
+
+# CHECKINGNON FOR NON-ASCII CHARACTERS: Use function showNonASCIIfile(file) from package tools
+library(tools)
+showNonASCIIfile(paste(cran.directory,my.version,"/GEVStableGarch/man/dist-skstd.Rd",sep = ''))
+
+
+

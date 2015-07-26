@@ -1,6 +1,5 @@
 \name{skstd}
 \alias{skstd}
-
 \alias{dskstd}
 \alias{pskstd}
 \alias{qskstd}
@@ -8,7 +7,7 @@
 
 
 \title{
-Skew Student's t Distribtuion from Fernandez and Steel (2002)
+Skew Student's t Distribtuion from Fernandez and Steel (1997)
 }
 
 
@@ -16,7 +15,8 @@ Skew Student's t Distribtuion from Fernandez and Steel (2002)
 
     Functions to compute density, distribution function, 
     quantile function and to generate random variates 
-    for the Skew Student's t Distribtuion from Fernandez and Steel (2002) withouth reparemeterization. 
+    for the Skew Student's t Distribtuion from Fernandez and Steel (1997). Notice that this function is different from the skew Student's t \code{sstd} from package fGarch. Although the two distributions use the same approach from Fernandez and Steel (1997), the second one was reparameterized in such a way that when the parameters mean = 0 and sd = 1 the distribution will have a true mean equal zero and the true variance equals to one, no matter the value of the skew parameter.
+    The distributions \code{skstd} and \code{sstd} are the same when the asymmetry parameter \code{xi} equals to 1, in which case they are symmetric.
     
 }
 \usage{
@@ -60,7 +60,10 @@ rskstd(n, mean = 0, sd = 1, nu = 3, xi = 1)
 
 
 \references{
-%% ~put references to the literature/web site here ~
+
+Fernandez Steel. "On Bayesian Modeling of Fat Tails and Skewness." Journal of the American Statistical Association, 93(441), 359-371
+
+
 }
 \author{
 Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
@@ -68,6 +71,31 @@ and Silvia Regina Costa Lopes.
 }
 
 \examples{
-%% asdf
+
+# Simulate Random Values and compare with
+# the empirical density and probability functions
+
+# Configure plot and generate random values
+par(mfrow = c(2, 2))
+set.seed(1000)
+r = rskstd(n = 1000)
+plot(r, type = "l", main = "Skew Student's t Random Values", col = "steelblue")
+
+# Plot empirical density and compare with true density:
+hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+box()
+x = seq(min(r), max(r), length = 201)
+lines(x, dskstd(x), lwd = 2)
+
+# Plot density function and compare with true df:
+plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
+     ylab = "Probability")
+lines(x, pskstd(x), lwd = 2)
+
+# Compute quantiles:
+# Here we compute the quantiles corresponding to the probability points from 
+# -10 to 10 and expect to obtain the same input sequence
+round(qskstd(pskstd(q = seq(-10, 10, by = 0.5))), digits = 6)
+
 }
 \keyword{ distribution }

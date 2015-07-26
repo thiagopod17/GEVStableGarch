@@ -1,22 +1,43 @@
 \name{show-methods}
+
+
 \docType{methods}
+
+
 \alias{show-methods}
 \alias{show,fGEVSTABLEGARCH-method}
 \alias{show,fGEVSTABLEGARCHSPEC-method}
-\title{ ~~ Methods for Function \code{show}  ~~}
+
+
+\title{GEVSTABLEGARCH Package Show Methods}
+
+
 \description{
- ~~ Methods for function \code{show}  ~~
+
+Methods to organize the output to the user when printing objects of class GEVSTABLEGARCH
+
 }
+
+
 \section{Methods}{
 \describe{
 
-\item{\code{signature(object = "fGEVSTABLEGARCH")}}{
-%%  ~~describe this method here~~
+    \item{\code{signature(object = "fGEVSTABLEGARCH")}}{
+        Print function for objects of class \code{"fGEVSTABLEGARCH"}
+    }
+
+    \item{\code{signature(object = "fGEVSTABLEGARCHSPEC")}}{
+        Print function for objects of class \code{"fGEVSTABLEGARCHSPEC"}
+    }
+}}
+
+
+\author{
+
+Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
+and Silvia Regina Costa Lopes.
+
 }
 
-\item{\code{signature(object = "fGEVSTABLEGARCHSPEC")}}{
-%%  ~~describe this method here~~
-}
-}}
-\keyword{methods}
-\keyword{ ~~ other possible keyword(s) ~~ }
+
+\keyword{models}

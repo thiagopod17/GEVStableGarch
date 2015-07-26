@@ -1,61 +1,104 @@
 \name{gsSpec}
+
+
 \alias{gsSpec}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Specification of ARMA-GARCH/APARCH models
-}
+
+
+\title{Specification of ARMA-GARCH/APARCH models with GEV or stable distributions}
+
+
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+Specifies an ARMA-GARCH or ARMA-APARCH model with innovations following GEV, stable or other common conditional distributions.
+
 }
 \usage{
-gsSpec(model = list(), presample = NULL, cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), rseed = NULL)
+gsSpec(model = list(), presample = NULL, 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", 
+    "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    rseed = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
+
+
 \arguments{
-  \item{model}{
-%%     ~~Describe \code{model} here~~
+
+    \item{model}{
+        a list of ARMA-GARCH/APARCH model parameters: \cr
+        \code{omega} - the coefficient of the variance equation,
+            by default 1e-6; \cr
+        \code{alpha} - the value or vector of autoregressive coefficients; \cr
+        \code{beta} - the value or vector of variance coefficients; 
+        \cr
+        The values for the ARMA part are: \cr
+        \code{mu} - the mean value; \cr
+        \code{ar} - the autoregressive coefficients; \cr
+        \code{ma} - the moving average coefficients. 
+        \cr
+        The parameters for the conditional distributions are:\cr
+        \code{skew} - the skewness parameter; \cr
+        \code{shape} - the shape parameter.\cr
+        }   
+
+    \item{presample}{
+        presample - a numeric "matrix" with 3 columns and
+        at least max(m,n,p,q) rows. 
+        The first culumn are the innovations, the second
+        the conditional variances, and the last the time series.
+        When presample is missing, we construct our presample matrix
+        as [z,h,y] where z = rnorm(0,1), h = "uev" recursion 
+        initialization described in Wuertz et al. (2006) and
+        y = mu. Note that the conditional variance column
+        can contain only strictly positive numbers and the function
+        \code{gsSpec} check for invalid values inside the presample
+        matrix.
+        }
+        
+        \item{cond.dist}{ a character string naming conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"}, \code{"stableS1"}, \code{"stableS2"}, \code{"gev"} and \code{"GAt"}. Other common distributions are also possible such as the \code{"norm"}, \code{"std"}, \code{"sstd"}, \code{"skstd"}, \code{"ged"}, but they are not the main feature of this work.
+        }
+        
+    \item{rseed}{
+        the seed for the intitialization of the random number generator for the innovations.
+        }
 }
-  \item{presample}{
-%%     ~~Describe \code{presample} here~~
-}
-  \item{cond.dist}{
-%%     ~~Describe \code{cond.dist} here~~
-}
-  \item{rseed}{
-%%     ~~Describe \code{rseed} here~~
-}
-}
+
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+This functions uses the interface of the \code{garchSpec} routine from package \pkg{fGarch} to simulate random values of the ARMA-GARCH/APARCH model with conditional GEV or stable distribution. 
+
 }
+
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+
+    The returned value is an object of class \code{"fGEVSTABLEGARCHSPEC"}.
+    
 }
+
 \references{
-%% ~put references to the literature/web site here ~
+
+Mittnik S, Paolella M, Rachev S (2002). "Stationarity of Stable Power-GARCH Processes." Journal of Econometrics, 106, 97-107.
+
+PACOTE FGARCH
+
 }
+
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+
+Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
+and Silvia Regina Costa Lopes.
+
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+
+# stable-GARCH from Curto et al. (2009) for the DJIA dataset
+spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "stableS1")
+sim.stable = gsSim(spec = spec.stable, n = 1000)
+ 
+# GEV-GARCH model from Zhao et al. (2011)
+spec.gev = gsSpec(model = list(mu = 0.21, a = 0.32, omega = 0.01,
+alpha = 0.45, beta = 0.08, shape = 0.08), cond.dist = "gev")
+sim.gev = gsSim(spec = spec.gev, n = 1000)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+
+\keyword{ models }

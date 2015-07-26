@@ -1,5 +1,14 @@
 #   Things to do on Package now
-    - test the package    
+    - Colocar tres autores em todos locais, R help, R code headers.
+    - citar pacote fGarch nas referencias dos codigos que eu aproveitei.
+    - change name of class ( retirar prefixo f)
+    - fill in the help of the package
+    - test the script of the papper
+    - update GEV table if necessary
+    - send it to CRAN
+    - update information on gev estimation in the package
+    - find non-asc ii caracteres in gat-dist.
+    
     
 
 # More tests if you have time. hahaha

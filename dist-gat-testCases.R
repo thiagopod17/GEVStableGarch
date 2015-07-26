@@ -212,8 +212,46 @@ histPlot <- function(x, ...) {
   invisible(s)
 }
 mean = 0; sd = 1; nu = 1; d = 5; xi = 1
-histPlot(rGAt(1000,mean = mean,sd = sd,nu = nu,d = d,xi = xi),
+random.GAt = rGAt(10000,mean = mean,sd = sd,nu = nu,d = d,xi = xi)
+histPlot(random.GAt,
          mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+
+x = seq(-3,3,0.01)
+plot(x , dGAt(x, mean = 0, nu = 1, d = 5, xi = 1))
+
+
+# ------------------------------------------------------------------------------
+# Example Scripts for the R help
+# The examples were adapted from the examples given in the documentation 
+# of the 'ged' density implemented inside package fGarch available on CRAN
+# ------------------------------------------------------------------------------
+
+# Simulate Random Values and compare with
+# the empirical density and probability functions
+
+# Configure plot and generate random values
+par(mfrow = c(2, 2))
+set.seed(1000)
+r = rGAt(n = 1000)
+plot(r, type = "l", main = "GAt Random Values", col = "steelblue")
+
+# Plot empirical density and compare with true density:
+hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+box()
+x = seq(min(r), max(r), length = 201)
+lines(x, dGAt(x), lwd = 2)
+
+# Plot density function and compare with true df:
+plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
+     ylab = "Probability")
+lines(x, pGAt(x), lwd = 2)
+
+# Compute quantiles:
+# Here we compute the quantiles corresponding to the probability points from 
+# -10 to 10 and expect to obtain the same input sequence
+round(qGAt(pGAt(x = seq(-10, 10, by = 0.5))), digits = 6)
+
+
 
 
 

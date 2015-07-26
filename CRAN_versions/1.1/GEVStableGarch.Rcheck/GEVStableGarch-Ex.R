@@ -5,39 +5,91 @@ library('GEVStableGarch')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 cleanEx()
-nameEx("fGEVSTABLEGARCH-class")
-### * fGEVSTABLEGARCH-class
+nameEx("dist-GAt")
+### * dist-GAt
 
 flush(stderr()); flush(stdout())
 
-### Name: fGEVSTABLEGARCH-class
-### Title: Class '"fGEVSTABLEGARCH"'
-### Aliases: fGEVSTABLEGARCH-class show,fGEVSTABLEGARCH-method
-### Keywords: classes
+### Name: GAt
+### Title: Generalized Asymmetric t Distribution
+### Aliases: GAt dGAt pGAt qGAt rGAt
+### Keywords: distribution
 
 ### ** Examples
 
-showClass("fGEVSTABLEGARCH")
+
+# Simulate Random Values and compare with
+# the empirical density and probability functions
+
+# Configure plot and generate random values
+par(mfrow = c(2, 2))
+set.seed(1000)
+r = rGAt(n = 1000)
+plot(r, type = "l", main = "GAt Random Values", col = "steelblue")
+
+# Plot empirical density and compare with true density:
+hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+box()
+x = seq(min(r), max(r), length = 201)
+lines(x, dGAt(x), lwd = 2)
+
+# Plot density function and compare with true df:
+plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
+     ylab = "Probability")
+lines(x, pGAt(x), lwd = 2)
+
+# Compute quantiles:
+# Here we compute the quantiles corresponding to the probability points from 
+# -10 to 10 and expect to obtain the same input sequence
+round(qGAt(pGAt(q = seq(-10, 10, by = 0.5))), digits = 6)
 
 
 
+
+graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 cleanEx()
-nameEx("fGEVSTABLEGARCHSPEC-class")
-### * fGEVSTABLEGARCHSPEC-class
+nameEx("dist-skstd")
+### * dist-skstd
 
 flush(stderr()); flush(stdout())
 
-### Name: fGEVSTABLEGARCHSPEC-class
-### Title: Class '"fGEVSTABLEGARCHSPEC"'
-### Aliases: fGEVSTABLEGARCHSPEC-class show,fGEVSTABLEGARCHSPEC-method
-### Keywords: classes
+### Name: skstd
+### Title: Skew Student's t Distribtuion from Fernandez and Steel (1997)
+### Aliases: skstd dskstd pskstd qskstd rskstd
+### Keywords: distribution
 
 ### ** Examples
 
-showClass("fGEVSTABLEGARCHSPEC")
+
+# Simulate Random Values and compare with
+# the empirical density and probability functions
+
+# Configure plot and generate random values
+par(mfrow = c(2, 2))
+set.seed(1000)
+r = rskstd(n = 1000)
+plot(r, type = "l", main = "Skew Student's t Random Values", col = "steelblue")
+
+# Plot empirical density and compare with true density:
+hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+box()
+x = seq(min(r), max(r), length = 201)
+lines(x, dskstd(x), lwd = 2)
+
+# Plot density function and compare with true df:
+plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
+     ylab = "Probability")
+lines(x, pskstd(x), lwd = 2)
+
+# Compute quantiles:
+# Here we compute the quantiles corresponding to the probability points from 
+# -10 to 10 and expect to obtain the same input sequence
+round(qskstd(pskstd(q = seq(-10, 10, by = 0.5))), digits = 6)
 
 
 
+
+graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 cleanEx()
 nameEx("gsFit")
 ### * gsFit
@@ -66,47 +118,15 @@ nameEx("gsMomentAparch")
 flush(stderr()); flush(stdout())
 
 ### Name: gsMomentAparch
-### Title: Evaluate the moments expression E( |Z| - gamma * Z) ^ delta
+### Title: Computation of moments for several conditional distribution
 ### Aliases: gsMomentAparch
-### Keywords: ~kwd1 ~kwd2
+### Keywords: aparch moments
 
 ### ** Examples
 
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (cond.dist = c("stableS1", "gev", "GAt", "norm", "std", 
-    "sstd", "skstd", "ged"), shape = 1.5, skew = 0, delta = 1, 
-    gm = 0) 
-{
-    cond.dist = match.arg(cond.dist)
-    if (cond.dist == "stableS1") 
-        kappa = .stableS1MomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "gev") 
-        kappa = .gevMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    if (cond.dist == "GAt") 
-        kappa = .GAtMomentAparch(shape = shape, delta = delta, 
-            skew = skew, gm = gm)
-    if (cond.dist == "norm") 
-        kappa = .normMomentAparch(delta = delta, gm = gm)
-    if (cond.dist == "std") 
-        kappa = .stdMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    if (cond.dist == "sstd") 
-        kappa = .sstdMomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "skstd") 
-        kappa = .skstdMomentAparch(shape = shape, skew = skew, 
-            delta = delta, gm = gm)
-    if (cond.dist == "ged") 
-        kappa = .gedMomentAparch(shape = shape, delta = delta, 
-            gm = gm)
-    kappa
-  }
+# EXEMPLOS GSMOMENTAPARCH
+
 
 
 
@@ -122,12 +142,15 @@ flush(stderr()); flush(stdout())
 
 ### ** Examples
 
+
 # AIC fit using models from ARMA(0,0)-GARCH(1,0) to ARMA(1,1)-GARCH(1,1)
-# with GEV conditional distribution
-#library(fGarch)
-#data(dem2gbp)
-#x = dem2gbp[, 1]
-# GSgarch.FitAIC(data = x,1,0,1,0,cond.dist = "gev")
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[,1]
+
+model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
+          algorithm = "sqp", cond.dist = "norm", selection.criteria = "BIC")
+
 
 
 
@@ -157,15 +180,23 @@ nameEx("gsSpec")
 flush(stderr()); flush(stdout())
 
 ### Name: gsSpec
-### Title: Specification of ARMA-GARCH/APARCH models
+### Title: Specification of ARMA-GARCH/APARCH models with GEV or stable
+###   distributions
 ### Aliases: gsSpec
-### Keywords: ~kwd1 ~kwd2
+### Keywords: models
 
 ### ** Examples
 
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+
+# stable-GARCH from Curto et al. (2009) for the DJIA dataset
+spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "stableS1")
+sim.stable = gsSim(spec = spec.stable, n = 1000)
+ 
+# GEV-GARCH model from Zhao et al. (2011)
+spec.gev = gsSpec(model = list(mu = 0.21, a = 0.32, omega = 0.01,
+alpha = 0.45, beta = 0.08, shape = 0.08), cond.dist = "gev")
+sim.gev = gsSim(spec = spec.gev, n = 1000)
+
 
 
 

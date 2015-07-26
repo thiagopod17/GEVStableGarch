@@ -9,4 +9,4 @@ Description: Package for ARMA-GARCH or ARMA-APARCH modelling with GEV and stable
 License: GPL (>=2)
 Depends: R(>= 2.15.0),fGarch,fExtremes,stabledist,skewt,Rsolnp
 Additional_repositories: http://www.robustanalysis.com
-Packaged: 2015-07-22 01:46:13 UTC; thiago
+Packaged: 2015-07-26 22:11:58 UTC; thiago
