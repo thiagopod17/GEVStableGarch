@@ -19,7 +19,7 @@
 \description{
 
 The class GEVSTABLEGARCH represents an ARMA-GARCH/APARCH 
-model estimated wih function \code{gsFit}
+model estimated wih function \code{\link{gsFit}}
 
 }
 
@@ -52,7 +52,8 @@ This object contain the estimated parameters of a time series process.
 the optimization algorithm will return a "true" convergence, even 
 when the optimized negative log-likelihood equals to 1e99. In this 
 case, we set the variable \code{convergence} to 1 to indicate that 
-convergence was not achieved. Aditional interpretation of \code{convergence} codes can be made by using the R help of the corresponding optimization routine: \code{?solnp} for the \code{"sqp"} or \code{"sqp.restriction} algorithms and \code{?nlminb} for \code{"nlminb"} or \code{"nlminb+nm} algorithms. 
+convergence was not achieved. In the general case, the variable \code{convergence} assumes the same 
+value reported by the internal solver used inside function \code{gsFit}. Hence, aditional interpretation of the \code{convergence} codes can be made by using the R help of the corresponding optimization routine: \code{solnp} (\code{"sqp"} and \code{"sqp.restriction"} algorithms) or \cr \code{nlminb} (\code{"nlminb"} and \code{"nlminb+nm"} algorithms). 
         }
         
     \item{\code{messages}:}{Object of class \code{"list"}:

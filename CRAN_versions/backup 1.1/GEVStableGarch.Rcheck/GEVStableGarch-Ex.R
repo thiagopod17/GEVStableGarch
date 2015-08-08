@@ -109,7 +109,7 @@ flush(stderr()); flush(stdout())
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
-gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "norm")
+gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
 
 
 

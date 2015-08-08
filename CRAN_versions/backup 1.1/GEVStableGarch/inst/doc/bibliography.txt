@@ -22,6 +22,10 @@ BEGIN
     \emph{Introduction to Time Series and Forecasting}.
     Springer, New York.
 
+    Curto, J.D., Tavares, A.N., Tavares, G.N. (2008).
+    \emph{Modelling Heavy Tails and Asymmetry Using ARCH-type Models with Stable Paretian Distributions}.
+    Nonlinear Dynamics, Springer, 51(1--2), 231--243.
+
     Ding, Z., Granger, C., Engle, R.F. (1993).
     \emph{A Long Memory Property of Stock Market Returns and a New Model}.
     Journal of Empirical Finance, 1, 83--106.
@@ -33,6 +37,14 @@ BEGIN
     Fernandez, C., Steel, M.F. (1998).
     \emph{On Bayesian Modeling of Fat Tails and Skewness}.
     Journal of the American Statistical Association, Taylor & Francis Group, 93(441), 359--371.
+
+    Frain, J.C. (2009).
+    \emph{Studies on the Application of the Alpha-stable Distribution in Economics}.
+    Trinity College.
+
+    Ling, S., McAller, M. (2002).
+    \emph{Necessary and Suficient Moment Conditions for the GARCH(r,s) and Asymmetric Power GARCH(r,s) Models}. 
+    Econometric Theory, 18(03), 722--729.
 
     Lambert, P., Laurent, S. (2001).
     \emph{Modelling Financial Time Series Using GARCH-type Models with a Skewed Student Distribution for the Innovations}.

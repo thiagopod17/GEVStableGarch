@@ -155,20 +155,38 @@ Loading required package: parallel
 > library(fGarch)
 > data(dem2gbp)
 > x = dem2gbp[, 1]
-> gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "norm")
+> gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
 
-Iter: 1 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
-Iter: 2 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
+Iter: 1 fn: 1266.0690	 Pars:  -0.15896 -0.11014  0.23860  0.04643  0.28889  0        0.56343  2.00000  1.00000 -0.22190
+Iter: 2 fn: 1266.0690	 Pars:  -0.15895 -0.11015  0.23860  0.04643  0.28889  0        0.56343  2.00000  1.00000 -0.22190
 solnp--> Completed in 2 iterations
 
 Final Estimate of the Negative LLH:
--LLH: 1106.608
+-LLH: 1266.069
 Coefficient(s):
-        Estimate  Std. Error  t value Pr(>|t|)    
-mu     -0.006191    0.008100 -0.76424 0.444727    
-omega   0.010761    0.002824  3.81063 0.000139 ***
-alpha1  0.153131    0.026217  5.84092  < 2e-16 ***
-beta1   0.805979    0.033229 24.25557  < 2e-16 ***
+        Estimate  Std. Error   t value Pr(>|t|)    
+mu     -0.158955    0.012873 -12.34777  < 2e-16 ***
+ar1    -0.110147    0.176751  -0.62318  0.53317    
+ma1     0.238604    0.171848   1.38846  0.16500    
+omega   0.046432    0.008400   5.52780  < 2e-16 ***
+alpha1  0.288885    0.030255   9.54846  < 2e-16 ***
+beta1   0.563433    0.054370  10.36289  < 2e-16 ***
+shape1 -0.221900    0.006139 -36.14854  < 2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > 
@@ -386,7 +404,7 @@ Best Model:  arma(0, 0) + garch(1, 1)
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  6.822 0.087 6.985 0 0 
+Time elapsed:  9.365 0.09 9.521 0 0 
 > grDevices::dev.off()
 null device 
           1 

@@ -11,7 +11,7 @@ Computation of moments for several conditional distribution
 
 \description{
 
-Computation of the moments expression \deqn{E( |Z| - \gamma Z ) ^ \delta} where \deqn{\mathcal{D}_{\vartheta}(0,1)} is the density of the innovations with zero location and unit scale and \deqn{\vartheta} are additional distributional parameters that describe the skew and the shape of the distribution.
+Computation of the moments expression \eqn{E( |Z| - \gamma Z ) ^ \delta} where \eqn{\mathcal{D}_{\vartheta}(0,1)} is the density of the innovations with zero location and unit scale and \eqn{\vartheta} are additional distributional parameters that describe the skew and the shape of the distribution.
 
 }
 
@@ -30,26 +30,25 @@ gsMomentAparch(cond.dist = c("stableS1", "gev", "gat", "norm",
         }
         
   \item{shape, skew}{
-        The shape and skew parameter for the conditional distribution. For the stable distribution the shape and skew are the \deqn{\alpha} (index of stability) and \deqn{\beta} (asymmetry) parameters. For the Generalized Asymmetric t distribution the shape parameters \deqn{\nu} and \deqn{d} and \deqn{\xi} is the skew parameter. For the skew Student's t distribution the shape is the degrees of freedom \deqn{\nu} and \deqn{\xi} is the asymmetry parameter. Finally, for the GEV distribution the shape parameter is the \deqn{\xi} parameter.
+        The shape and skew parameter for the conditional distribution. For the stable distribution the shape and skew are the index of stability (\eqn{\alpha}) and the asymmetry parameter (\eqn{\beta}). For the Generalized Asymmetric t distribution there are two shape parameters (\eqn{\nu} and \eqn{d}) and one asymmetry parameter called \eqn{\xi}. For the skew Student's t distribution the shape is the degrees of freedom (\eqn{\nu}) and \eqn{\xi} is the asymmetry parameter. Finally, for the GEV distribution the shape parameter is called \eqn{\xi}.
 }
 
   \item{delta, gm}{
-        The \deqn{\delta} and \deqn{\gamma} parameteres of the ARMA-GARCH/APARCH model.
+        The \eqn{\delta} and \eqn{\gamma} parameteres of the ARMA-GARCH/APARCH model.
 }
 
-See the R documentation of function \code{gsFit} for more details.
+See the R documentation of function \code{\link{gsFit}} for more details.
 
 }
 
 
 \details{
 
-For each conditional distribution, the evaluation of the moment expression \deqn{E(|Z| - \gamma Z)^\delta} is crucial if one is interested in finding a stationary solution. Analytical expressions to compute these moments are available throughout the GARCH literature for many conditional distributions and we have derived an efficient formula for the asymmetric stable case.
-the APARCH moment expression, which is not valid for the \code{sstd} density. 
-It is true that we can use numerical integration to compute those moments but there are several drawbacks that represent limitations. The first one is that numerical integration is always slower than using an closed expression to compute those formulas. The second is that this technique fails when the distribution becomes very pick or very concentrated on a small portion of the real line. For example, if we use the R base function \code{integrate} to calculate the area total probability on the interval \deqn{(-\infty,\infty)} for the standard gat distribution with parameters \deqn{\nu = 2, d = 0.05} and \deqn{\xi = 1} we get 
-\deqn{3.690067e-07}, which is not true since the total probability must be 1. Therefore, it is very important for us to have the exact expression for all those moments in order to evaluate correctly the stationarity restrictions. 
+For each conditional distribution, the evaluation of the moment expression \eqn{E(|Z| - \gamma Z)^\delta} is crucial if one is interested in finding a stationary solution. Analytical expressions to compute these moments are available throughout the GARCH literature for many conditional distributions and we have derived an efficient formula for the asymmetric stable case.
+It is true that we can use numerical integration to compute those moments but there are several drawbacks that represent limitations. The first one is that numerical integration is always slower than using a closed expression to compute those formulas. The second is that this technique fails when the distribution becomes very pick or very concentrated on a small portion of the real line. For example, if we use the R base function \code{integrate} to calculate the area total probability on the interval \eqn{(-\infty,\infty)} for the standard gat distribution with parameters \eqn{\nu = 2, d = 0.05} and \eqn{\xi = 1} we get 
+\eqn{3.690067e-07}, which is not true since the total probability must be 1. Therefore, it is very important for us to have the exact expression for all those moments in order to evaluate correctly the stationarity restrictions. 
 
-The \code{gsMomentAparch} function can be used to compute those expressions for the following distributions: Normal, Student's t, skewed Student's t from Fernandez and Steel (1998), GED, stable in its 1-parameterization and the GAt distribution. Only for the GEV distribution we use numerical integration. For all other distribution we use the analytical expression to compute the APARCH moment.
+The \code{gsMomentAparch} function can be used to compute those expressions for the following distributions: Normal, Student's t, skewed Student's t from Fernandez and Steel (1998), GED, stable in its 1-parameterization and the GAt distribution. Only for the GEV distribution we use numerical integration.
 
 Note: The \pkg{GEVStableGarch} package implements a slighty different version of the Student's skew distribution that is different from the one implemented inside the \pkg{fGarch} package. Therefore, the APARCH moment formula is only valid for the \pkg{GEVStableGarch} implementation (\code{skstd}) and not for the \pkg{fGarch} implementation \code{sstd}.
 }
@@ -58,7 +57,7 @@ Note: The \pkg{GEVStableGarch} package implements a slighty different version of
 \value{
 
 Returns the following expression for several conditional distributions
-\deqn{E( |Z| - \gamma Z) ^ \delta}. If any of the input parameters are outside the parameter space, this function returns \deqn{\infty}
+\eqn{E( |Z| - \gamma Z) ^ \delta}. If any of the input parameters are outside the parameter space, this function returns \eqn{\infty}
 
 }
 

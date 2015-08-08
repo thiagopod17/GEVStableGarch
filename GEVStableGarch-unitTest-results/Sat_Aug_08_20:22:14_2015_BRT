@@ -1,0 +1,12 @@
+Testing garch(1,1)-normal against garchFit, G@RCH and SPLUS Fin Metrics...
+OK
+
+
+Testing garch(1,1)-normal algorithms: sqp, nlminb, nlminb+nm and sqp.restriction...
+OK
+
+Date:  Sat_Aug_08_20:22:14_2015_BRT
+==============================================
+Testing functions from package GEVStableGarch.
+
+Date:  Sat_Aug_08_20:22:14_2015_BRT

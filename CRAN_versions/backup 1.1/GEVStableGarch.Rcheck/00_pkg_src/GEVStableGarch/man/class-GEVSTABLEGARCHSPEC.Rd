@@ -18,8 +18,7 @@
 
 \description{
 
-This class represents an ARMA-GARCH/APARCH model with innovations following an i.i.d
-stable, GEV distributions. Other distributions are also allowed.
+This class represents an ARMA-GARCH/APARCH model with innovations following an univariate distribution with zero location and unit scale.
 
 }
 
@@ -31,7 +30,7 @@ specifies an univariate ARMA-GARCH/APARCH model with GEV or stable conditional
 distribution. Note that we only allow the user
 to create an object that do not violate the model specifications. For more details about
 the definition of those models see:
-see Mittnik et al. (2002) (stable innovations), Zhao et al. (2011) (GEV innovations) Wuertz et al. (2008) (finite variance innovations) and Mittnik et al. (2003) (GAt innovations).
+see Mittnik and Paolella (2000) (GAt innovations), Mittnik et al. (2002) (stable innovations), Zhao et al. (2011) (GEV innovations) Wuertz et al. (2009) (finite variance innovations).
 
 }
 
@@ -39,15 +38,14 @@ see Mittnik et al. (2002) (stable innovations), Zhao et al. (2011) (GEV innovati
 \section{Slots}{
   \describe{
     \item{\code{call}:}{Object of class \code{"call"}: 
-        the call of the \code{gsSpec} function.
+        the call of the \code{\link{gsSpec}} function.
         } 
     \item{\code{formula}:}{Object of class \code{"formula"}: 
         a list with two formula entries for the mean and variance 
         equation of the combined ARMA-GARCH/APARCH model.
         }
     \item{\code{model}:}{Object of class \code{"list"}: 
-        a list with the model parameters specifying the Autorregressive,
-        the GARCH/APARCH and the innovations parameters.
+        a list with the model parameters specifying the model parameters (see the model definition described in function \code{\link{gsFit}}.
         }
     \item{\code{presample}:}{Object of class \code{"matrix"}: 
         a numeric matrix with presample values.
@@ -75,6 +73,11 @@ see Mittnik et al. (2002) (stable innovations), Zhao et al. (2011) (GEV innovati
 
 \references{
 
+
+    Mittnik, S., Paolella, M.S. (2000).
+   \emph{Prediction of Financial Downside-Risk with Heavy-Tailed Conditional Distributions}
+    Available at SSRN 391261.
+    
     Wuertz, D., Chalabi, Y., with contribution from Miklovic, M., Boudt, C., Chausse, P., and others (2013).
     \emph{fGarch: Rmetrics - Autoregressive Conditional Heteroskedastic Modelling, R package version 3010.82},   
     \url{http://CRAN.R-project.org/package=fGarch}.

@@ -1,0 +1,17 @@
+===================================================
+Testing functions from package GEVStableGarch.
+
+Date and time:  DATE-08-08-15---TIME-20h34m20sec
+===================================================
+
+
+-----
+Testing the estimated parameters from the 
+garch(1,1)-normal against garchFit, G@RCH and SPLUS Fin Metrics...
+OK
+
+
+-----
+Testing he estimated parameters from the garch(1,1)-normal 
+algorithms: sqp, nlminb, nlminb+nm and sqp.restriction...
+OK

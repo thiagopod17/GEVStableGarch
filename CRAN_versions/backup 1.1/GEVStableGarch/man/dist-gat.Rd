@@ -21,7 +21,7 @@ Generalized Asymmetric t Distribution
     this is the same t3-distribution mentioned in the literature and defined 
     by Paolella (1997). 
     The GAt distribution includes the Student's t, Laplace, 
-    Cauchy and the normal distribution when the shape parameter (\deqn{\nu \rightarrow \infty}) (see see Mittnik and Paolella (2000)).
+    Cauchy and the normal distribution when the shape parameter (\eqn{\nu \rightarrow \infty}) (see Mittnik and Paolella (2000)).
     
 }
 

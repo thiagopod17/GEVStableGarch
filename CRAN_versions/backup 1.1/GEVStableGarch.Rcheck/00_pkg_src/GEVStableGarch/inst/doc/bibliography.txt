@@ -22,6 +22,10 @@ BEGIN
     \emph{Introduction to Time Series and Forecasting}.
     Springer, New York.
 
+    Curto, J.D., Tavares, A.N., Tavares, G.N. (2008).
+    \emph{Modelling Heavy Tails and Asymmetry Using ARCH-type Models with Stable Paretian Distributions}.
+    Nonlinear Dynamics, Springer, 51(1--2), 231--243.
+
     Ding, Z., Granger, C., Engle, R.F. (1993).
     \emph{A Long Memory Property of Stock Market Returns and a New Model}.
     Journal of Empirical Finance, 1, 83--106.
@@ -33,6 +37,14 @@ BEGIN
     Fernandez, C., Steel, M.F. (1998).
     \emph{On Bayesian Modeling of Fat Tails and Skewness}.
     Journal of the American Statistical Association, Taylor & Francis Group, 93(441), 359--371.
+
+    Frain, J.C. (2009).
+    \emph{Studies on the Application of the Alpha-stable Distribution in Economics}.
+    Trinity College.
+
+    Ling, S., McAller, M. (2002).
+    \emph{Necessary and Suficient Moment Conditions for the GARCH(r,s) and Asymmetric Power GARCH(r,s) Models}. 
+    Econometric Theory, 18(03), 722--729.
 
     Lambert, P., Laurent, S. (2001).
     \emph{Modelling Financial Time Series Using GARCH-type Models with a Skewed Student Distribution for the Innovations}.
@@ -87,3 +99,50 @@ BEGIN
 =================================================
 END
 =================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\deqn{
+    k(\alpha) = \left\{
+    \begin{array}{rl}
+    \alpha & \text{if } \alpha < 1 \\
+    \alpha-2 & \text{if } \alpha > 1,
+    \end{array} \right.
+}
+
+and
+
+\deqn{
+    \tilde{\beta} = \left\{
+    \begin{array}{rl}
+    \frac{2}{\pi\alpha}\arctan(\beta\tan(\frac{\alpha\pi}{2})) & \text{if } 0 < \alpha < 1\\
+    \frac{2}{\pi(\alpha-2)}\arctan(\beta\tan(\tfrac{\pi(\alpha-2)}{2})) & \text{if } 1 < \alpha < 2.
+    \end{array} \right.}
+}
+
+Notice that this expression is only valid for the stable distribution in 1-parameterization, and thus
+cannot be used to the estimate models with stable distribution in 0 or 2 parameterizations.
+
+The stationarity restriction implemented inside \pkg{GEVStableGarch} package imposes the follow restriction
+
+\deqn{
+    \sum_{i=1}^p E(|Z| - \gamma_i Z)^\delta\alpha_i +\sum_{j=1}^q\beta_j < 1 - TOL.STATIONARITY
+}
+
+where the variable TOL.STATIONARITY is set to 0.001 by default. For numerical reasons, the value of this variable cannot be greater than 0.05. The estimation of the stationary model is done by using the \code{solnp} routine from \pkg{Rsolnp} package together with the evaluation of the previous expression by through function \code{gsMomentAparch}.
+
+

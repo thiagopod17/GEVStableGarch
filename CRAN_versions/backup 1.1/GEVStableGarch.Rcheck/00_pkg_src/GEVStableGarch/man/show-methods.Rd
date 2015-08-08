@@ -14,7 +14,7 @@
 
 \description{
 
-Methods to organize the output to the user when printing objects of class GEVSTABLEGARCH
+Methods to organize the output to the user when printing objects of class GEVSTABLEGARCH and GEVSTABLEGARCHSPEC. The show methods and the classes GEVSTABLEGARCH and GEVSTABLEGARCHSPEC were developed through the available code from \pkg{fGarch} package available at CRAN in order to make the interfaces more similar to the user.
 
 }
 
@@ -26,7 +26,7 @@ Methods to organize the output to the user when printing objects of class GEVSTA
     }
 
     \item{\code{signature(object = "GEVSTABLEGARCHSPEC")}}{
-        Print function for objects of class \code{"GEVSTABLEGARCHSPEC"}
+        Print function for objects of class \cr \code{"GEVSTABLEGARCHSPEC"}
     }
 }}
 

@@ -70,7 +70,7 @@ four different optimization procedures, namely the \code{"sqp"}, \code{"sqp.rest
 
 \details{
 
-The starting values of the model parameters are key in getting any possible convergence and they were chosen to reflect this. For example, the GEV shape starting value was chosen to be 0.01 since in this case the support of the distribution with zero location and unit scale will encompasses both positive and negative parts of the real line (the support is at [-100,\eqn{\infty})). 
+The starting values of the model parameters are key in getting any possible convergence and they were chosen to reflect this. For example, the GEV shape starting value was chosen to be 0 since in this case the support of the distribution with zero location and unit scale will encompasses both positive and negative parts of the real line (the support is at [-\eqn{\infty},+\eqn{\infty})). 
 
 The parameters will be interpreted according to the following 
 equations (see Wurtz et al. ,2009)

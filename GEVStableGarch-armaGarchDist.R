@@ -114,6 +114,15 @@
         # density directly, asumming that the shape parameter is different from zero. Aditionally,
         # we cannot enforce the computation with the shape parameter equal to zero, since the
         # algorithm is not able to move for the optimum in most cases.
+        
+        # when the shape parameter is small
+        if( abs(shape[1]) < 1e-7 )
+        {
+            llh <- sum(log(hh)) + sum(z/hh) + sum(exp(-z/hh))
+            return(llh)
+        }
+        
+        # when the shape parameter is next to zero
         sig <- hh
         y <- 1 + shape * (z/hh)
         llh <- sum(log(sig)) + sum(y^(-1/shape)) + sum(log(y))*(1/shape + 1)

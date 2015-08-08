@@ -15,7 +15,7 @@ Skew Student's t Distribtuion from Fernandez and Steel (1997)
 
     Functions to compute density, distribution function, 
     quantile function and to generate random values 
-    for the Skew Student's t distribtuion from Fernandez and Steel (1997). Notice that this function is different from the skew Student's t \code{sstd} from package fGarch. Although the two distributions use the same approach from Fernandez and Steel (1997), the second one was reparameterized in such a way that when the parameters mean = 0 and sd = 1 the distribution will have a true mean equal zero and the true variance equals to one, no matter the value of the skew parameter.
+    for the Skew Student's t distribtuion from Fernandez and Steel (1997). Notice that this function is different from the skew Student's t \code{sstd} from package \pkg{fGarch}. Although the two distributions use the same approach from Fernandez and Steel (1997), the second one was reparameterized in such a way that when the parameters mean = 0 and sd = 1 the distribution will have a zero mean and unit variance, no matter the value of the skew parameter.
     The distributions \code{skstd} and \code{sstd} are the same when the asymmetry parameter \code{xi} equals to 1, in which case they correspond to the well known Student's t distribution \code{std}.
     
 }

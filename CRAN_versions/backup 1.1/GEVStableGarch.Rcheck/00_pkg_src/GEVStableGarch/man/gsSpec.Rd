@@ -9,7 +9,7 @@
 
 \description{
 
-Specifies an ARMA-GARCH or ARMA-APARCH model with innovations following GEV, stable.
+Specifies an ARMA-GARCH or ARMA-APARCH model.
 
 }
 \usage{
@@ -43,15 +43,15 @@ gsSpec(model = list(), presample = NULL,
         with max(m,n,p,q) rows. 
         The first culumn are the innovations, the second
         the conditional variances, and the last the time series.
-        When presample is missing, it is constructed
+        When the presample matrix is missing, it is constructed
         as [z,h,y] where z ~ Normal(0,1), h = "uev" recursion 
         initialization described in Wuertz et al. (2009) and
-        y = mu. Note that the conditional variance column
+        y = \code{mu}. Note that the conditional variance column
         can contain only strictly positive numbers and the function
         \code{gsSpec} check for invalid values.
         }
         
-        \item{cond.dist}{ a character string naming conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"}, \code{"stableS1"}, \code{"stableS2"}, \code{"gev"} and \code{"gat"}. Other common distributions are also possible such as the \code{"norm"}, \code{"std"}, \code{"sstd"}, \code{"skstd"}, \code{"ged"}, but they are not the main feature of this work.
+        \item{cond.dist}{ a character string naming the conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"} (stable in S0-parameterization), \code{"stableS1"} (stable in S1-parameterization), \code{"stableS2"} (stable in S2-parameterization), \code{"gev"}, \code{"gat"} and \code{"skstd"} (skew Student's t from Fernandez and Steel (1998)). Other common conditional distribution (normal, Student's t, \code{"sstd"} (skew Student's t from \pkg{fGarch} package) and GED) are also allowed since they are very important for testing purposes.
         }
         
     \item{rseed}{
