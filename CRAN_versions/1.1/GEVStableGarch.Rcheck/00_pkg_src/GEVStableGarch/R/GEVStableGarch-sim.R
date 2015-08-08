@@ -84,7 +84,7 @@ gsSim <-
 	   stop("The parameter 'n' must be > 2")
 
     # Specification:
-    stopifnot(class(spec) == "fGEVSTABLEGARCHSPEC")
+    stopifnot(class(spec) == "GEVSTABLEGARCHSPEC")
     model = spec@model
 
     # Random Seed:
@@ -106,8 +106,8 @@ gsSim <-
     if (spec@distribution == "gev")
         z = rgev(n, xi = model$shape)
   
-	  if (spec@distribution == "GAt") 
-	      z = rGAt(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
+	  if (spec@distribution == "gat") 
+	      z = rgat(n, nu = model$shape[1], d = model$shape[2], xi = model$skew)
   
     if (spec@distribution == "norm")
         z = rnorm(n)

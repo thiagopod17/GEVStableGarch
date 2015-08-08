@@ -27,7 +27,7 @@
 
 .armaDist <- 
   function(z, sigma = 1, shape = 1.5, skew = 0, 
-           cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+           cond.dist = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
            TOLG = 1e-8) 
   {
     # Description:
@@ -41,7 +41,7 @@
     #   z - vector of points to calculate the llh.
     #   h - the sclale parameter
     #   cond.dist - name of the conditional distribution, one of
-    #       "stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"
+    #       "stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"
     #   TOLG - general tolerance for arma-garch parameters. 
     #   In the beggining it was set to 1e-5
     
@@ -104,7 +104,7 @@
     }
     
     # GAt distribution
-    if(cond.dist == "GAt")
+    if(cond.dist == "gat")
     {
       if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
       {
@@ -115,7 +115,7 @@
       d = shape[2]
       xi = skew
       
-      return(-sum(log(dGAt(x = z/sigma, nu = nu, d = d, xi = xi)/sigma)))        
+      return(-sum(log(dgat(x = z/sigma, nu = nu, d = d, xi = xi)/sigma)))        
     }
     
     # GED conditional distribution.

@@ -1,23 +1,19 @@
 #   Things to do on Package now
-    - Colocar tres autores em todos locais, R help, R code headers.
-    - citar pacote fGarch nas referencias dos codigos que eu aproveitei.
-    - change name of class ( retirar prefixo f)
     - fill in the help of the package
     - test the script of the papper
     - update GEV table if necessary
-    - send it to CRAN
-    - update information on gev estimation in the package
-    - find non-asc ii caracteres in gat-dist.
-    
+    - send it to CRAN    
+    - conferir se as distribuicoes normal e outras estao como principais no help.
     
 
-# More tests if you have time. hahaha
+# More tests if you have time
+    - Prepare a unit test that can be run automatically, checking values with tables.
+    Take a look at the test package from R before creating these test cases.
     - SIM function
     - FIT function
     
 
 # Improvements 
-    - GEV estimation fails when there are outliers, i.e. max-min is big.
     - sqp.restriction algorithm must be tested with others datasets.
 
 # Before submiting to CRAN
@@ -61,20 +57,6 @@ changed variable name from 'gm' to 'gamma'
 
   - See the TOLG and TOLGSTABLE parameters in function gsGetStart. They were originally set to 
     1e-7 and 2e-2.
-
-
-
-# Changes on papper:
-
-
-- Sugestao para o abstract: The results suggest that this kind of distributions clearly outperforms the Gaussian case. However, when a-stable and Students t distributions are compared, a general conclusion should be avoided as the goodness-of-fit measures favor the a-stable distribution in the case of S&P 500 returns and the 
-
-
-
-
-
-
-
 
 
 

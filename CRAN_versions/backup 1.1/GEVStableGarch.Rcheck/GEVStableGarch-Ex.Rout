@@ -1,0 +1,398 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "GEVStableGarch"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('GEVStableGarch')
+Loading required package: fGarch
+Loading required package: timeDate
+Loading required package: timeSeries
+Loading required package: fBasics
+Loading required package: MASS
+
+Attaching package: ‘fBasics’
+
+The following object is masked from ‘package:base’:
+
+    norm
+
+Loading required package: fExtremes
+Loading required package: fTrading
+Loading required package: stabledist
+Loading required package: skewt
+Loading required package: Rsolnp
+Loading required package: truncnorm
+Loading required package: parallel
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("dist-gat")
+> ### * dist-gat
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gat
+> ### Title: Generalized Asymmetric t Distribution
+> ### Aliases: gat dgat pgat qgat rgat
+> ### Keywords: distribution
+> 
+> ### ** Examples
+> 
+> 
+> # Simulate Random Values and compare with
+> # the empirical density and probability functions
+> # Note: This example was addapted from "sstd {fGarch} R Documentation"
+> 
+> # Configure plot and generate random values
+> par(mfrow = c(2, 2))
+> set.seed(1000)
+> r = rgat(n = 1000)
+> plot(r, type = "l", main = "GAt Random Values", col = "steelblue")
+> 
+> # Plot empirical density and compare with true density:
+> hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+> box()
+> x = seq(min(r), max(r), length = 201)
+> lines(x, dgat(x), lwd = 2)
+> 
+> # Plot density function and compare with true df:
+> plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
++      ylab = "Probability")
+> lines(x, pgat(x), lwd = 2)
+> 
+> # Compute quantiles:
+> # Here we compute the quantiles corresponding to the probability points from 
+> # -10 to 10 and expect to obtain the same input sequence
+> round(qgat(pgat(q = seq(-10, 10, by = 0.5))), digits = 6)
+ [1] -10.0  -9.5  -9.0  -8.5  -8.0  -7.5  -7.0  -6.5  -6.0  -5.5  -5.0  -4.5
+[13]  -4.0  -3.5  -3.0  -2.5  -2.0  -1.5  -1.0  -0.5   0.0   0.5   1.0   1.5
+[25]   2.0   2.5   3.0   3.5   4.0   4.5   5.0   5.5   6.0   6.5   7.0   7.5
+[37]   8.0   8.5   9.0   9.5  10.0
+> 
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+> nameEx("dist-skstd")
+> ### * dist-skstd
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: skstd
+> ### Title: Skew Student's t Distribtuion from Fernandez and Steel (1997)
+> ### Aliases: skstd dskstd pskstd qskstd rskstd
+> ### Keywords: distribution
+> 
+> ### ** Examples
+> 
+> 
+> # Simulate Random Values and compare with
+> # the empirical density and probability functions
+> # Note: This example was addapted from "sstd {fGarch} R Documentation"
+> 
+> # Configure plot and generate random values
+> par(mfrow = c(2, 2))
+> set.seed(1000)
+> r = rskstd(n = 1000)
+> plot(r, type = "l", main = "Skew Student's t Random Values", col = "steelblue")
+> 
+> # Plot empirical density and compare with true density:
+> hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
+> box()
+> x = seq(min(r), max(r), length = 201)
+> lines(x, dskstd(x), lwd = 2)
+> 
+> # Plot density function and compare with true df:
+> plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
++      ylab = "Probability")
+> lines(x, pskstd(x), lwd = 2)
+> 
+> # Compute quantiles:
+> # Here we compute the quantiles corresponding to the probability points from 
+> # -10 to 10 and expect to obtain the same input sequence
+> round(qskstd(pskstd(q = seq(-10, 10, by = 0.5))), digits = 6)
+ [1] -10.0  -9.5  -9.0  -8.5  -8.0  -7.5  -7.0  -6.5  -6.0  -5.5  -5.0  -4.5
+[13]  -4.0  -3.5  -3.0  -2.5  -2.0  -1.5  -1.0  -0.5   0.0   0.5   1.0   1.5
+[25]   2.0   2.5   3.0   3.5   4.0   4.5   5.0   5.5   6.0   6.5   7.0   7.5
+[37]   8.0   8.5   9.0   9.5  10.0
+> 
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+> nameEx("gsFit")
+> ### * gsFit
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsFit
+> ### Title: Estimation of ARMA-GARCH/APARCH models
+> ### Aliases: gsFit
+> 
+> ### ** Examples
+> 
+> # This examples uses the dataset of the package fGarch to estimate
+> # an ARMA(1,1)-GARCH(1,1) with GEV conditional distribution.
+> library(fGarch)
+> data(dem2gbp)
+> x = dem2gbp[, 1]
+> gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "norm")
+
+Iter: 1 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
+Iter: 2 fn: 1106.6079	 Pars:  -0.006191  0         0         0.010761  0.153131  0         0.805979  2.000000  1.000000  1.000000
+solnp--> Completed in 2 iterations
+
+Final Estimate of the Negative LLH:
+-LLH: 1106.608
+Coefficient(s):
+        Estimate  Std. Error  t value Pr(>|t|)    
+mu     -0.006191    0.008100 -0.76424 0.444727    
+omega   0.010761    0.002824  3.81063 0.000139 ***
+alpha1  0.153131    0.026217  5.84092  < 2e-16 ***
+beta1   0.805979    0.033229 24.25557  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsMomentAparch")
+> ### * gsMomentAparch
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsMomentAparch
+> ### Title: Computation of moments for several conditional distribution
+> ### Aliases: gsMomentAparch
+> ### Keywords: aparch moments
+> 
+> ### ** Examples
+> 
+> 
+> # Computation of the Moment E( |Z| - gamma Z) ^ delta for several distributions
+> 
+> gsMomentAparch(cond.dist = "stableS1", shape = 1.1, skew = 0, delta = 1.01, gm = 0.99999)
+[1] 7.469748
+> 
+> gsMomentAparch(cond.dist = "gev", shape = -4, skew = 0, delta = 1.4, gm = 0)
+[1] 49.31175
+> 
+> gsMomentAparch(cond.dist = "gat", shape = c(1.9,2.3), skew = 0.5, delta = 0.4, gm = 0)
+[1] 0.924961
+> 
+> gsMomentAparch(cond.dist = "norm", shape = c(1.9,2.3), skew =1, delta = 11.4, gm = -0.999)
+[1] 6675149
+> 
+> gsMomentAparch(cond.dist = "std", shape = 2.001, skew = -0.5, delta = 2, gm = -0.99)
+[1] 1.9801
+> 
+> gsMomentAparch(cond.dist = "sstd", shape = 2.001, skew = 0.11, delta = 2, gm = -0.99)
+[1] 0.001179274
+> 
+> gsMomentAparch(cond.dist = "skstd", shape = 5.001, skew = 0.11, delta = 3, gm = -0.5)
+[1] 204.6061
+> 
+> gsMomentAparch(cond.dist = "ged", shape = 6, skew = 0.11, delta = 5.11, gm = -0.5)
+[1] 13.1871
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSelect")
+> ### * gsSelect
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSelect
+> ### Title: Selects the best model according to goodness-of-fit criteria
+> ### Aliases: gsSelect
+> 
+> ### ** Examples
+> 
+> 
+> # Best ARMA-GARCH model within the range ARMA(0,0)-GARCH(1,0) to ARMA(0,0)-GARCH(1,1)
+> # using the Corrected Akaike Information Criteria (AICc)
+> library(fGarch)
+> data(dem2gbp)
+> x = dem2gbp[,1]
+> 
+> model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
++           algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC")
+
+------------------------------------------------------------------------------------------
+Model: arma(0, 0) + garch(1, 0) with 'gev' conditional distribution
+------------------------------------------------------------------------------------------
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+
+Iter: 1 fn: 1346.0487	 Pars:  -0.16653  0        0        0.18043  0.34266  0        0.70000  2.00000  1.00000 -0.21308
+Iter: 2 fn: 1346.0487	 Pars:  -0.16653  0        0        0.18043  0.34266  0        0.70000  2.00000  1.00000 -0.21308
+solnp--> Completed in 2 iterations
+
+Final Estimate of the Negative LLH:
+-LLH: 1346.049
+Coefficient(s):
+        Estimate  Std. Error  t value   Pr(>|t|)    
+mu     -0.166531    0.010180 -16.3590 < 2.22e-16 ***
+omega   0.180433    0.005831  30.9435 < 2.22e-16 ***
+alpha1  0.342664    0.027599  12.4156 < 2.22e-16 ***
+shape1 -0.213079    0.004005 -53.2087 < 2.22e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+------------------------------------------------------------------------------------------
+Model: arma(0, 0) + garch(1, 1) with 'gev' conditional distribution
+------------------------------------------------------------------------------------------
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+
+Iter: 1 fn: 1278.4808	 Pars:  -0.14582  0        0        0.05387  0.36623  0        0.48891  2.00000  1.00000 -0.22039
+Iter: 2 fn: 1278.4808	 Pars:  -0.14582  0        0        0.05387  0.36624  0        0.48890  2.00000  1.00000 -0.22039
+solnp--> Completed in 2 iterations
+
+Final Estimate of the Negative LLH:
+-LLH: 1278.481
+Coefficient(s):
+        Estimate  Std. Error   t value   Pr(>|t|)    
+mu     -0.145815    0.010319 -14.13068 < 2.22e-16 ***
+omega   0.053870    0.009044   5.95609 < 2.22e-16 ***
+alpha1  0.366235    0.031690  11.55686 < 2.22e-16 ***
+beta1   0.488903    0.053776   9.09155 < 2.22e-16 ***
+shape1 -0.220386    0.006427 -34.28959 < 2.22e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+------------------------------------------------------------------------------------------
+Best Model:  arma(0, 0) + garch(1, 1)
+------------------------------------------------------------------------------------------
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSim")
+> ### * gsSim
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSim
+> ### Title: Simulation of ARMA-GARCH/APARCH process
+> ### Aliases: gsSim
+> 
+> ### ** Examples
+> 
+> # Simulation of a ARMA-APARCH process with stable conditional distribution
+> #x <- GSgarch.Sim(N = 2500, mu = 0.1,a = c(0.2,0.3),b = c(0.2,0.5),
+> #omega = 0.1, alpha = c(0.1,0.2),beta = c(0.1,0.1),gm=c(0.3,-0.3),
+> #delta = 1,skew = 0.3,shape = 1.9, cond.dis = "stable")
+> 
+> 
+> 
+> cleanEx()
+> nameEx("gsSpec")
+> ### * gsSpec
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gsSpec
+> ### Title: Specification of ARMA-GARCH/APARCH models with GEV or stable
+> ###   distributions
+> ### Aliases: gsSpec
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> 
+> # stable-GARCH from Curto et al. (2009) for the DJIA dataset
+> spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, 
++ alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), 
++ cond.dist = "stableS1")
+> sim.stable = gsSim(spec = spec.stable, n = 1000)
+>  
+> # GEV-GARCH model from Zhao et al. (2011)
+> spec.gev = gsSpec(model = list(mu = 0.21, a = 0.32, omega = 0.01,
++ alpha = 0.45, beta = 0.08, shape = 0.08), cond.dist = "gev")
+> sim.gev = gsSim(spec = spec.gev, n = 1000)
+> 
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  6.822 0.087 6.985 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

@@ -93,11 +93,11 @@ cond.dist.list = c("norm", "std", "sstd", "ged")
 for( i in 1:length(cond.dist.list) )
 {
     spec1 <- gsSpec(model = list(omega = 1, alpha = 0, beta = 0), rseed = 1001, 
-                    presample = presampleMatrix,cond.dist = cond.dist.list[i])  
+                    presample = presample.matrix,cond.dist = cond.dist.list[i])  
     sim1 <- gsSim(spec = spec1, n = 5, n.start = 1)
     
     spec2 <- garchSpec(model = list(omega = 1, alpha = 0, beta = 0), rseed = 1001, 
-                       presample = presampleMatrix,cond.dist = cond.dist.list[i])
+                       presample = presample.matrix,cond.dist = cond.dist.list[i])
     sim2 <- garchSim2(spec2, n = 5, n.start = 1, extended = TRUE)
     
     if (sum( sim1 == sim2 ) != 15)

@@ -27,7 +27,7 @@ gsFit <-
 function(
     formula = ~ garch(1,1), 
     data,  
-    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"),
     control = NULL,
@@ -92,7 +92,7 @@ function(
     #   description - a character string which allows for a project description
     
     # Return:
-    #   result - An object of class fGEVSTABLEGARCH     
+    #   result - An object of class GEVSTABLEGARCH     
       
     # FUNCTION:  
 
@@ -183,7 +183,7 @@ function(
     out$cond.dist <- cond.dist
     out$data <- data
     optim.finished <- FALSE
-    if(cond.dist == "GAt")
+    if(cond.dist == "gat")
         lengthShape = 2
     else
         lengthShape = 1
@@ -295,7 +295,7 @@ function(
         
         
         # Configure 'shape' for the 'GAt' distribution
-        #if(cond.dist == "GAt")
+        #if(cond.dist == "gat")
         #    shape <- parm[4+m+n+2*p+q+1,4+m+n+2*p+q+1+1]
         
         # Configuring delta and gamma for Garch estimation
@@ -534,8 +534,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stableS0","stableS1","stableS2","GAt")  == cond.dist)) (3+m+n+2*p+q+1),
-                    if(any(c("std","gev","stableS0","stableS1","stableS2","sstd","skstd","ged","GAt")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stableS0","stableS1","stableS2","gat")  == cond.dist)) (3+m+n+2*p+q+1),
+                    if(any(c("std","gev","stableS0","stableS1","stableS2","sstd","skstd","ged","gat")  == cond.dist)) 
                       (4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape))
     } else {
         outindex <- c(if(include.mean) 1, 
@@ -546,8 +546,8 @@ function(
                     if(APARCH) (2+m+n+p+1):(3+m+n+p+p-1),
                     if(!GARCH) (2+m+n+2*p+1):(3+m+n+2*p+q-1),
                     if(APARCH) (2+m+n+2*p+q+1),
-                    if(any(c("sstd","skstd","stableS0", "stableS1", "stableS2","GAt")  == cond.dist)) (1+m+n+2*p+q+1),
-                    if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","skstd","ged","GAt")  == cond.dist)) 
+                    if(any(c("sstd","skstd","stableS0", "stableS1", "stableS2","gat")  == cond.dist)) (1+m+n+2*p+q+1),
+                    if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","skstd","ged","gat")  == cond.dist)) 
                       (2+m+n+2*p+q+1):(2+m+n+2*p+q+lengthShape),
                     length(out$par))  
     }
@@ -560,8 +560,8 @@ function(
                   if(APARCH) paste("gamma", 1:p, sep = ""),
                   if(!GARCH) paste("beta", 1:q, sep = ""),
                   if(APARCH) "delta",
-                  if(any(c("sstd","stableS0", "stableS1", "stableS2","GAt","skstd")  == cond.dist)) "skew",
-                  if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","ged","GAt","skstd")  == cond.dist)) 
+                  if(any(c("sstd","stableS0", "stableS1", "stableS2","gat","skstd")  == cond.dist)) "skew",
+                  if(any(c("std","gev","stableS0", "stableS1", "stableS2","sstd","ged","gat","skstd")  == cond.dist)) 
                     paste("shape", 1:lengthShape, sep = ""),
                   if(ARMAonly) "sigma")
     
@@ -623,7 +623,7 @@ function(
                 tval = out$tval, matcoef = out$matcoef)
 
     # creating the output object as in fGarch package...
-    new("fGEVSTABLEGARCH", call = as.call(match.call()), formula = formula.input, 
+    new("GEVSTABLEGARCH", call = as.call(match.call()), formula = formula.input, 
     method = "Max Log-Likelihood Estimation", 
     convergence = out$convergence,
     messages = messages,

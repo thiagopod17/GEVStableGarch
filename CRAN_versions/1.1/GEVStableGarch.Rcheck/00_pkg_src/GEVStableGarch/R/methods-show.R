@@ -35,22 +35,22 @@
 
 #########################################################################################
 # FUNCTION:                   DESCRIPTION:
-#  show.fGEVSTABLEGARCH       S4 Show method for an object of class 'fGEVSTABLEGARCH'
-#  show.fGEVSTABLEGARCHSPEC   S4 Show method for an object of class 'fGEVSTABLEGARCHSPEC'
+#  show.GEVSTABLEGARCH       S4 Show method for an object of class 'GEVSTABLEGARCH'
+#  show.GEVSTABLEGARCHSPEC   S4 Show method for an object of class 'GEVSTABLEGARCHSPEC'
 #########################################################################################
 
 
-setMethod(f = "show", signature(object = "fGEVSTABLEGARCH"), definition =
+setMethod(f = "show", signature(object = "GEVSTABLEGARCH"), definition =
     function(object)
 {
     # A function originally implemented by Diethelm Wuertz and modified
     # to be used inside package GEVStableGarch. See the latest copyright notice. 
 
     # Description:
-    #   Print method for an object of class "fGEVSTABLEGARCH"
+    #   Print method for an object of class "GEVSTABLEGARCH"
 
     # Arguments:
-    #   object - an object of class 'fGEVSTABLEGARCH'
+    #   object - an object of class 'GEVSTABLEGARCH'
 
     # FUNCTION:
 
@@ -116,17 +116,17 @@ setMethod(f = "show", signature(object = "fGEVSTABLEGARCH"), definition =
 # ------------------------------------------------------------------------------
 
 
-setMethod(f = "show", signature(object = "fGEVSTABLEGARCHSPEC"), definition =
+setMethod(f = "show", signature(object = "GEVSTABLEGARCHSPEC"), definition =
     function(object)
 {
       # A function originally implemented by Diethelm Wuertz and modified
       # to be used inside package GEVStableGarch. See the latest copyright notice. 
 
     # Description:
-    #   S4 Print Method for objects of class 'fGEVSTABLEGARCHSPEC'
+    #   S4 Print Method for objects of class 'GEVSTABLEGARCHSPEC'
 
     # Arguments:
-    #   object - Object of class 'fGEVSTABLEGARCHSPEC'
+    #   object - Object of class 'GEVSTABLEGARCHSPEC'
 
     # FUNCTION:
 
@@ -166,7 +166,7 @@ setMethod(f = "show", signature(object = "fGEVSTABLEGARCHSPEC"), definition =
             cat("\nDistributional Parameters: \n")
             cat(" shape =", x@model$shape, " skew =", x@model$skew)
         }
-        if (x@distribution == "GAt") {
+        if (x@distribution == "gat") {
           cat("\nDistributional Parameters: \n")
           cat(" shape = c (", x@model$shape[1], "," , x@model$shape[2], ") skew =", x@model$skew)
         }

@@ -5,14 +5,14 @@ library('GEVStableGarch')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 cleanEx()
-nameEx("dist-GAt")
-### * dist-GAt
+nameEx("dist-gat")
+### * dist-gat
 
 flush(stderr()); flush(stdout())
 
-### Name: GAt
+### Name: gat
 ### Title: Generalized Asymmetric t Distribution
-### Aliases: GAt dGAt pGAt qGAt rGAt
+### Aliases: gat dgat pgat qgat rgat
 ### Keywords: distribution
 
 ### ** Examples
@@ -20,28 +20,29 @@ flush(stderr()); flush(stdout())
 
 # Simulate Random Values and compare with
 # the empirical density and probability functions
+# Note: This example was addapted from "sstd {fGarch} R Documentation"
 
 # Configure plot and generate random values
 par(mfrow = c(2, 2))
 set.seed(1000)
-r = rGAt(n = 1000)
+r = rgat(n = 1000)
 plot(r, type = "l", main = "GAt Random Values", col = "steelblue")
 
 # Plot empirical density and compare with true density:
 hist(r, n = 25, probability = TRUE, border = "white", col = "steelblue")
 box()
 x = seq(min(r), max(r), length = 201)
-lines(x, dGAt(x), lwd = 2)
+lines(x, dgat(x), lwd = 2)
 
 # Plot density function and compare with true df:
 plot(sort(r), (1:1000/1000), main = "Probability", col = "steelblue",
      ylab = "Probability")
-lines(x, pGAt(x), lwd = 2)
+lines(x, pgat(x), lwd = 2)
 
 # Compute quantiles:
 # Here we compute the quantiles corresponding to the probability points from 
 # -10 to 10 and expect to obtain the same input sequence
-round(qGAt(pGAt(q = seq(-10, 10, by = 0.5))), digits = 6)
+round(qgat(pgat(q = seq(-10, 10, by = 0.5))), digits = 6)
 
 
 
@@ -63,6 +64,7 @@ flush(stderr()); flush(stdout())
 
 # Simulate Random Values and compare with
 # the empirical density and probability functions
+# Note: This example was addapted from "sstd {fGarch} R Documentation"
 
 # Configure plot and generate random values
 par(mfrow = c(2, 2))
@@ -107,7 +109,7 @@ flush(stderr()); flush(stdout())
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
-gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "norm")
+gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
 
 
 
@@ -125,7 +127,23 @@ flush(stderr()); flush(stdout())
 ### ** Examples
 
 
-# EXEMPLOS GSMOMENTAPARCH
+# Computation of the Moment E( |Z| - gamma Z) ^ delta for several distributions
+
+gsMomentAparch(cond.dist = "stableS1", shape = 1.1, skew = 0, delta = 1.01, gm = 0.99999)
+
+gsMomentAparch(cond.dist = "gev", shape = -4, skew = 0, delta = 1.4, gm = 0)
+
+gsMomentAparch(cond.dist = "gat", shape = c(1.9,2.3), skew = 0.5, delta = 0.4, gm = 0)
+
+gsMomentAparch(cond.dist = "norm", shape = c(1.9,2.3), skew =1, delta = 11.4, gm = -0.999)
+
+gsMomentAparch(cond.dist = "std", shape = 2.001, skew = -0.5, delta = 2, gm = -0.99)
+
+gsMomentAparch(cond.dist = "sstd", shape = 2.001, skew = 0.11, delta = 2, gm = -0.99)
+
+gsMomentAparch(cond.dist = "skstd", shape = 5.001, skew = 0.11, delta = 3, gm = -0.5)
+
+gsMomentAparch(cond.dist = "ged", shape = 6, skew = 0.11, delta = 5.11, gm = -0.5)
 
 
 
@@ -137,19 +155,20 @@ nameEx("gsSelect")
 flush(stderr()); flush(stdout())
 
 ### Name: gsSelect
-### Title: Selects the best model according to goodness-of-fit
+### Title: Selects the best model according to goodness-of-fit criteria
 ### Aliases: gsSelect
 
 ### ** Examples
 
 
-# AIC fit using models from ARMA(0,0)-GARCH(1,0) to ARMA(1,1)-GARCH(1,1)
+# Best ARMA-GARCH model within the range ARMA(0,0)-GARCH(1,0) to ARMA(0,0)-GARCH(1,1)
+# using the Corrected Akaike Information Criteria (AICc)
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
 
 model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
-          algorithm = "sqp", cond.dist = "norm", selection.criteria = "BIC")
+          algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC")
 
 
 
@@ -189,7 +208,9 @@ flush(stderr()); flush(stdout())
 
 
 # stable-GARCH from Curto et al. (2009) for the DJIA dataset
-spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "stableS1")
+spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, 
+alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), 
+cond.dist = "stableS1")
 sim.stable = gsSim(spec = spec.stable, n = 1000)
  
 # GEV-GARCH model from Zhao et al. (2011)

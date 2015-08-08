@@ -34,13 +34,13 @@
 
 ################################################################################
 # FUNCTION:               SPECIFICATION:
-#  gsSpec               Creates a 'fGEVSTABLEGARCHSPEC' object from scratch
+#  gsSpec               Creates a 'GEVSTABLEGARCHSPEC' object from scratch
 ################################################################################
 
 
 gsSpec <-
     function (model = list(), presample = NULL,
-              cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+              cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
               rseed = NULL)
 {
       
@@ -85,7 +85,7 @@ gsSpec <-
     #       function.
     #   rseed - optional random seed. The default seed is '0'.
      
-    # Return: An object of class fGEVSTABLEGARCHSPEC   
+    # Return: An object of class GEVSTABLEGARCHSPEC   
         # Slots:
         #   call - the function call.
         #   formula - a formula object describing the model, e.g.
@@ -103,7 +103,7 @@ gsSpec <-
         "stableS1" = 0,
         "stableS2" = 0,
         "gev" = NULL,
-        "GAt" = 1,
+        "gat" = 1,
         "norm" = NULL,
         "std" = NULL,
         "sstd" = 0.9,
@@ -116,7 +116,7 @@ gsSpec <-
         "stableS1" = 1.7,
         "stableS2" = 1.7,
         "gev" = 0.3,
-        "GAt" = c(3,1),
+        "gat" = c(3,1),
         "norm" = NULL,
         "std" = 4,
         "sstd" = 4,
@@ -297,7 +297,7 @@ gsSpec <-
 
     
     # Result: 
-    new("fGEVSTABLEGARCHSPEC",
+    new("GEVSTABLEGARCHSPEC",
         call = match.call(),
         formula = formula,
         model = list(omega = model$omega, alpha = model$alpha,

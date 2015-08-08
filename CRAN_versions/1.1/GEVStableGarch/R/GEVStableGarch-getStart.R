@@ -26,7 +26,7 @@
 
 
 .getStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
-                      cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+                      cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
                       TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   
@@ -85,7 +85,7 @@
     
     # Initial variable declaration
     cond.dist = match.arg(cond.dist)
-    cond.dist.list = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+    cond.dist.list = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
     Mean <- mean(data)
     Var <- var(data)
     Dispersion <- mean(abs(x-Mean))
@@ -141,7 +141,7 @@
       "stableS1" = 0.1 * Dispersion,
       "stableS2" = 0.1 * Dispersion,
       "gev" = 0.1 * Var,
-      "GAt" = 0.1 * Var,
+      "gat" = 0.1 * Var,
       "norm" = 0.1 * Var,
       "std" = 0.1 * Var,
       "sstd" = 0.1 * Var,
@@ -153,7 +153,7 @@
       "stableS1" = rep(0.1/p, p),
       "stableS2" = rep(0.1/p, p),
       "gev" = rep(0.05/p, p),
-      "GAt" = rep(0.1/p, p),
+      "gat" = rep(0.1/p, p),
       "norm" = rep(0.1/p, p),
       "std" = rep(0.1/p, p),
       "sstd" = rep(0.1/p, p),
@@ -165,7 +165,7 @@
       "stableS1" = rep(0.8/q, q),
       "stableS2" = rep(0.8/q, q),
       "gev" = rep(0.7/q, q),
-      "GAt" = rep(0.8/q, q),
+      "gat" = rep(0.8/q, q),
       "norm" = rep(0.8/q, q),
       "std" = rep(0.8/q, q),
       "sstd" = rep(0.8/q, q),
@@ -177,7 +177,7 @@
       "stableS1" = 1.05,
       "stableS2" = 1.05,
       "gev" = 2,
-      "GAt" = 2,
+      "gat" = 2,
       "norm" = 2,
       "std" = 2,
       "sstd" = 2,
@@ -189,7 +189,7 @@
       "stableS1" = 0,
       "stableS2" = 0,
       "gev" = 1,
-      "GAt" = 1,
+      "gat" = 1,
       "norm" = 1,
       "std" = 1,
       "sstd" = 1,
@@ -200,8 +200,8 @@
       "stableS0" = 1.9,
       "stableS1" = 1.9,
       "stableS2" = 1.9,
-      "gev" = 0,
-      "GAt" = c(2, 4),
+      "gev" = 0.01, # numerical tests showed that 0.01 is a good starting parameter 
+      "gat" = c(2, 4),
       "norm" = 1,
       "std" = 4,
       "sstd" = 4,
@@ -222,7 +222,7 @@
       "stableS1" = 1,
       "stableS2" = 1,
       "gev" = TOLG,
-      "GAt" = TOLG,
+      "gat" = TOLG,
       "norm" = TOLG,
       "std" = TOLG,
       "sstd" = TOLG,
@@ -234,7 +234,7 @@
       "stableS1" = - 1 + TOLSTABLE,
       "stableS2" = - 1 + TOLSTABLE,
       "gev" = 0,
-      "GAt" = TOLG,
+      "gat" = TOLG,
       "norm" = 0,
       "std" = 0,
       "sstd" = TOLG,
@@ -246,7 +246,7 @@
       "stableS1" = 1 + TOLSTABLE,
       "stableS2" = 1 + TOLSTABLE,
       "gev" = - 0.5 + TOLG, # to ensure good MLE properties. See Jondeau et al. 
-      "GAt" = c ( TOLG, TOLG),
+      "gat" = c ( TOLG, TOLG),
       "norm" = 0,
       "std" = 2 + TOLG,
       "sstd" = 2 + TOLG,
@@ -267,7 +267,7 @@
       "stableS1" = 2 - TOLSTABLE,
       "stableS2" = 2 - TOLSTABLE,
       "gev" = 100,
-      "GAt" = 100,
+      "gat" = 100,
       "norm" = 100,
       "std" = 100,
       "sstd" = 100,
@@ -279,7 +279,7 @@
       "stableS1" = 1 - TOLSTABLE,
       "stableS2" = 1 - TOLSTABLE,
       "gev" = 2,
-      "GAt" = 100,
+      "gat" = 100,
       "norm" = 2,
       "std" = 2,
       "sstd" = 100,
@@ -291,7 +291,7 @@
       "stableS1" = 2 - TOLSTABLE,
       "stableS2" = 2 - TOLSTABLE,
       "gev" = 0.5 - TOLG, # to ensure finiteness of the variance and mean. 
-      "GAt" = c ( 100, 100),
+      "gat" = c ( 100, 100),
       "norm" = 2,
       "std" = 100,
       "sstd" = 100,

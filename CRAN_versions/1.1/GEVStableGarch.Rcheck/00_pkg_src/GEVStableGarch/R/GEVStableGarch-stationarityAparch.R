@@ -46,7 +46,7 @@
 #
 #  .gedMomentAparch                Exact APARCH moments for the standard GED distribution
 
-#  .GAtMomentAparch                 Exact APARCH moments for the standard GAt distribution
+#  .gatMomentAparch                 Exact APARCH moments for the standard GAt distribution
 #
 #  .stableS1MomentAparch             Exact APARCH moments for the location zero and unit scale
 #                                   in S1 parametrization (see Nolan (1999)).
@@ -68,7 +68,7 @@
 .stationarityAparch <-
   function (model = list(), 
             formula,
-            cond.dist = c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"))
+            cond.dist = c("stableS1", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"))
 {
     
     # Description: 
@@ -145,8 +145,8 @@
             kappa = try(.stableS1MomentPowerGarch (shape = shape, skew = skew, 
                                                       delta = 1), silent = TRUE)
         
-        if(cond.dist == "GAt")
-           kappa = try(.GAtMomentAparch(shape = shape, skew = skew, 
+        if(cond.dist == "gat")
+           kappa = try(.gatMomentAparch(shape = shape, skew = skew, 
                                        delta = 2, gm = 0), silent = TRUE)   
         
         if(cond.dist == "skstd")
@@ -170,8 +170,8 @@
             if(cond.dist == "gev")
               kappa[i] = try(.gevMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)
             
-            if(cond.dist == "GAt")
-              kappa[i] = try(.GAtMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
+            if(cond.dist == "gat")
+              kappa[i] = try(.gatMomentAparch(shape = shape, delta = delta, gm = gm[i]), silent = TRUE)  
             
             if(cond.dist == "norm")
               kappa[i] = try(.normMomentAparch (delta = delta, gm = gm[i]), silent = TRUE)
@@ -199,7 +199,7 @@
 
 
 gsMomentAparch <- function(
-    cond.dist = c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stableS1", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"),
     shape = 1.5, 
     skew = 0,
     delta = 1,
@@ -215,8 +215,8 @@ gsMomentAparch <- function(
     if(cond.dist == "gev")
       kappa = .gevMomentAparch(shape = shape, delta = delta, gm = gm)
     
-    if(cond.dist == "GAt")
-      kappa = .GAtMomentAparch(shape = shape, delta = delta, skew = skew, gm = gm)  
+    if(cond.dist == "gat")
+      kappa = .gatMomentAparch(shape = shape, delta = delta, skew = skew, gm = gm)  
     
     if(cond.dist == "norm")
       kappa = .normMomentAparch (delta = delta, gm = gm)
@@ -343,7 +343,7 @@ gsMomentAparch <- function(
 
 
 
-.GAtMomentAparch <- function(shape = c(3,1), skew = 1, delta = 1.2, gm = 0)
+.gatMomentAparch <- function(shape = c(3,1), skew = 1, delta = 1.2, gm = 0)
 {
   # Description:
   #   Returns the following Expectation for a standard GAt distribution

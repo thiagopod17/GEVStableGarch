@@ -3,48 +3,84 @@
 \title{
 Simulation of ARMA-GARCH/APARCH process
 }
+
+
 \description{
-This functions simulate time series following ARMA-GARCH/APARCH models with several conditional distributions, including GEV and stable distributions.}
+
+This functions simulates time series following ARMA-GARCH/APARCH models with GEV and stable distributions.
+
+}
+
+
 \usage{
 gsSim(spec = garchSpec(), n = 100, n.start = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{spec}{
-A model specified with function gsSpec
+A model specified with function \code{\link{gsSpec}}.
 }
   \item{n}{
-The size of simulated time serie
+The size of simulated time series.
 }
   \item{n.start}{
-%%     ~~Describe \code{n.start} here~~
+  Length of the "burn-in" period of the simulated time series.
 }
 }
+
+
 \details{
+
 The initial values of the time series
 are fixed and the recursion formulas of the model are used to simulate the dynamics of the
 process. We do not verify the stationarity conditions of the model because the simulation of
-non-stationary process could also be of interest.
+non-stationary process could also be of interest by the researcher.
+
 }
+
+
 \value{
   The function returns an object containing the following items:
-	\item{model }{A string describing the estimated model.}
-	\item{cond.dist }{The conditional distribution used to fit the model.}
-	\item{series}{An array of two columns. The first column is the simulated process \deqn{X_t}
-	and the second one is the \deqn{\sigma_t} simulated process.}
+	\item{ model }{
+    A string describing the estimated model.
+  }
+	\item{ cond.dist }{
+    The conditional distribution used to fit the model.
+  }
+	\item{ series}{
+    An array with three columns, where the first column contains
+    the simulated ARMA-GARCH/APARCH process (\code{garch}), the second column the conditional
+    standard deviations (\code{"sigma"}), and the last column the innovations (\code{"eps"}).
+  }
 }
-\references{
-Brockwell, P. J, e Davis, R. A. Introduction to Time Series and Forecasting.
-Springer, New York, 1996.
 
-Nolan, J. P. Numerical calculations of stable densities and distribution
-functions. Communications in Statistics - Stochastic Models 13: 759-
-774, 1997.
+
+\references{
+
+    Brockwell, P.J., Davis, R.A. (1996).
+    \emph{Introduction to Time Series and Forecasting}.
+    Springer, New York.
+
+    Wuertz, D., Chalabi, Y., with contribution from Miklovic, M., Boudt, C., Chausse, P., and others (2013).
+    \emph{fGarch: Rmetrics - Autoregressive Conditional Heteroskedastic Modelling, R package version 3010.82},   
+    \url{http://CRAN.R-project.org/package=fGarch}.
+
+    Wuertz, D., Chalabi, Y., Luksan, L. (2009).
+    \emph{Parameter Estimation of ARMA Models with GARCH/ APARCH Errors: An R and SPlus SoftwareImplementation}.   
+    Journal of Statistical Software, forthcoming,
+    \href{http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResources/GarchAndR/WurtzEtAlGarch.pdf}{http://www-stat.wharton.upenn.edu/~steele/...WurtzEtAlGarch.pdf}.
+    
 }
+
+
+
 \author{
-Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
-and Silvia Regina Costa Lopes.
+
+Thiago do Rego Sousa.
+
 }
+
+
 \examples{
 # Simulation of a ARMA-APARCH process with stable conditional distribution
 #x <- GSgarch.Sim(N = 2500, mu = 0.1,a = c(0.2,0.3),b = c(0.2,0.5),

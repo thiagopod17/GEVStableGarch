@@ -5,9 +5,9 @@ Version: 1.1
 Date: 2015-07-19
 Author: Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano and Silvia Regina Costa Lopes
 Maintainer: Thiago do Rego Sousa <thiagoestatistico@gmail.com>
-Description: Package for ARMA-GARCH or ARMA-APARCH modelling with GEV and stable conditional distributions.
+Description: Package for simulation and estimation of ARMA-GARCH/APARCH models with GEV and stable distributions.
 License: GPL (>=2)
 Depends: R(>= 2.15.0),fGarch,fExtremes,stabledist,skewt,Rsolnp
 Additional_repositories: http://www.robustanalysis.com
-Packaged: 2015-07-26 22:11:58 UTC; thiago
-Built: R 3.1.1; ; 2015-07-26 22:12:00 UTC; unix
+Packaged: 2015-08-08 14:30:27 UTC; thiago
+Built: R 3.1.1; ; 2015-08-08 14:30:29 UTC; unix

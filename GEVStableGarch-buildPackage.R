@@ -55,8 +55,8 @@ my.version = '1.1'
 # STEP: Create the Package Structure (man pages, function files, Description, etc)
 # Declare list of files that will be contained inside the package
 # If you include/delete a new file in the package do not forget to update this list
-my.list.of.files = c("class-fGEVSTABLEGARCH.R",
-                     "class-fGEVSTABLEGARCHSPEC.R",
+my.list.of.files = c("class-GEVSTABLEGARCH.R",
+                     "class-GEVSTABLEGARCHSPEC.R",
                      "dist-skstd.R",
                      "dist-gat.R",
                      "GEVStableGarch-armaGarchDist.R",
@@ -85,13 +85,15 @@ my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, s
 --------------------------------------------------------------
 # STEP: Make necessary modification on files
   # Put DEBUG = FALSE in gsFit function and take it off
-  # from the function parameters
+  # from the function parameters, making it equal to FALSE in the beggining of the function.
 
 --------------------------------------------------------------
 # STEP: Fill in the package documentation
   # Help pages ( .Rd files)
   # DESCRIPTION
   # NAMESPACE
+  # Put new references in the inst/doc/bibliography.txt file first and then copy to the
+  # desired file
 
   
   
@@ -115,9 +117,27 @@ my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, s
 # ADIVICES FOR CORRECTING SOME ERRORS
 --------------------------------------------------------------
 
-# CHECKINGNON FOR NON-ASCII CHARACTERS: Use function showNonASCIIfile(file) from package tools
+# CHECKING FOR NON-ASCII CHARACTERS: Use function showNonASCIIfile(file) from package tools
 library(tools)
-showNonASCIIfile(paste(cran.directory,my.version,"/GEVStableGarch/man/dist-skstd.Rd",sep = ''))
+file.to.find.non.ascii = "/GEVStableGarch/man/gsFit.Rd"
+showNonASCIIfile(paste(cran.directory, my.version, file.to.find.non.ascii,sep = ''))
+
+# CHECK THE PACKAGE EVERYTIME YOU PUT NEW LATEX CODE INTO IT. WHY ? 
+# The R CMD check does not give you advice about where is the error.
+
+# DO NOT PUT BLANK LINES BETWEEN \eqn OR \deqn COMMANDS
+
+# BUID PACKAGE TO CORRECT ERRORS
+
+# DO NOT USE THE \text or \texttt MACRO INSIDE THE \eqn ENVIRONMENT
+
+
+
+library(fGarch)
+data(dem2gbp)
+x = dem2gbp[, 1]
+gev.model = gsFit(data = x , formula = ~aparch(1,1), cond.dist = "gev")
+
 
 
 

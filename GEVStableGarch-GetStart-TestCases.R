@@ -31,7 +31,7 @@ library(fExtremes); library(skewt)
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-mylist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+mylist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
 for( i in 1:length(mylist) )
 {
     start = .getStart(data = x,m = 1,n = 1,p = 1,q = 1, 
@@ -46,7 +46,7 @@ for( i in 1:length(mylist) )
 library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-mylist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+mylist = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
 for( i in 1:length(mylist) )
 {
   start = .getStart(data = x,m = 3,n = 3,p = 3,q = 2, 

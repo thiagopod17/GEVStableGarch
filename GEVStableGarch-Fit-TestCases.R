@@ -234,7 +234,7 @@ model1@fit$llh
 
 # garch(1,1)-GAt-intercept
 model1 <- gsFit(data = x , formula = ~garch(1,1),
-                      cond.dist = "GAt", include.mean = TRUE,
+                      cond.dist = "gat", include.mean = TRUE,
                       algorithm = "nlminb+nm")
 model1@fit$par
 model1@fit$llh
@@ -242,12 +242,12 @@ model1@fit$llh
 
 # aparch(1,1)-GAt-intercept-nlminb+nm
 model1 <- gsFit(data = x , formula = ~aparch(1,1),
-                      cond.dist = "GAt", include.mean = TRUE, DEBUG = TRUE,
+                      cond.dist = "gat", include.mean = TRUE, DEBUG = TRUE,
                       algorithm = "nlminb+nm")
 
 # garch(1,1)-GAt-intercept-sqp
 model1 <- gsFit(data = x , formula = ~garch(1,1),
-                      cond.dist = "GAt", include.mean = TRUE, DEBUG = TRUE,
+                      cond.dist = "gat", include.mean = TRUE, DEBUG = TRUE,
                       algorithm = "sqp")
 
 model1@fit$par
@@ -344,7 +344,7 @@ model1@fit$llh
 
 # arma(1,1)-garch(1,1)-GAt-intercept-nlminb+nm
 model1 <- gsFit(data = x , formula = ~arma(1,1)+garch(1,1),
-                      cond.dist = "GAt", include.mean = TRUE, DEBUG = TRUE,
+                      cond.dist = "gat", include.mean = TRUE, DEBUG = TRUE,
                       algorithm = "nlminb+nm")
 
 
@@ -414,15 +414,15 @@ cbind(model1@fit$par,model2@fit$par,model3@fit$par)
 
 # arma(1,1)-garch(1,1)-GAt
 model1 <- gsFit(data = x, formula = ~arma(1,1)+garch(1,1),
-                cond.dist = "GAt", include.mean = TRUE, 
+                cond.dist = "gat", include.mean = TRUE, 
                 algorithm = "nlminb+nm")
 
 model2 <- gsFit(data = x, formula = ~arma(1,1)+garch(1,1),
-                cond.dist = "GAt", include.mean = TRUE, 
+                cond.dist = "gat", include.mean = TRUE, 
                 algorithm = "sqp")
 
 model3 <- gsFit(data = x, formula = ~arma(1,1)+garch(1,1),
-                cond.dist = "GAt", include.mean = TRUE, 
+                cond.dist = "gat", include.mean = TRUE, 
                 algorithm = "sqp.restriction")
 cbind(model1@fit$par,model2@fit$par,model3@fit$par)
 
@@ -468,7 +468,7 @@ library(fGarch)
 data(dem2gbp)
 library(skewt)
 x = dem2gbp[, 1]
-# c("stableS1", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged")
+# c("stableS1", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
 
 
 # garch(1,1)-stableS1-intercept-NAO FIZ AINDA
@@ -490,13 +490,13 @@ fit1 <- gsFit(data = x, formula = ~garch(1,1),
 
 # garch(1,1)-GAt-intercept
 fit1 <- gsFit(data = x, formula = ~garch(1,1),
-              cond.dist = "GAt", include.mean = TRUE, 
+              cond.dist = "gat", include.mean = TRUE, 
               algorithm = "sqp.restriction")
 
 fit1 <- gsFit(data = x, formula = ~garch(1,1),
-              cond.dist = "GAt", include.mean = TRUE, 
+              cond.dist = "gat", include.mean = TRUE, 
               algorithm = "sqp", control = list( trace = 3, tol = 1e-5))
-gsMomentAparch(cond.dist = "GAt", shape = fit1@fit$par[6:7], 
+gsMomentAparch(cond.dist = "gat", shape = fit1@fit$par[6:7], 
                skew = fit1@fit$par[5], gm = 0, delta = 2)*fit1@fit$par[3] + fit1@fit$par[4]
 
 
@@ -646,7 +646,7 @@ fit2 = garchFit(data = x, formula = ~garch(1,1),
 # GEV 
 library(GEVStableGarch)
 gev.spec = gsSpec(model = list(ar = 0.4, alpha = 0.1, omega = 0.11, 
-                               beta = 0.3, shape = 0.4, delta = 2),
+                               beta = 0.3, shape = 0.01, delta = 2),
                   cond.dist = "gev", rseed = 102)
 
 sample.gev = gsSim( spec = gev.spec, n = 2000)
@@ -660,7 +660,6 @@ fit1 <- gsFit(data = 100*sp500dge[, 1], formula = ~garch(1,1),
               cond.dist = "gev", algorithm = "sqp")
 
 fit2 = GSgarch.Fit(data = dem2gbp[,1], 0,0,1,1, cond.dist = "gev", 
-                   intercept = TRUE, algorithm = "sqp", printRes = TRUE,
-                   DEBUG = TRUE)
+                   intercept = TRUE, algorithm = "sqp", printRes = TRUE)
 
 

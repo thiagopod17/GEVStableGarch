@@ -1,13 +1,13 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.8.17)  26 JUL 2015 19:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.8.17)  8 AUG 2015 11:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/RtmpRUbP17/Rd2pdf150
-c4803f389/Rd2.tex
+**/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/Rtmpn8iriU/Rd2pdf108
+15167bd0e/Rd2.tex
 
-(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/RtmpRUbP17/Rd2pdf150c
-4803f389/Rd2.tex
+(/private/var/folders/zh/n1dxshjn3dv8jdshkmgy66l00000gn/T/Rtmpn8iriU/Rd2pdf1081
+5167bd0e/Rd2.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
 
@@ -719,108 +719,96 @@ File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 
 
 {/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (6.19641pt too wide) in paragraph at lines 53--57
-[]\T1/ptm/m/n/10 This pack-age con-tains func-tions for es-ti-mat-ing and sim-u
--lat-ing com-bined ARMA-GARCH or ARMA-
+Overfull \hbox (4.49648pt too wide) in paragraph at lines 62--63
+[]\T1/ptm/m/n/10 This pack-age con-tains func-tions for sim-u-lat-ing and es-ti
+-mat-ing ARMA-GARCH or ARMA-APARCH
  []
 
 
-Overfull \hbox (6.69673pt too wide) in paragraph at lines 77--80
-[]\T1/ptm/m/n/10 Nolan, J. P. Max-i-mum like-li-hood es-ti-ma-tion and di-ag-no
-s-tics for sta-ble dis-tri-bu-tion. In O. E.Barndorff-
- []
+Overfull \vbox (9.87117pt too high) has occurred while \output is active []
 
 
-Overfull \hbox (1.55684pt too wide) in paragraph at lines 81--84
-[]\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
-ion of ARMA mod-els with GARCH/APARCH
+[2]
+Overfull \hbox (2.2892pt too wide) in alignment at lines 111--111
+ [] [] 
  []
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [2]
+) [3] [4]
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [3]
-Overfull \hbox (1.2491pt too wide) in paragraph at lines 254--256
-[]\T1/zi4/m/n/10 signature(object = "fGEVSTABLEGARCHSPEC")\T1/ptm/m/n/10 : prin
-ts an ob-ject of class 'fGEVSTABLE-
+)
+Overfull \hbox (10.4189pt too wide) in paragraph at lines 329--331
+[]\T1/zi4/m/n/10 signature(object = "GEVSTABLEGARCH")\T1/ptm/m/n/10 : prints an
+ ob-ject of class 'GEVSTABLE-GARCH'. 
  []
 
-
-Overfull \hbox (24.71617pt too wide) in paragraph at lines 274--275
-[]\T1/ptm/m/n/10 Wuertz D, Cha-l-abi Y, Luk-san L (2009). "Pa-ram-e-ter Es-ti-m
-a-tion of ARMA Mod-els with GARCH/APARCH
- []
-
-
-Overfull \hbox (42.91547pt too wide) in paragraph at lines 274--275
-\T1/ptm/m/n/10 URL http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResou
-rces/GarchAndR/WurtzEtAlGarch.pdf. 
- []
-
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [4] [5]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+[5] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 ) [6]
-Underfull \hbox (badness 10000) in paragraph at lines 482--485
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+)
+Overfull \hbox (5.8479pt too wide) in paragraph at lines 473--474
+\T1/ptm/m/n/10 parameterization), \T1/zi4/m/n/10 "stableS1" \T1/ptm/m/n/10 (sta
+-ble in S1-parameterization), \T1/zi4/m/n/10 "stableS2" \T1/ptm/m/n/10 (sta-
+ []
+
+[7] [8]
+Underfull \hbox (badness 10000) in paragraph at lines 589--594
 
  []
 
-[7]
-Overfull \hbox (1.55684pt too wide) in paragraph at lines 558--561
-[]\T1/ptm/m/n/10 Wurtz, D., Y. Cha-l-abi, e L. Luk-san. Pa-ram-e-ter es-ti-ma-t
-ion of ARMA mod-els with GARCH/APARCH
+
+Underfull \hbox (badness 10000) in paragraph at lines 589--594
+
  []
 
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [8]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [9] [10]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+[9] [10] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 ) [11]
-(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+[12] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-)
-Underfull \hbox (badness 10000) in paragraph at lines 830--844
-
- []
-
-[12]
-Overfull \hbox (258.18103pt too wide) in paragraph at lines 900--900
- []\T1/zi4/m/n/9 spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061,
- alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "s
-tableS1")[] 
+) [13]
+Overfull \hbox (15.50812pt too wide) in paragraph at lines 913--914
+[]\T1/ptm/m/n/10 Returns a S4 ob-ject of class "GEVSTABLE-GARCH" with the best 
+model. See [][]\T1/zi4/m/n/10 GEVSTABLEGARCH-class[][][]
  []
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-)
-Overfull \hbox (11.71938pt too wide) in paragraph at lines 927--928
-[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
-LEGARCH" 
- []
-
-
-Overfull \hbox (51.71938pt too wide) in paragraph at lines 931--932
-[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "fGEVSTAB
-LEGARCHSPEC" 
- []
-
-[13] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+) [14] [15]
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
-) [14]
-LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 1025
+)
+Underfull \hbox (badness 10000) in paragraph at lines 1053--1066
+
+ []
+
+
+Overfull \hbox (5.8479pt too wide) in paragraph at lines 1081--1082
+\T1/ptm/m/n/10 parameterization), \T1/zi4/m/n/10 "stableS1" \T1/ptm/m/n/10 (sta
+-ble in S1-parameterization), \T1/zi4/m/n/10 "stableS2" \T1/ptm/m/n/10 (sta-
+ []
+
+[16] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+)
+Overfull \hbox (1.71938pt too wide) in paragraph at lines 1154--1155
+[]\T1/ptm/m/n/10 Print func-tion for ob-jects of class \T1/zi4/m/n/10 "GEVSTABL
+EGARCH" 
+ []
+
+[17] (/usr/local/texlive/2014/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+) [18]
+LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 1262
 .
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2013/06/07 Fontinst v1.933 font definitions for TS1/zi4.
-) (./Rd2.ind [15]
+) (./Rd2.ind [19]
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `T1/ptm/b/n' tried instead on input line 3.
 
@@ -828,51 +816,53 @@ LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 31.
 
-[16
+[20
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1046.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1046.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1283.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1283.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1046.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1046.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1283.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1283.
 
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
-(rerunfilecheck)             Checksum: CF5BBB59D1CA8DCD1A1ABF0A42B03DF4;669.
+(rerunfilecheck)             Checksum: 998D71E3800260BD3A195141EC8C6D86;665.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1046.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1283.
  ) 
 Here is how much of TeX's memory you used:
- 6486 strings out of 493117
- 93981 string characters out of 6135433
- 171898 words of memory out of 5000000
- 9697 multiletter control sequences out of 15000+600000
+ 6500 strings out of 493117
+ 94086 string characters out of 6135433
+ 173992 words of memory out of 5000000
+ 9700 multiletter control sequences out of 15000+600000
  40963 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,5n,34p,589b,592s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,7n,34p,1003b,592s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/
 usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texli
 ve/2014/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/
 2014/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local
 /texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/
 texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/t
-exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/tex
-live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texli
-ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/
-2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
-014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/201
-4/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf
--dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/font
-s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/ur
-w/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/ut
-mri8a.pfb>
-Output written on Rd2.pdf (16 pages, 169689 bytes).
+exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/tex
+live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texli
+ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive
+/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/20
+14/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/tex
+mf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2014/texmf-dist
+/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/typ
+e1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/tim
+es/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/urw/times/utmri8a
+.pfb>
+Output written on Rd2.pdf (20 pages, 214926 bytes).
 PDF statistics:
- 362 PDF objects out of 1000 (max. 8388607)
- 327 compressed objects within 4 object streams
- 129 named destinations out of 1000 (max. 500000)
+ 426 PDF objects out of 1000 (max. 8388607)
+ 385 compressed objects within 4 object streams
+ 140 named destinations out of 1000 (max. 500000)
  97 words of extra memory for PDF output out of 10000 (max. 10000000)
 

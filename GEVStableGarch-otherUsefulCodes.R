@@ -90,7 +90,7 @@ abs((model2@fit$par-model1@fit$par)/model1@fit$par)
 
 
 .getStartOld <- function(data,m,n,p,q, AR = FALSE, MA = FALSE, ARMAonly = FALSE,
-                         cond.dist = c("stable", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+                         cond.dist = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
                          TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   # Description:
@@ -263,7 +263,7 @@ abs((model2@fit$par-model1@fit$par)/model1@fit$par)
     shape.init <- 4
     shape.lower <- 0 + TOLG; shape.upper <- 20   
   }
-  if (cond.dist == "GAt")
+  if (cond.dist == "gat")
   {   
     shape.init <- c(4,1)
     shape.lower <- rep(0 + TOLG,2)

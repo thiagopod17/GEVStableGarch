@@ -14,9 +14,9 @@ Skew Student's t Distribtuion from Fernandez and Steel (1997)
 \description{
 
     Functions to compute density, distribution function, 
-    quantile function and to generate random variates 
-    for the Skew Student's t Distribtuion from Fernandez and Steel (1997). Notice that this function is different from the skew Student's t \code{sstd} from package fGarch. Although the two distributions use the same approach from Fernandez and Steel (1997), the second one was reparameterized in such a way that when the parameters mean = 0 and sd = 1 the distribution will have a true mean equal zero and the true variance equals to one, no matter the value of the skew parameter.
-    The distributions \code{skstd} and \code{sstd} are the same when the asymmetry parameter \code{xi} equals to 1, in which case they are symmetric.
+    quantile function and to generate random values 
+    for the Skew Student's t distribtuion from Fernandez and Steel (1997). Notice that this function is different from the skew Student's t \code{sstd} from package \pkg{fGarch}. Although the two distributions use the same approach from Fernandez and Steel (1997), the second one was reparameterized in such a way that when the parameters mean = 0 and sd = 1 the distribution will have a zero mean and unit variance, no matter the value of the skew parameter.
+    The distributions \code{skstd} and \code{sstd} are the same when the asymmetry parameter \code{xi} equals to 1, in which case they correspond to the well known Student's t distribution \code{std}.
     
 }
 \usage{
@@ -30,7 +30,7 @@ rskstd(n, mean = 0, sd = 1, nu = 3, xi = 1)
     \item{mean, sd, nu, xi}{
         location parameter \code{mean},
         scale parameter \code{sd},
-        shape parameter \code{nu}.
+        shape parameter \code{nu},
         asymmetry parameter \code{xi}.
         }
         
@@ -52,28 +52,31 @@ rskstd(n, mean = 0, sd = 1, nu = 3, xi = 1)
     \code{d*} returns the density,
     \code{p*} returns the distribution function,
     \code{q*} returns the quantile function, and
-    \code{r*} generates random deviates, \cr
-    all values are numeric vectors.
+    \code{r*} generates random deviates. \cr
+    All values are numeric vectors.
  
 }
 
 
-
 \references{
 
-Fernandez Steel. "On Bayesian Modeling of Fat Tails and Skewness." Journal of the American Statistical Association, 93(441), 359-371
-
+    Fernandez, C., Steel, M.F. (1998).
+    \emph{On Bayesian Modeling of Fat Tails and Skewness}.
+    Journal of the American Statistical Association, Taylor & Francis Group, 93(441), 359--371.
 
 }
+
 \author{
-Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
-and Silvia Regina Costa Lopes.
+
+Thiago do Rego Sousa.
+
 }
 
 \examples{
 
 # Simulate Random Values and compare with
 # the empirical density and probability functions
+# Note: This example was addapted from "sstd {fGarch} R Documentation"
 
 # Configure plot and generate random values
 par(mfrow = c(2, 2))

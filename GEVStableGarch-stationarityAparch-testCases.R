@@ -26,7 +26,7 @@
 #  .stdMomentAparch
 #  .skstdMomentAparch              
 #  .gedMomentAparch                
-#  .GAtMomentAparch 
+#  .gatMomentAparch 
 #  .gevMomentAparch
 #  .stableS1MomentAparch            
 #  .stableS1SymmetricMomentGarch    
@@ -198,7 +198,7 @@ as.numeric(.trueAparchMomentsWurtz(fun = "dsstd", gm = 0.151121, delta = 1.20250
 
 
 # ------------------------------------------------------------------------------
-# Test Cases for functions .GAtMomentAparch (standard GAt distribution)
+# Test Cases for functions .gatMomentAparch (standard GAt distribution)
 # ------------------------------------------------------------------------------
 
 # Tests with the numerical integration computation
@@ -217,10 +217,10 @@ trueValues = rep(NA,n)
 functionValues = rep(NA,n)
 for(i in 1:n)
 {
-  trueValues[i] = as.numeric(.trueAparchMomentsWurtz(fun = "dGAt",gm = gmValues[i], 
+  trueValues[i] = as.numeric(.trueAparchMomentsWurtz(fun = "dgat",gm = gmValues[i], 
                   delta = deltaValues[i], nu = shapeValues[i,1], d = shapeValues[i,2], 
                   xi = skewValues[i], lower = -Inf, upper = Inf)[1])
-  functionValues[i] = .GAtMomentAparch(shape = shapeValues[i,], delta = deltaValues[i],
+  functionValues[i] = .gatMomentAparch(shape = shapeValues[i,], delta = deltaValues[i],
                                         gm = gmValues[i], skew = skewValues[i])
 }
 error = 100*abs((trueValues - functionValues)/trueValues)
@@ -530,9 +530,9 @@ spec <- gsSpec(model = list(alpha = 1.3),
 # GARCH(1,0)-stableS1
 spec <- gsSpec(model = list(alpha = 1.3, delta = 1, shape = 1.5, skew = 0), 
                     presample = NULL,cond.dist = c("stableS1"), rseed = 3)
-# GARCH(1,0)-GAt
+# GARCH(1,0)-gat
 spec <- gsSpec(model = list(alpha = 1.3, delta = 2, shape = c(3,3)), 
-                    presample = NULL,cond.dist = c("GAt"), rseed = 3)
+                    presample = NULL,cond.dist = c("gat"), rseed = 3)
 # GARCH(1,0)-norm
 spec <- gsSpec(model = list(alpha = 1.3, delta = 2), 
                     presample = NULL,cond.dist = c("norm"), rseed = 3)
@@ -554,9 +554,9 @@ spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4),
 # GARCH(1,1)-stableS1
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 1, shape = 1.5), 
                     presample = NULL,cond.dist = c("stableS1"), rseed = 3)
-# GARCH(1,1)-GAt
+# GARCH(1,1)-gat
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2, shape = c(3,3)), 
-                    presample = NULL,cond.dist = c("GAt"), rseed = 3)
+                    presample = NULL,cond.dist = c("gat"), rseed = 3)
 # GARCH(1,1)-norm
 spec <- gsSpec(model = list(alpha = 1.3, beta = 1.4, delta = 2), 
                     presample = NULL,cond.dist = c("norm"), rseed = 3)
@@ -578,9 +578,9 @@ spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4),
 # GARCH(5,1)-stableS1
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 1, shape = 4), 
                     presample = NULL,cond.dist = c("stableS1"), rseed = 3)
-# GARCH(5,1)-GAt
+# GARCH(5,1)-gat
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2, shape = c(3,3)), 
-                    presample = NULL,cond.dist = c("GAt"), rseed = 3)
+                    presample = NULL,cond.dist = c("gat"), rseed = 3)
 # GARCH(5,1)-norm
 spec <- gsSpec(model = list(alpha = runif(5,0,1), beta = 1.4, delta = 2), 
                     presample = NULL,cond.dist = c("norm"), rseed = 3)
@@ -603,10 +603,10 @@ spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = run
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
                                  shape = runif(1,0,5), skew = runif(1,0,5) ), 
                     presample = NULL,cond.dist = c("stableS1"), rseed = 3)
-# APARCH(1,0)-GAt
+# APARCH(1,0)-gat
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1),
                                  shape = runif(2,0,5), skew = runif(1,0,5)), 
-                    presample = NULL,cond.dist = c("GAt"), rseed = 3)
+                    presample = NULL,cond.dist = c("gat"), rseed = 3)
 # APARCH(1,0)-norm
 spec <- gsSpec(model = list(alpha = runif(5,1,3), delta = runif(1,0,5), gm = runif(1,-1,1)), 
                     presample = NULL,cond.dist = c("norm"), rseed = 3)
@@ -631,10 +631,10 @@ spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = run
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
                                  shape = runif(1,0,5), skew = runif(1,0,5) ), 
                     presample = NULL,cond.dist = c("stableS1"), rseed = 3)
-# APARCH(5,1)-GAt
+# APARCH(5,1)-gat
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1),
                                  shape = runif(2,0,5), skew = runif(1,0,5)), 
-                    presample = NULL,cond.dist = c("GAt"), rseed = 3)
+                    presample = NULL,cond.dist = c("gat"), rseed = 3)
 # APARCH(5,1)-norm
 spec <- gsSpec(model = list(alpha = runif(5,0,3), delta = runif(1,0,5), gm = runif(5,-1,1)), 
                     presample = NULL,cond.dist = c("norm"), rseed = 3)
@@ -666,7 +666,7 @@ gsMomentAparch(cond.dist = "stableS1", shape = 1.1, skew = 0, delta = 1.01, gm =
 
 gsMomentAparch(cond.dist = "gev", shape = -4, skew = 0, delta = 1.4, gm = 0)
 
-gsMomentAparch(cond.dist = "GAt", shape = c(1.9,2.3), skew = 0.5, delta = 0.4, gm = 0)
+gsMomentAparch(cond.dist = "gat", shape = c(1.9,2.3), skew = 0.5, delta = 0.4, gm = 0)
 
 gsMomentAparch(cond.dist = "norm", shape = c(1.9,2.3), skew =1, delta = 11.4, gm = -0.999)
 

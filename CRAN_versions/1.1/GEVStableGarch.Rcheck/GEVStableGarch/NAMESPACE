@@ -19,10 +19,10 @@ export(dskstd,
        pskstd,
        qskstd,
        rskstd,
-       dGAt,
-       pGAt,
-       qGAt,
-       rGAt,
+       dgat,
+       pgat,
+       qgat,
+       rgat,
        .armaGarchDist,
        .filterArma,
        .filterAparch,
@@ -41,7 +41,7 @@ export(dskstd,
        .stdMomentAparch,
        .skstdMomentAparch,
        .gedMomentAparch,
-       .GAtMomentAparch,
+       .gatMomentAparch,
        .stableS1MomentAparch,
        .stableS1SymmetricMomentGarch,
        .stableS1SymmetricMomentAparch,
@@ -58,6 +58,6 @@ exportMethods(
 )
 
 exportClasses(
-    fGEVSTABLEGARCH,
-     fGEVSTABLEGARCHSPEC 
+    GEVSTABLEGARCH,
+     GEVSTABLEGARCHSPEC 
 )

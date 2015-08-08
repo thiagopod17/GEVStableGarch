@@ -18,15 +18,15 @@
 
 
 ################################################################################
-# FUNCTION:              t3 (now called GAt) DISTRIBUTION PROPOSED IN PAOLELLA (1997)
-#  pGAt                   Probability function for the GAt
-#  dGAt                   Density for the GAt-distribution 
-#  qGAt                   Quantile function for the GAt
-#  rGAt                   Random Number Generator for the GAt
+# FUNCTION:              t3 (now called GAt) distribution proposed in Paolella (1997)
+#  pgat                   Probability function for the GAt
+#  dgat                   Density for the GAt-distribution 
+#  qgat                   Quantile function for the GAt
+#  rgat                   Random Number Generator for the GAt
 ################################################################################
 
 
-dGAt <- 
+dgat <- 
   function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1, log = FALSE)
   {   
     # A function implemented by Thiago Sousa
@@ -91,7 +91,7 @@ dGAt <-
 
 # ------------------------------------------------------------------------------
 
-pGAt <- 
+pgat <- 
   function(q, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
   {   
     # A function imlemented by Thiago Sousa
@@ -157,7 +157,7 @@ pGAt <-
 #------------------------------------------------------------------------------
 
   
-qGAt <- 
+qgat <- 
   function(p, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
     
@@ -181,7 +181,7 @@ qGAt <-
     }
     
     # Compute quantiles located at (-Inf,0] and at (0,+Inf)
-    F0 = pGAt(0, mean = 0, sd = 1, nu = nu, d = d, xi = xi)
+    F0 = pgat(0, mean = 0, sd = 1, nu = nu, d = d, xi = xi)
     n = length(p)
     result = rep(NA,n)
     indexLessThanF0 = which (p <= F0, arr.ind = TRUE)
@@ -217,7 +217,7 @@ qGAt <-
 # ------------------------------------------------------------------------------
 
 
-rGAt <-  
+rgat <-  
   function(n, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
     
@@ -228,7 +228,7 @@ rGAt <-
     # FUNCTION:
     
     randomUnif = runif(n = n, min = 0, max = 1)
-    result = qGAt(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
+    result = qgat(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
     
     # Return Value:
     result

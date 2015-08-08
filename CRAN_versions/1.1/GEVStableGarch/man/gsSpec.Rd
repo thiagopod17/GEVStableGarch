@@ -9,13 +9,13 @@
 
 \description{
 
-Specifies an ARMA-GARCH or ARMA-APARCH model with innovations following GEV, stable or other common conditional distributions.
+Specifies an ARMA-GARCH or ARMA-APARCH model.
 
 }
 \usage{
 gsSpec(model = list(), presample = NULL, 
     cond.dist = c("stableS0", "stableS1", "stableS2", "gev", 
-    "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    "gat", "norm", "std", "sstd", "skstd", "ged"), 
     rseed = NULL)
 }
 
@@ -24,8 +24,7 @@ gsSpec(model = list(), presample = NULL,
 
     \item{model}{
         a list of ARMA-GARCH/APARCH model parameters: \cr
-        \code{omega} - the coefficient of the variance equation,
-            by default 1e-6; \cr
+        \code{omega} - the coefficient of the variance equation; \cr
         \code{alpha} - the value or vector of autoregressive coefficients; \cr
         \code{beta} - the value or vector of variance coefficients; 
         \cr
@@ -41,19 +40,18 @@ gsSpec(model = list(), presample = NULL,
 
     \item{presample}{
         presample - a numeric "matrix" with 3 columns and
-        at least max(m,n,p,q) rows. 
+        with max(m,n,p,q) rows. 
         The first culumn are the innovations, the second
         the conditional variances, and the last the time series.
-        When presample is missing, we construct our presample matrix
-        as [z,h,y] where z = rnorm(0,1), h = "uev" recursion 
-        initialization described in Wuertz et al. (2006) and
-        y = mu. Note that the conditional variance column
+        When the presample matrix is missing, it is constructed
+        as [z,h,y] where z ~ Normal(0,1), h = "uev" recursion 
+        initialization described in Wuertz et al. (2009) and
+        y = \code{mu}. Note that the conditional variance column
         can contain only strictly positive numbers and the function
-        \code{gsSpec} check for invalid values inside the presample
-        matrix.
+        \code{gsSpec} check for invalid values.
         }
         
-        \item{cond.dist}{ a character string naming conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"}, \code{"stableS1"}, \code{"stableS2"}, \code{"gev"} and \code{"GAt"}. Other common distributions are also possible such as the \code{"norm"}, \code{"std"}, \code{"sstd"}, \code{"skstd"}, \code{"ged"}, but they are not the main feature of this work.
+        \item{cond.dist}{ a character string naming the conditional distribution of innovations. The package was created to accept the following distributions: \code{"stableS0"} (stable in S0-parameterization), \code{"stableS1"} (stable in S1-parameterization), \code{"stableS2"} (stable in S2-parameterization), \code{"gev"}, \code{"gat"} and \code{"skstd"} (skew Student's t from Fernandez and Steel (1998)). Other common conditional distribution (normal, Student's t, \code{"sstd"} (skew Student's t from \pkg{fGarch} package) and GED) are also allowed since they are very important for testing purposes.
         }
         
     \item{rseed}{
@@ -69,29 +67,35 @@ This functions uses the interface of the \code{garchSpec} routine from package \
 
 \value{
 
-    The returned value is an object of class \code{"fGEVSTABLEGARCHSPEC"}.
+    The returned value is an object of class \code{"GEVSTABLEGARCHSPEC"}.
     
 }
 
 \references{
 
-Mittnik S, Paolella M, Rachev S (2002). "Stationarity of Stable Power-GARCH Processes." Journal of Econometrics, 106, 97-107.
+    Wuertz, D., Chalabi, Y., with contribution from Miklovic, M., Boudt, C., Chausse, P., and others (2013).
+    \emph{fGarch: Rmetrics - Autoregressive Conditional Heteroskedastic Modelling, R package version 3010.82},   
+    \url{http://CRAN.R-project.org/package=fGarch}.
 
-PACOTE FGARCH
+    Wuertz, D., Chalabi, Y., Luksan, L. (2009).
+    \emph{Parameter Estimation of ARMA Models with GARCH/ APARCH Errors: An R and SPlus SoftwareImplementation}.   
+    Journal of Statistical Software, forthcoming,
+    \href{http://www-stat.wharton.upenn.edu/~steele/Courses/956/RResources/GarchAndR/WurtzEtAlGarch.pdf}{http://www-stat.wharton.upenn.edu/~steele/...WurtzEtAlGarch.pdf}.
 
 }
 
 \author{
 
-Thiago do Rego Sousa, Cira Etheowalda Guevara Otiniano 
-and Silvia Regina Costa Lopes.
+Thiago do Rego Sousa.
 
 }
 
 \examples{
 
 # stable-GARCH from Curto et al. (2009) for the DJIA dataset
-spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), cond.dist = "stableS1")
+spec.stable = gsSpec(model = list(mu = 0.0596, omega = 0.0061, 
+alpha = 0.0497, beta = 0.9325, skew = -0.9516, shape = 1.9252), 
+cond.dist = "stableS1")
 sim.stable = gsSim(spec = spec.stable, n = 1000)
  
 # GEV-GARCH model from Zhao et al. (2011)

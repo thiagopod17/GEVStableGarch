@@ -27,7 +27,7 @@
 
 .armaGarchDist <- 
     function(z, hh, shape = 1.5, skew = 0, 
-    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
     TOLG = 1e-8) 
 {
     # Description:
@@ -86,11 +86,11 @@
     }
     
     # GAt distribution
-    if(cond.dist == "GAt")
+    if(cond.dist == "gat")
     {
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
            return(1e99)    
-        return(-sum(log(dGAt(x = z/hh, nu = shape[1], d = shape[2], xi = skew)/hh)))        
+        return(-sum(log(dgat(x = z/hh, nu = shape[1], d = shape[2], xi = skew)/hh)))        
     }
     
     # GED conditional distribution.
@@ -104,10 +104,20 @@
     # GEV conditional distribution
     if(cond.dist == "gev")
     {
-       if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) # to ensure good mle properties and finiteness of the variance
+        # to ensure good mle properties and finiteness of the variance
+        # we require shape > -0.5 ( See Jondeau et al. (XXX))
+        if( (shape[1] <= -0.5) || (shape[1] >= 0.5)) 
             return(1e99)
-       result = -sum(log((dgev(x = z/hh, xi = shape[1]))/hh))
-       return(result)
+        
+        # compute density normally with shape != from zero. There was some numerical problems
+        # while using function dgev from package fExtremes and thus, we decided to compute the
+        # density directly, asumming that the shape parameter is different from zero. Aditionally,
+        # we cannot enforce the computation with the shape parameter equal to zero, since the
+        # algorithm is not able to move for the optimum in most cases.
+        sig <- hh
+        y <- 1 + shape * (z/hh)
+        llh <- sum(log(sig)) + sum(y^(-1/shape)) + sum(log(y))*(1/shape + 1)
+            return(llh)
     }
     
     # stable conditional distribution
