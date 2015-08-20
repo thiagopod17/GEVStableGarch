@@ -88,7 +88,7 @@
     cond.dist.list = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
     Mean <- mean(data)
     Var <- var(data)
-    Dispersion <- mean(abs(x-Mean))
+    Dispersion <- mean(abs(data-Mean))
     arima.fit <- c()
     arima.fit.try <- "empty"  
     arima.m <- m
@@ -200,7 +200,7 @@
       "stableS0" = 1.9,
       "stableS1" = 1.9,
       "stableS2" = 1.9,
-      "gev" = 0.01, # numerical tests showed that 0.01 is a good starting parameter 
+      "gev" = 0, # numerical tests showed that 0.01 is a good starting parameter.
       "gat" = c(2, 4),
       "norm" = 1,
       "std" = 4,
@@ -310,7 +310,7 @@
         if(start.model.persistency >= 0.95)
         {
             print(start.model.persistency)
-            print(paste("The starting model with conditional",cond.dist.list[i], " is not stationary."))
+            print(paste("The starting model with conditional",cond.dist, " is not stationary."))
             stop("Change the starting value of the parameters for the reported model.")
         }
     }

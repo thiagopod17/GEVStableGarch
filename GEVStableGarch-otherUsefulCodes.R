@@ -81,11 +81,97 @@ abs((model2@fit$par-model1@fit$par)/model1@fit$par)
 
 
 
+# ------------------------------------------------------------------------------
+# Arma likelihood code inside the llh function of gsFit
+# ------------------------------------------------------------------------------
+# BEGIN: Log Likelihood for pure ARMA process
+#############################################
+armaLLH <- function(parm)
+{      
+  if(DEBUG)
+    print(parm)
+  # check if some parameters are NAN
+  if(sum(is.nan(parm)) != 0) {return(1e99)}
+  
+  # Getting parameters from parm vector 
+  mu <- parm[1];
+  a <- parm[(1+1):(2+m-1)]
+  b <- parm[(1+m+1):(2+m+n-1)]
+  skew <- parm[1+m+n+1]
+  shape <- parm[(2+m+n+1):(2+m+n+lengthShape)]
+  sigma <- parm[2+lengthShape+m+n+1]
+  
+  # Setting parameters to accept tapper off MA, AR or GARCH coefficients
+  if( AR == TRUE) 
+    a <- 0
+  if( MA == TRUE) 
+    b <- 0
+  if (include.mean == FALSE)
+    mu <- 0
+  
+  if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
+  {
+    if( shape-delta < tolerance$TOLSTABLE || abs(shape) < tolerance$TOLSTABLE ||
+          !(abs(skew) < 1) || !((shape - 2) < 0) )
+    {
+      return(1e99)
+    }
+  }
+  
+  # ARMA stationarity condition check
+  if(!arCheck(a))
+    return(1e99)
+  
+  # Stop if parametr is not > 0
+  if(sigma <= 0)
+    return(1e99)
+  
+  # Filters the Time series to obtain the i.i.d. sequence of 
+  # 'innovations' to evaluate the Log-likelihood function
+  z <- .filterArma(data = data, size.data = N, m = m, n = n, mu = mu, a = a, b = b)
+  
+  if(DEBUG)
+  {
+    print(c("length(z)",length(z)))
+    print(c("N",N))
+  }
+  
+  
+  # get output Residuals
+  if (optim.finished)
+  {
+    out$residuals <<- as.numeric(z)
+    out$sigma.t <<- sigma
+    out$h.t <<- sigma
+  }
+  
+  # Return llh function        
+  llh.dens <- .armaDist(z = z, sigma = sigma, shape = shape, 
+                        skew = skew, cond.dist = cond.dist)
+  llh <- llh.dens
+  if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
+  {
+    llh <- 1e99
+  }
+  llh
+}
+# END: Log Likelihood for pure ARMA process
+#############################################
 
 
-##############
-# OLD GET START FUNCTION
-##############
+
+
+
+
+
+
+
+
+# ------------------------------------------------------------------------------
+# Old .getStart function
+# ------------------------------------------------------------------------------
+
+
 
 
 

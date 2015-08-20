@@ -65,4 +65,3 @@ x = dem2gbp[,1]
           AR = FALSE, MA = FALSE,
           cond.dist = "gev")  
 
-

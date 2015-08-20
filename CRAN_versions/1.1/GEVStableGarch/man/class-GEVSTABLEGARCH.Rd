@@ -26,7 +26,7 @@ model estimated wih function \code{\link{gsFit}}
 
 \section{Objects from the Class}{
 
-Objects can be created by calling function \code{gsFit}.
+Objects can be created by calling function \code{\link{gsFit}}.
 This object contain the estimated parameters of a time series process.
 
 }
@@ -36,7 +36,7 @@ This object contain the estimated parameters of a time series process.
   \describe{
   
     \item{\code{call}:}{Object of class \code{"call"}: 
-        the call of the \code{gsFit} function.
+        the call of the \code{\link{gsFit}} function.
         } 
         
     \item{\code{formula}:}{Object of class \code{"formula"}: 
@@ -118,7 +118,8 @@ value reported by the internal solver used inside function \code{gsFit}. Hence, 
 
 \author{
 
-Thiago do Rego Sousa
+Thiago do Rego Sousa for the latest modifications \cr
+Diethelm Wuertz for the original implementation of the fGARCH-class from package fGarch
 
 }
 

@@ -19,7 +19,7 @@ Generalized Asymmetric t Distribution
     quantile function and to generate random variates 
     for the generalized asymmetric t distribution (GAt). Notice that
     this is the same t3-distribution mentioned in the literature and defined 
-    by Paolella (1997). 
+    by Paolella (1997) and Mittnik and Paolella (2000). 
     The GAt distribution includes the Student's t, Laplace, 
     Cauchy and the normal distribution when the shape parameter (\eqn{\nu \rightarrow \infty}) (see Mittnik and Paolella (2000)).
     

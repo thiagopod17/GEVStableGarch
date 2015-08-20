@@ -1,6 +1,18 @@
 pkgname <- "GEVStableGarch"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
+base::assign(".ExTimings", "GEVStableGarch-Ex.timings", pos = 'CheckExEnv')
+base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+base::assign(".format_ptime",
+function(x) {
+  if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
+  if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
+  options(OutDec = '.')
+  format(x[1L:3L], digits = 7L)
+},
+pos = 'CheckExEnv')
+
+### * </HEADER>
 library('GEVStableGarch')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -10,6 +22,7 @@ nameEx("dist-gat")
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gat
 ### Title: Generalized Asymmetric t Distribution
 ### Aliases: gat dgat pgat qgat rgat
@@ -47,6 +60,8 @@ round(qgat(pgat(q = seq(-10, 10, by = 0.5))), digits = 6)
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("dist-gat", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 cleanEx()
 nameEx("dist-skstd")
@@ -54,6 +69,7 @@ nameEx("dist-skstd")
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: skstd
 ### Title: Skew Student's t Distribtuion from Fernandez and Steel (1997)
 ### Aliases: skstd dskstd pskstd qskstd rskstd
@@ -91,6 +107,8 @@ round(qskstd(pskstd(q = seq(-10, 10, by = 0.5))), digits = 6)
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("dist-skstd", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 cleanEx()
 nameEx("gsFit")
@@ -98,27 +116,30 @@ nameEx("gsFit")
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gsFit
 ### Title: Estimation of ARMA-GARCH/APARCH models
 ### Aliases: gsFit
 
 ### ** Examples
 
-# This examples uses the dataset of the package fGarch to estimate
+# This examples uses the dem2gbp dataset to estimate
 # an ARMA(1,1)-GARCH(1,1) with GEV conditional distribution.
-library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
-gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
+gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "gev")
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("gsFit", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("gsMomentAparch")
 ### * gsMomentAparch
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gsMomentAparch
 ### Title: Computation of moments for several conditional distribution
 ### Aliases: gsMomentAparch
@@ -148,12 +169,15 @@ gsMomentAparch(cond.dist = "ged", shape = 6, skew = 0.11, delta = 5.11, gm = -0.
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("gsMomentAparch", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("gsSelect")
 ### * gsSelect
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gsSelect
 ### Title: Selects the best model according to goodness-of-fit criteria
 ### Aliases: gsSelect
@@ -163,22 +187,24 @@ flush(stderr()); flush(stdout())
 
 # Best ARMA-GARCH model within the range ARMA(0,0)-GARCH(1,0) to ARMA(0,0)-GARCH(1,1)
 # using the Corrected Akaike Information Criteria (AICc)
-library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-
 model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
-          algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC")
+          algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC", 
+          include.mean = FALSE)
 
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("gsSelect", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("gsSim")
 ### * gsSim
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gsSim
 ### Title: Simulation of ARMA-GARCH/APARCH process
 ### Aliases: gsSim
@@ -192,12 +218,15 @@ flush(stderr()); flush(stdout())
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("gsSim", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("gsSpec")
 ### * gsSpec
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: gsSpec
 ### Title: Specification of ARMA-GARCH/APARCH models with GEV or stable
 ###   distributions
@@ -221,6 +250,8 @@ sim.gev = gsSim(spec = spec.gev, n = 1000)
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("gsSpec", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 ### * <FOOTER>
 ###
 options(digits = 7L)

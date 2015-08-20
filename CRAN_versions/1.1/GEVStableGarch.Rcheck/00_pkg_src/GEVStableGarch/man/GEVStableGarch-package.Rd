@@ -48,15 +48,15 @@ The current version of package \pkg{GEVStableGarch} has a new algorithm that all
 
 \section{Time Series Simulation}{
 
-  contains functions to simulate ARMA-GARCH/APARCH processes with conditional GEV or stable
+  Contains functions to simulate ARMA-GARCH/APARCH processes with conditional GEV or stable
   distributions. 
-  Note: These routines were adapted from functions \code{garchSpec} and \code{garchSim} available in \pkg{fGarch} package.
+  Note: These routines were adapted from functions \code{garchSpec} and \code{garchSim} available in \pkg{fGarch} package to make the interfaces more similar.
   
   Functions:
   
   \tabular{ll}{
     \code{gsSpec} \tab Specifies an univariate ARMA-GARCH/APARCH model, \cr \cr
-    \code{gsSim} \tab Simulates a ARMA-GARCH/APARCH process. }
+    \code{gsSim} \tab Simulates an ARMA-GARCH/APARCH process. }
   
 }
 

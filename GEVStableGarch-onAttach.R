@@ -36,22 +36,9 @@
 {
   options(.stableIsLoaded=FALSE)
   if(length(find.package("stable",quiet = TRUE)))
-    options(.stableIsLoaded=TRUE)	
-  if(getOption('.stableIsLoaded', default = FALSE) == TRUE)
-  {
-    GSgarch.dstable <<- function(param, ...)
-    {
-      return(stable::dstable.quick(param = param, ...))
-    }
-  }
-  if(getOption('.stableIsLoaded', default = FALSE) == FALSE)
-  {
-    GSgarch.dstable <<- function(param, ...)
-    {
-      return(stabledist::dstable(pm = param, ...))
-    }
-  }
+    options(.stableIsLoaded=TRUE)
 }
+
 
 ################################################################################
 

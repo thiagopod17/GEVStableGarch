@@ -92,7 +92,8 @@ see Mittnik and Paolella (2000) (GAt innovations), Mittnik et al. (2002) (stable
 
 \author{
 
-Thiago do Rego Sousa.
+Thiago do Rego Sousa for the latest modifications \cr
+Diethelm Wuertz for the original implementation of the fGARCHSPEC-class from package fGarch
 
 }
 

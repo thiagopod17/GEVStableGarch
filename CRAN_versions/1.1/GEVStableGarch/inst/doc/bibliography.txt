@@ -18,9 +18,17 @@ BEGIN
 =================================================
 
 
+    Bollerslev T., Ghysels, E. (1996) 
+    \emph{Journal of Business and Economic Statistics}.
+    Periodic Autoregressive Conditional Heteroscedasticity, 14(2), 139--151
+
     Brockwell, P.J., Davis, R.A. (1996).
     \emph{Introduction to Time Series and Forecasting}.
     Springer, New York.
+
+    Brooks C., Burke S.P., Persand G. (2001) 
+    \emph{International Journal of Forecasting}.
+    Benchmarks and the Accuracy of GARCH Model Estimation, 17(1), 45--57 
 
     Curto, J.D., Tavares, A.N., Tavares, G.N. (2008).
     \emph{Modelling Heavy Tails and Asymmetry Using ARCH-type Models with Stable Paretian Distributions}.
@@ -49,6 +57,10 @@ BEGIN
     Lambert, P., Laurent, S. (2001).
     \emph{Modelling Financial Time Series Using GARCH-type Models with a Skewed Student Distribution for the Innovations}.
     Institut de Statistique, Universite Catholique de Louvain, Discussion Paper 0125.
+
+    McCullough B. D., Renfro C. G. (1999)
+    \emph{Journal of Economic and Social Measurement}
+    Benchmarks and Software Standards: A Case Study of GARCH Procedures, 25 (2), 59--71
 
     Mittnik, S., Paolella, M.S. (2000).
     \emph{Conditional Density and Value-At-Risk Prediction of Asian Currency Exchange Rates}. 
@@ -94,7 +106,6 @@ BEGIN
     \emph{Interior Algorithms for Linear, Quadratic, and Linearly Constrained Non-Linear Programming}.
     Ph.D. Thesis, Department of EES,
     Stanford University.
-
 
 =================================================
 END

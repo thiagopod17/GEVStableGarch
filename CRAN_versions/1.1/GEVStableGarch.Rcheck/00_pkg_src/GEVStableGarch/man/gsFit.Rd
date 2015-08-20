@@ -31,7 +31,7 @@ tolerance = NULL, title = NULL, description = NULL)
 \arguments{
 
     \item{formula}{ 
-        a formula object specifying mean and variance equation. The mean equation should be specified using the names: "arma"", "garch"" or "aparch". For example: ~arma(1,0)-garch(1,0) for AR(1)-ARCH(1), and ~arma(0,1)-garch(2,2) for MA(1)-GARCH(2,2). 
+        a formula object specifying mean and variance equation. The mean equation should be specified using the names: "arma"", "garch"" or "aparch". For example: ~arma(1,0)-garch(1,0) for AR(1)-ARCH(1), or ~arma(0,1)-garch(2,2) for MA(1)-GARCH(2,2). 
         }
         
    \item{data}{ 
@@ -55,7 +55,7 @@ four different optimization procedures, namely the \code{"sqp"}, \code{"sqp.rest
         }
 
       \item{tolerance}{
-        Tolerance for parameter estimation. When specified, the tolerance parameter should be passed as a list in the following format \cr \code{list( TOLG = 1e-8, TOLSTABLE = 1e-2, TOLSTATIONARITY = 1e-3 )}, where \code{TOLG} is the tolerance used to set the boundary region of the model parameters, \code{TOLSTABLE} is the boundary of parameters for stable distribution and \cr \code{TOLSTATIONARITY} is the tolerance parameter used by the \code{"sqp.restriction"} algorithm when searching for the stationary solution. 
+        Tolerance for parameter estimation. When specified, the tolerance parameter should be passed as a list in the following format \cr \code{list( TOLG = 1e-8, TOLSTABLE = 1e-2, TOLSTATIONARITY = 1e-3 )}, where \code{TOLG} is the tolerance used to set the boundary region of the model parameters, \code{TOLSTABLE} is the boundary of parameters for stable distribution and \cr \code{TOLSTATIONARITY} is the tolerance parameter used by the \code{"sqp.restriction"} algorithm when searching for the stationary solution (see the details). 
         }
 
     \item{title}{ 
@@ -70,7 +70,7 @@ four different optimization procedures, namely the \code{"sqp"}, \code{"sqp.rest
 
 \details{
 
-The starting values of the model parameters are key in getting any possible convergence and they were chosen to reflect this. For example, the GEV shape starting value was chosen to be 0.01 since in this case the support of the distribution with zero location and unit scale will encompasses both positive and negative parts of the real line (the support is at [-100,\eqn{\infty})). 
+The starting values of the model parameters are key in getting any possible convergence and they were chosen to reflect this. For example, the GEV shape starting value was chosen to be 0 since in this case the support of the distribution with zero location and unit scale will encompasses both positive and negative parts of the real line (the support is at (-\eqn{\infty},+\eqn{\infty})). 
 
 The parameters will be interpreted according to the following 
 equations (see Wurtz et al. ,2009)
@@ -89,7 +89,7 @@ where \eqn{\mathcal{D}_{\vartheta}(0,1)} is the density of the innovations with 
 
 Most software packages implement the estimation of GARCH models without imposing stationarity, but restricting the parameter set by appropriate bounds. This last approach was implemented in the \pkg{GEVStableGarch} package through the following algorithms: \code{"sqp"}, \code{"nlminb"} and \code{"nlminb + nm"}. The first two algorithms search for the optimum value by restricting the parameter set to appropriate lower and upper bounds. The last implements a two step optimization procedure, which consists in starting the search by using the constrained routine \code{nlminb} and then performing another search using an unconstrained method (in our case the Nelder-Mead method implemented in the \code{R} base function \code{optim}). This approach was suggested by Wuertz et al. (2009) since in many cases it leads to an improved solution (in terms of the likelihood function of the data).
 
-Finally, the \code{"sqp.restriction"} algorithm performs a constrained search to maximize the log-likelihood function in order to obtain an stationary model.
+Finally, the \code{"sqp.restriction"} algorithm performs a constrained search to maximize the log-likelihood function in order to obtain an stationary model. It can be used to estimate models with the following conditional distributions: \code{"stableS1"}, \code{"gev"}, \code{"gat"}, \code{"skstd"}, \code{"norm"}, \code{"std"} and \code{"ged"}. 
 
 }
 
@@ -109,9 +109,9 @@ Diongue et al. (2008) showed that the APARCH(p,q) (all coefficients \eqn{\gamma_
     \sum_{i=1}^p E(|Z| - \gamma_i Z)^\delta\alpha_i +\sum_{j=1}^q\beta_j < 1,
 }
 
-where \eqn{Z} has distribution \eqn{S(\alpha,\beta;1)} (stable in 1-parameterization). The estimation of stationary models is mainly dependent on the time taken to evaluate the expression the expression for the asymmetric stable distribution \eqn{E(|Z| - \gamma_i Z)^\delta} and can be computed as:
+where \eqn{Z} has distribution \eqn{S(\alpha,\beta;1)} (stable in 1-parameterization). The estimation of stationary models is mainly dependent on the time taken to evaluate the expression for the asymmetric stable distribution \eqn{E(|Z| - \gamma_i Z)^\delta}.
 
-The moment expression used to verify the stationarity condition is given in the next proposition. 
+The moment expression used to verify the stationarity condition is given by 
 
 \deqn{
 E(|Z| - \gamma Z)^\delta = \frac{ (1 - \gamma )^\delta\tilde{\sigma}^{\delta+1}\Gamma(\delta+1)\Gamma(-\frac{\delta}{\alpha}) }
@@ -158,7 +158,7 @@ The stationarity restriction implemented inside \pkg{GEVStableGarch} package imp
 }
 \code{TOL.STATIONARITY}, \cr
 
-where the variable TOL.STATIONARITY is set to 0.001 by default. For numerical reasons, the value of this variable cannot be greater than 0.05. The estimation of the stationary model is done by using the \code{solnp} routine from \pkg{Rsolnp} package together with the evaluation of the previous expression by through function \code{gsMomentAparch}.
+where the variable TOL.STATIONARITY is set to 0.001 by default. For numerical reasons, the value of this variable cannot be greater than 0.05.
 
 }
 
@@ -227,7 +227,7 @@ where the variable TOL.STATIONARITY is set to 0.001 by default. For numerical re
 \section{Enhances}{
 
 The estimation of ARMA-GARCH/APARCH models with conditional stable distribution is mainly dependent
-on the time taken during the calculation of density points. Although the package can be used with the R \pkg{stabledist} package, the estimation of such models is only feasible if we use the fast implementation of stable densities using the R \pkg{stable} package designed by J.P.Nolan (see \url{http://academic2.american.edu/\textasciitilde jpnolan/stable/stable.html}). 
+on the time taken during the calculation of density points. Although the package can be used with the R \pkg{stabledist} package, the estimation of such models is only feasible if we use the fast implementation of stable densities using the R \pkg{stable} package designed by J.P.Nolan (see \url{http://academic2.american.edu/~jpnolan/stable/stable.html}). 
 
 The \pkg{stable} package implements a faster computation of stable 
 densities that are accurately enough to perform numerical optimization and is available at \url{http://www.robustanalysis.com}.
@@ -298,12 +298,11 @@ and Silvia Regina Costa Lopes
 }
 
 \examples{
-# This examples uses the dataset of the package fGarch to estimate
+# This examples uses the dem2gbp dataset to estimate
 # an ARMA(1,1)-GARCH(1,1) with GEV conditional distribution.
-library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
-gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
+gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "gev")
 }
 
 

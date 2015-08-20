@@ -642,26 +642,6 @@ fit2 = garchFit(data = x, formula = ~garch(1,1),
 
 
 
-# TESTS PRIOR TO SENDING TO CRAN..
-# GEV 
-library(GEVStableGarch)
-gev.spec = gsSpec(model = list(ar = 0.4, alpha = 0.1, omega = 0.11, 
-                               beta = 0.3, shape = -0.4, delta = 2),
-                  cond.dist = "gev", rseed = 102)
-
-sample.gev = gsSim( spec = gev.spec, n = 2000)
-fit1 <- gsFit(data = as.vector(sample.gev[,1]), formula = ~garch(1,1),
-              cond.dist = "gev", algorithm = "sqp")
-
-fit1 <- gsFit(data = dem2gbp[,1], formula = ~garch(1,1),
-              cond.dist = "gev", algorithm = "sqp")
-
-fit1 <- gsFit(data = 100*sp500dge[, 1], formula = ~garch(1,1),
-              cond.dist = "gev", algorithm = "sqp")
-
-fit2 = GSgarch.Fit(data = dem2gbp[,1], 0,0,1,1, cond.dist = "gev", 
-                   intercept = TRUE, algorithm = "sqp", printRes = TRUE)
-
 
 
 

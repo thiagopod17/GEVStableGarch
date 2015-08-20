@@ -57,7 +57,7 @@ Note: The \pkg{GEVStableGarch} package implements a slighty different version of
 \value{
 
 Returns the following expression for several conditional distributions
-\eqn{E( |Z| - \gamma Z) ^ \delta}. If any of the input parameters are outside the parameter space, this function returns \eqn{\infty}
+\eqn{E( |Z| - \gamma Z) ^ \delta}. If any of the input parameters are outside the parameter space, this function returns \eqn{\infty}.
 
 }
 

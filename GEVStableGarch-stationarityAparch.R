@@ -308,7 +308,7 @@ gsMomentAparch <- function(
     #   E[ (|z|-gm*z)^delta.
     #   Reference: fGarch: Wurtz and the package Skewt uses the one defined 
     #   in Fernandez, C. and Steel, M. F. J. (1998). On Bayesian modeling of fat 
-    #   tails and skewness, J. Am. Statist. Assoc. 93, 359–371.
+    #   tails and skewness, J. Am. Statist. Assoc. 93, 359-371.
     #   Another reference: http://www.timberlake.co.uk/slaurent/G@RCH/Book63.html
      
     # Note: This is not the APARCH moments for the 'dsstd' function from fGarch package. 

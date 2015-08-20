@@ -25,6 +25,33 @@
 ################################################################################
 
 
+
+
+# ------------------------------------------------------------------------------
+# The default is to use the dstable density from package stabledist
+# If the user has the 'stable' package from JP Nolan, then the density
+# is computed with the dstable.quick function.
+# The configuration of the .GSgarch.dstable function was done 
+# inside the .onAttach function, but we get some warnings concerning
+# .armaGarchDist: no visible global function definition for '.GSgarch.dstable'.
+# Therefore, we decided to define the function here and to decide wether 
+# or not to use package 'stable' only when function .armaGarchDist is called.
+# This is bad for efficiency and we must find another reasonable way to define it
+
+
+.GSgarch.dstable <- function(x,alpha = 1.5, beta = 0, gamma = 1, 
+                             delta = 0, param = 1)
+{
+  return(stabledist::dstable(x, alpha, beta, gamma, 
+                             delta, pm = param))
+}
+
+
+
+# ------------------------------------------------------------------------------
+
+
+
 .armaGarchDist <- 
     function(z, hh, shape = 1.5, skew = 0, 
     cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
@@ -114,6 +141,15 @@
         # density directly, asumming that the shape parameter is different from zero. Aditionally,
         # we cannot enforce the computation with the shape parameter equal to zero, since the
         # algorithm is not able to move for the optimum in most cases.
+        
+        # when the shape parameter is small
+        if( abs(shape[1]) < 1e-7 )
+        {
+            llh <- sum(log(hh)) + sum(z/hh) + sum(exp(-z/hh))
+            return(llh)
+        }
+        
+        # when the shape parameter is next to zero
         sig <- hh
         y <- 1 + shape * (z/hh)
         llh <- sum(log(sig)) + sum(y^(-1/shape)) + sum(log(y))*(1/shape + 1)
@@ -123,6 +159,20 @@
     # stable conditional distribution
     if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
     {
+        # Compute density with package 'stable' if it is available
+        if(getOption('.stableIsLoaded', default = FALSE) == TRUE)
+        {
+          .GSgarch.dstable <- function(x,alpha = 1.5, beta = 0, gamma = 1, 
+                                       delta = 0, param = 1)
+          {
+            return(stable::dstable.quick(x, alpha, beta, gamma, 
+                                         delta, param))
+          }
+        }
+      
+      
+      
+      
         # Return Big Values if we are out of parameter space
 
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
@@ -135,21 +185,24 @@
         # Compute density either using "stable" or "stabledist" package
         
         if(cond.dist == "stableS0")
-            result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+            result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
                       beta = skew, param = 0)/hh))
         
         if(cond.dist == "stableS1")
-          result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+          result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
                                         beta = skew, param = 1)/hh))
         
         if(cond.dist == "stableS2")
-          result = -sum(log(stable::dstable.quick(x = z/hh, alpha = shape,
+          result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
                                         beta = skew, param = 2)/hh))
         
         # Result 
         return(result)
     }
 }
+
+
+
 
 
 

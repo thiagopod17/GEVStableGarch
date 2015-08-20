@@ -19,7 +19,7 @@
 
 ################################################################################
 # FUNCTION:               SPECIFICATION: 
-#  GARCHSPEC              S4 GEVSTABLEGARCHSPEC Class representation 
+#  GEVSTABLEGARCHSPEC     S4 GEVSTABLEGARCHSPEC Class representation 
 ################################################################################
 
 

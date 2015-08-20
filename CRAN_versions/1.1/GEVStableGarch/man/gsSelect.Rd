@@ -20,7 +20,7 @@ This function estimates ARMA-GARCH/APARCH models with varying order and returns 
 gsSelect(data, order.max = c(1, 1, 1, 1), 
 selection.criteria = c("AIC", "AICc", "BIC"), is.aparch = FALSE, 
 cond.dist = c("stableS0", "stableS1", "stableS2", "gev", 
-"GAt", "norm", "std", "sstd", "skstd", "ged"), 
+"gat", "norm", "std", "sstd", "skstd", "ged"), 
 include.mean = TRUE, 
 algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"), ...)
 }
@@ -89,11 +89,10 @@ Thiago do Rego Sousa.
 
 # Best ARMA-GARCH model within the range ARMA(0,0)-GARCH(1,0) to ARMA(0,0)-GARCH(1,1)
 # using the Corrected Akaike Information Criteria (AICc)
-library(fGarch)
 data(dem2gbp)
 x = dem2gbp[,1]
-
 model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
-          algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC")
+          algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC", 
+          include.mean = FALSE)
 
 }

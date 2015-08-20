@@ -5,11 +5,26 @@
 ## packages
 ################################################
 
-import(fGarch,
-       fExtremes,
-       stabledist,
-       skewt,
-       Rsolnp)
+import(Rsolnp,
+       methods,
+       skewt
+)
+
+importFrom("stats", "arima", "as.formula", "dnorm", "filter",
+             "integrate", "nlminb", "optim", "pbeta", "pnorm",
+             "printCoefmat", "qbeta", "rnorm", "runif", "terms", "var")
+
+importFrom("fGarch", "dstd", "rstd", "dsstd", "rsstd", "dged", "rged")
+
+importFrom("fExtremes", "dgev", "rgev")
+
+importFrom("stabledist", "dstable", "rstable")
+
+importFrom("timeDate", "timeDate", "timeSequence")
+
+importFrom("timeSeries", "timeSeries")
+
+
 
 ################################################
 ## functions
@@ -23,6 +38,7 @@ export(dskstd,
        pgat,
        qgat,
        rgat,
+       .GSgarch.dstable,
        .armaGarchDist,
        .filterArma,
        .filterAparch,
@@ -47,6 +63,7 @@ export(dskstd,
        .stableS1SymmetricMomentAparch,
        .stableS1MomentPowerGarch
        )
+
 
 
 ################################################

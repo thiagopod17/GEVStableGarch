@@ -86,7 +86,8 @@ This functions uses the interface of the \code{garchSpec} routine from package \
 
 \author{
 
-Thiago do Rego Sousa.
+Thiago do Rego Sousa for the latest modifications \cr
+Diethelm Wuertz for the original implementation of the garchSim function from package fGarch
 
 }
 

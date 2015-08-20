@@ -41,7 +41,7 @@
 
 
 gsSim <-
-    function(spec = garchSpec(), n = 100, n.start = 100)
+    function(spec = gsSpec(), n = 100, n.start = 100)
 {
     # A function originally implemented by Diethelm Wuertz and modified
     # to be used inside package GEVStableGarch. See the latest copyright notice. 
@@ -50,8 +50,8 @@ gsSim <-
     #   Simulates a time series process from the GARCH family
 
     # Arguments:
-    #   model - a specification object of class 'fGARCHSPEC' as
-    #     returned by the function \code{garchSpec}:
+    #   model - a specification object of class 'GEVSTABLEGARCHSPEC' as
+    #     returned by the function \code{gsSpec}:
     #     ar - a vector of autoregressive coefficients of
     #       length m for the ARMA specification,
     #     ma - a vector of moving average coefficients of
@@ -184,83 +184,11 @@ gsSim <-
     charvec  <- timeSequence(from = from, length.out = NROW(data))
     ans <- timeSeries(data = data[, c(3,2,1)], charvec = charvec)
     colnames(ans) <- c("Series", "Volatility", "Innovations")    
-    attr(ans, "control") <- list(garchSpec = spec)
+    attr(ans, "control") <- list(gsSpec = spec)
 
     # Return Value:
     ans
 }
-
-
-
-
-
-
-
-
-.garchSim2 = function (spec = garchSpec(), n = 100, n.start = 100, extended = FALSE) 
-{
-  stopifnot(class(spec) == "fGARCHSPEC")
-  model = spec@model
-  if (spec@rseed != 0) 
-    set.seed(spec@rseed)
-  n = n + n.start
-  if (spec@distribution == "norm") 
-    z = rnorm(n)
-  if (spec@distribution == "ged") 
-    z = rged(n, nu = model$shape)
-  if (spec@distribution == "std") 
-    z = rstd(n, nu = model$shape)
-  if (spec@distribution == "snorm") 
-    z = rsnorm(n, xi = model$skew)
-  if (spec@distribution == "sged") 
-    z = rsged(n, nu = model$shape, xi = model$skew)
-  if (spec@distribution == "sstd") 
-    z = rsstd(n, nu = model$shape, xi = model$skew)
-  delta = model$delta
-  z = c(rev(spec@presample[, 1]), z)
-  h = c(rev(spec@presample[, 2]), rep(NA, times = n))
-  y = c(rev(spec@presample[, 3]), rep(NA, times = n))
-  m = length(spec@presample[, 1])
-  names(z) = names(h) = names(y) = NULL
-  mu = model$mu
-  ar = model$ar
-  ma = model$ma
-  omega = model$omega
-  alpha = model$alpha
-  gamma = model$gamma
-  beta = model$beta
-  deltainv = 1/delta
-  order.ar = length(ar)
-  order.ma = length(ma)
-  order.alpha = length(alpha)
-  order.beta = length(beta)
-  eps = h^deltainv * z
-  
-  #print(c(omega,alpha,gamma,beta,delta))
-  for (i in (m + 1):(n + m)) {
-    h[i] = omega + sum(alpha * (abs(eps[i - (1:order.alpha)]) - 
-                                  gamma * (eps[i - (1:order.alpha)]))^delta) + sum(beta * 
-                                                                                     h[i - (1:order.beta)])
-    eps[i] = h[i]^deltainv * z[i]
-    y[i] = mu + sum(ar * y[i - (1:order.ar)]) + sum(ma * 
-                                                      eps[i - (1:order.ma)]) + eps[i]
-  }
-  data = cbind(z = z[(m + 1):(n + m)], sigma = h[(m + 1):(n + 
-                                                            m)]^deltainv, y = y[(m + 1):(n + m)])
-  rownames(data) = as.character(1:n)
-  data = data[-(1:n.start), ]
-  from <- timeDate(format(Sys.time(), format = "%Y-%m-%d")) - 
-    NROW(data) * 24 * 3600
-  charvec <- timeSequence(from = from, length.out = NROW(data))
-  ans <- timeSeries(data = data[, c(3, 2, 1)], charvec = charvec)
-  colnames(ans) <- c("garch", "sigma", "eps")
-  ans <- if (extended) 
-    ans
-  else ans[, "garch"]
-  attr(ans, "control") <- list(garchSpec = spec)
-  ans
-}
-
 
 
 

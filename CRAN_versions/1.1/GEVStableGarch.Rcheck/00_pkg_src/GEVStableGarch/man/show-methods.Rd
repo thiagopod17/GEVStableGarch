@@ -33,7 +33,8 @@ Methods to organize the output to the user when printing objects of class GEVSTA
 
 \author{
 
-Thiago do Rego Sousa.
+Thiago do Rego Sousa for the latest modifications \cr
+Diethelm Wuertz for the original implementation of the show-methods from package fGarch
 
 }
 

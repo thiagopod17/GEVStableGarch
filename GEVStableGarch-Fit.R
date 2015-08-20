@@ -33,8 +33,7 @@ function(
     control = NULL,
     tolerance = NULL,
     title = NULL,
-    description = NULL,
-    DEBUG = FALSE)
+    description = NULL)
 {  
     # Description:
     #     This functions reads the univariate time series and fits
@@ -57,7 +56,6 @@ function(
     #         mu, a, b: ARMA parameters
     #         omega, alpha, gamma, beta: APARCH vector parameters
     #         garchLLH: Log Likelihood for the ARMA(m,n)-GARCH(p,q) model
-    #         armaLLH: Log Likelihood for the ARMA(m,n) model
     #         sigma: The scale parameter in a pure ARMA(m,n) model with innovations 
     #         D(shape,skew,sigma,location = 0).
     #         llh: The negative of the log-likelihood
@@ -97,6 +95,7 @@ function(
     # FUNCTION:  
 
     # Error Treatment on input parameters
+    DEBUG = FALSE
     cond.dist = match.arg(cond.dist)
     algorithm = match.arg(algorithm)
     if (!is.numeric(data) || any(is.na(data)) || any(is.null(data)) || any(!is.finite(data)))
@@ -197,81 +196,6 @@ function(
           return(TRUE)
         all(Mod(polyroot(c(1, -ar[1L:p]))) > 1)
     }
-
-    
-    # BEGIN: Log Likelihood for pure ARMA process
-    #############################################
-    armaLLH <- function(parm)
-    {      
-        if(DEBUG)
-            print(parm)
-        # check if some parameters are NAN
-        if(sum(is.nan(parm)) != 0) {return(1e99)}
-        
-        # Getting parameters from parm vector 
-        mu <- parm[1];
-        a <- parm[(1+1):(2+m-1)]
-        b <- parm[(1+m+1):(2+m+n-1)]
-        skew <- parm[1+m+n+1]
-        shape <- parm[(2+m+n+1):(2+m+n+lengthShape)]
-        sigma <- parm[2+lengthShape+m+n+1]
-        
-        # Setting parameters to accept tapper off MA, AR or GARCH coefficients
-        if( AR == TRUE) 
-          a <- 0
-        if( MA == TRUE) 
-          b <- 0
-        if (include.mean == FALSE)
-          mu <- 0
-         
-        if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
-        {
-            if( shape-delta < tolerance$TOLSTABLE || abs(shape) < tolerance$TOLSTABLE ||
-                  !(abs(skew) < 1) || !((shape - 2) < 0) )
-            {
-              return(1e99)
-            }
-        }
-        
-        # ARMA stationarity condition check
-        if(!arCheck(a))
-            return(1e99)
-        
-        # Stop if parametr is not > 0
-        if(sigma <= 0)
-           return(1e99)
-        
-        # Filters the Time series to obtain the i.i.d. sequence of 
-        # 'innovations' to evaluate the Log-likelihood function
-        z <- .filterArma(data = data, size.data = N, m = m, n = n, mu = mu, a = a, b = b)
-        
-        if(DEBUG)
-        {
-            print(c("length(z)",length(z)))
-            print(c("N",N))
-        }
-        
-        
-        # get output Residuals
-        if (optim.finished)
-        {
-            out$residuals <<- as.numeric(z)
-            out$sigma.t <<- sigma
-            out$h.t <<- sigma
-        }
-        
-        # Return llh function        
-        llh.dens <- .armaDist(z = z, sigma = sigma, shape = shape, 
-                                 skew = skew, cond.dist = cond.dist)
-        llh <- llh.dens
-        if (is.nan(llh) || is.infinite(llh) || is.na(llh)) 
-        {
-          llh <- 1e99
-        }
-        llh
-    }
-    # END: Log Likelihood for pure ARMA process
-    #############################################
 
 
     # BEGIN: garch Likelihood ARMA-APARCH or pure GARCH process
@@ -415,12 +339,7 @@ function(
     }
 
     # Optimization procedure using selected algorithms
-    if(ARMAonly)
-        modelLLH <- armaLLH
-    else 
-        modelLLH <- garchLLH
-
-
+    modelLLH <- garchLLH
 
 
     if (algorithm == "nlminb")
@@ -466,7 +385,7 @@ function(
         out$hessian = out$hessian[1:sizeHessian,1:sizeHessian]
         out$convergence <- fit1$convergence
     }
-    if ( (algorithm == "sqp") && !is.numeric(try(sqrt(diag(solve(out$hessian))), silent = TRUE)))
+    if ( (any(c("sqp","nlminb")  == algorithm)) && !is.numeric(try(sqrt(diag(solve(out$hessian))), silent = TRUE)))
     {
         # Call the Nelder-Mead method just to calculate the hessian matrix
         # This is due to the fact that the hessian matrix returned
@@ -634,3 +553,25 @@ function(
 
 # -----------------------------------------------------------------------------
 
+
+
+
+GSgarch.dstable <<- function(x,alpha = 1.5, beta = 0, gamma = 1, 
+                             delta = 0, param = 1)
+{
+  return(stabledist::dstable(x, alpha, beta, gamma, 
+                             delta, pm = param))
+}
+if(getOption('.stableIsLoaded', default = FALSE) == TRUE)
+{
+  GSgarch.dstable <<- function(x,alpha = 1.5, beta = 0, gamma = 1, 
+                               delta = 0, param = 1)
+  {
+    return(stable::dstable.quick(x, alpha, beta, gamma, 
+                                 delta, param))
+  }
+}
+
+
+
+# -----------------------------------------------------------------------------

@@ -1,4 +1,6 @@
 GEVStableGarch-package	GEVStableGarch-package
+Datasets	data
+dem2gbp	data
 dgat	dist-gat
 dskstd	dist-skstd
 gat	dist-gat
@@ -22,3 +24,4 @@ show,GEVSTABLEGARCHSPEC-method	show-methods
 show,GEVSTABLEGARCHSPEC-update	class-GEVSTABLEGARCHSPEC
 show-methods	show-methods
 skstd	dist-skstd
+sp500dge	data

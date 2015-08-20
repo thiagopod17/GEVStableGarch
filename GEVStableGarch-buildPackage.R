@@ -46,6 +46,7 @@ cran.directory = '/Users/thiago/dropbox/Pappers/GEVStableGarch/GEVStableGarch/CR
 my.version = '1.1'
 
 
+
 --------------------------------------------------------------
 # STEP: Create a folder with this name at
 # '/Users/thiago/dropbox/Pappers/GEVStableGarch/CRAN_versions/'
@@ -82,11 +83,17 @@ my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, s
 #                 force = FALSE)
 
 
+
 --------------------------------------------------------------
 # STEP: Make necessary modification on files
   # Put DEBUG = FALSE in gsFit function and take it off
   # from the function parameters, making it equal to FALSE in the beggining of the function.
+  # change the name of functions inside file armaGarchDist from "stable::dstable.quick"
+  # to "GSgarch.dstable" (see file GEVStableGarch-onAttach )
 
+  
+  
+  
 --------------------------------------------------------------
 # STEP: Fill in the package documentation
   # Help pages ( .Rd files)
@@ -97,20 +104,52 @@ my.list.of.files.complete.adress = paste(my.files.directory, my.list.of.files, s
 
   
   
-  
 --------------------------------------------------------------
 # STEP: Create the tar.gz file by executing the two commands on the terminal
 #  < cd /Users/thiago/dropbox/pappers/GEVStableGarch/GEVStableGarch/CRAN_versions/1.1 > 
 #  < R --vanilla CMD build GEVStableGarch > 
   
   
-  
-  --------------------------------------------------------------  
+--------------------------------------------------------------  
 # STEP: Check your package by running the command
-#  < R --vanilla CMD check GEVStableGarch_1.1.tar.gz > 
-# Correct possible errors
+#  Install the latest 'stable' R version since the CRAN
+#  maintainers will use it to check your package
+#  1: < R --vanilla CMD check GEVStableGarch_1.1.tar.gz > 
+#  2: < R CMD check --as-cran GEVStableGarch_1.1.tar.gz  > 
+#  3: Test using the current R-devel version and R-release
+#  versions using the website:
+#  http://win-builder.r-project.org/upload.aspx
 
   
+  
+--------------------------------------------------------------  
+# STEP: Copy additional files to the package
+# changeLog to the root
+  
+ 
+  
+--------------------------------------------------------------  
+# STEP: Final test before sending to CRAN
+# Install the package on both mac and windows and run 
+# the GEVStableGarch-TestAfterBuildPackage.R file inside R (not R studio)
+
+
+
+--------------------------------------------------------------  
+# STEP: Send to CRAN: 
+# https://cran.r-project.org/web/packages/policies.html#Submission
+# Notes: 
+# 1 - If there is an warning you cannot eliminate, explain the
+# reason for that on the submission form.
+# 2 - Before submitting a package update, consult the CRAN 
+# check the error report page at 
+# https://cran.r-project.org/web/checks/check_results_GEVStableGarch.html
+# 3 - When emailing cran maintainers always send a copy (cc) to 
+# "CRAN@R-project.org" <CRAN@r-project.org>
+# 4 - Notes we are unable to solve
+#   4.1 - Package 'stable' is only available at http://www.robustanalysis.com and
+#   therefore cannot be checked. Most users of package GEVStableGarch own the 'stable' 
+#   library and hence, the enhances sections is really important.
 
   
 --------------------------------------------------------------  
@@ -130,13 +169,6 @@ showNonASCIIfile(paste(cran.directory, my.version, file.to.find.non.ascii,sep = 
 # BUID PACKAGE TO CORRECT ERRORS
 
 # DO NOT USE THE \text or \texttt MACRO INSIDE THE \eqn ENVIRONMENT
-
-
-
-library(fGarch)
-data(dem2gbp)
-x = dem2gbp[, 1]
-gev.model = gsFit(data = x , formula = ~aparch(1,1), cond.dist = "gev")
 
 
 

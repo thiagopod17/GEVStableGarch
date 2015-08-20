@@ -7,16 +7,19 @@ Simulation of ARMA-GARCH/APARCH process
 
 \description{
 
-This functions simulates time series following ARMA-GARCH/APARCH models with GEV and stable distributions.
+This functions simulates time series following ARMA-GARCH/APARCH models with GEV and stable distributions. This function was developed through the available code from \pkg{fGarch} package available at CRAN.
 
 }
 
 
 \usage{
-gsSim(spec = garchSpec(), n = 100, n.start = 100)
+
+gsSim(spec = gsSpec(), n = 100, n.start = 100)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+
   \item{spec}{
 A model specified with function \code{\link{gsSpec}}.
 }
@@ -26,6 +29,7 @@ The size of simulated time series.
   \item{n.start}{
   Length of the "burn-in" period of the simulated time series.
 }
+
 }
 
 
@@ -76,7 +80,8 @@ non-stationary process could also be of interest by the researcher.
 
 \author{
 
-Thiago do Rego Sousa.
+Thiago do Rego Sousa for the latest modifications \cr
+Diethelm Wuertz for the original implementation of the garchSpec function from package fGarch
 
 }
 

@@ -1,7 +1,7 @@
 
-R version 3.1.1 (2014-07-10) -- "Sock it to Me"
-Copyright (C) 2014 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin10.8.0 (64-bit)
+R version 3.2.2 (2015-08-14) -- "Fire Safety"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -20,26 +20,23 @@ Type 'q()' to quit R.
 > pkgname <- "GEVStableGarch"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
+> base::assign(".ExTimings", "GEVStableGarch-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
 > library('GEVStableGarch')
-Loading required package: fGarch
-Loading required package: timeDate
-Loading required package: timeSeries
-Loading required package: fBasics
-Loading required package: MASS
-
-Attaching package: ‘fBasics’
-
-The following object is masked from ‘package:base’:
-
-    norm
-
-Loading required package: fExtremes
-Loading required package: fTrading
-Loading required package: stabledist
-Loading required package: skewt
 Loading required package: Rsolnp
 Loading required package: truncnorm
 Loading required package: parallel
+Loading required package: skewt
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
@@ -48,6 +45,7 @@ Loading required package: parallel
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gat
 > ### Title: Generalized Asymmetric t Distribution
 > ### Aliases: gat dgat pgat qgat rgat
@@ -89,6 +87,8 @@ Loading required package: parallel
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("dist-gat", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("dist-skstd")
@@ -96,6 +96,7 @@ Loading required package: parallel
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: skstd
 > ### Title: Skew Student's t Distribtuion from Fernandez and Steel (1997)
 > ### Aliases: skstd dskstd pskstd qskstd rskstd
@@ -137,6 +138,8 @@ Loading required package: parallel
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("dist-skstd", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("gsFit")
@@ -144,20 +147,18 @@ Loading required package: parallel
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gsFit
 > ### Title: Estimation of ARMA-GARCH/APARCH models
 > ### Aliases: gsFit
 > 
 > ### ** Examples
 > 
-> # This examples uses the dataset of the package fGarch to estimate
+> # This examples uses the dem2gbp dataset to estimate
 > # an ARMA(1,1)-GARCH(1,1) with GEV conditional distribution.
-> library(fGarch)
 > data(dem2gbp)
 > x = dem2gbp[, 1]
-> gev.model = gsFit(data = x , formula = ~arma(1,1)+garch(1,1), cond.dist = "gev")
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
+> gev.model = gsFit(data = x , formula = ~garch(1,1), cond.dist = "gev")
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
@@ -172,32 +173,33 @@ Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 
-Iter: 1 fn: 1266.0690	 Pars:  -0.15896 -0.11014  0.23860  0.04643  0.28889  0        0.56343  2.00000  1.00000 -0.22190
-Iter: 2 fn: 1266.0690	 Pars:  -0.15895 -0.11015  0.23860  0.04643  0.28889  0        0.56343  2.00000  1.00000 -0.22190
+Iter: 1 fn: 1278.4808	 Pars:  -0.14582  0        0        0.05387  0.36624  0        0.48891  2.00000  1.00000 -0.22039
+Iter: 2 fn: 1278.4808	 Pars:  -0.14581  0        0        0.05387  0.36624  0        0.48891  2.00000  1.00000 -0.22039
 solnp--> Completed in 2 iterations
 
 Final Estimate of the Negative LLH:
--LLH: 1266.069
+-LLH: 1278.481
 Coefficient(s):
-        Estimate  Std. Error   t value Pr(>|t|)    
-mu     -0.158955    0.012873 -12.34777  < 2e-16 ***
-ar1    -0.110147    0.176751  -0.62318  0.53317    
-ma1     0.238604    0.171848   1.38846  0.16500    
-omega   0.046432    0.008400   5.52780  < 2e-16 ***
-alpha1  0.288885    0.030255   9.54846  < 2e-16 ***
-beta1   0.563433    0.054370  10.36289  < 2e-16 ***
-shape1 -0.221900    0.006139 -36.14854  < 2e-16 ***
+        Estimate  Std. Error   t value   Pr(>|t|)    
+mu     -0.145815    0.010276 -14.19024 < 2.22e-16 ***
+omega   0.053869    0.008997   5.98778 < 2.22e-16 ***
+alpha1  0.366236    0.031739  11.53902 < 2.22e-16 ***
+beta1   0.488905    0.054631   8.94923 < 2.22e-16 ***
+shape1 -0.220386    0.006516 -33.82062 < 2.22e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("gsFit", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("gsMomentAparch")
 > ### * gsMomentAparch
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gsMomentAparch
 > ### Title: Computation of moments for several conditional distribution
 > ### Aliases: gsMomentAparch
@@ -235,12 +237,15 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("gsMomentAparch", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("gsSelect")
 > ### * gsSelect
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gsSelect
 > ### Title: Selects the best model according to goodness-of-fit criteria
 > ### Aliases: gsSelect
@@ -250,12 +255,11 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 > 
 > # Best ARMA-GARCH model within the range ARMA(0,0)-GARCH(1,0) to ARMA(0,0)-GARCH(1,1)
 > # using the Corrected Akaike Information Criteria (AICc)
-> library(fGarch)
 > data(dem2gbp)
 > x = dem2gbp[,1]
-> 
 > model = gsSelect (data = x, order.max = c(0,0,1,1), is.aparch = FALSE, 
-+           algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC")
++           algorithm = "sqp", cond.dist = "gev", selection.criteria = "AIC", 
++           include.mean = FALSE)
 
 ------------------------------------------------------------------------------------------
 Model: arma(0, 0) + garch(1, 0) with 'gev' conditional distribution
@@ -285,19 +289,24 @@ Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
+Warning in log(y) : NaNs produced
 
-Iter: 1 fn: 1346.0487	 Pars:  -0.16653  0        0        0.18043  0.34266  0        0.70000  2.00000  1.00000 -0.21308
-Iter: 2 fn: 1346.0487	 Pars:  -0.16653  0        0        0.18043  0.34266  0        0.70000  2.00000  1.00000 -0.21308
+Iter: 1 fn: 1463.3705	 Pars:  -0.01643  0        0        0.19240  0.46982  0        0.70000  2.00000  1.00000 -0.22706
+Iter: 2 fn: 1463.3705	 Pars:  -0.01643  0        0        0.19240  0.46981  0        0.70000  2.00000  1.00000 -0.22706
 solnp--> Completed in 2 iterations
 
 Final Estimate of the Negative LLH:
--LLH: 1346.049
+-LLH: 1463.371
 Coefficient(s):
         Estimate  Std. Error  t value   Pr(>|t|)    
-mu     -0.166531    0.010180 -16.3590 < 2.22e-16 ***
-omega   0.180433    0.005831  30.9435 < 2.22e-16 ***
-alpha1  0.342664    0.027599  12.4156 < 2.22e-16 ***
-shape1 -0.213079    0.004005 -53.2087 < 2.22e-16 ***
+omega   0.192397    0.005580  34.4780 < 2.22e-16 ***
+alpha1  0.469814    0.027004  17.3979 < 2.22e-16 ***
+shape1 -0.227063    0.003624 -62.6605 < 2.22e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -314,34 +323,19 @@ Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
 Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
-Warning in log(y) : NaNs produced
 
-Iter: 1 fn: 1278.4808	 Pars:  -0.14582  0        0        0.05387  0.36623  0        0.48891  2.00000  1.00000 -0.22039
-Iter: 2 fn: 1278.4808	 Pars:  -0.14582  0        0        0.05387  0.36624  0        0.48890  2.00000  1.00000 -0.22039
+Iter: 1 fn: 1382.9047	 Pars:  -0.01643  0        0        0.03724  0.44891  0        0.58140  2.00000  1.00000 -0.24009
+Iter: 2 fn: 1382.9047	 Pars:  -0.01643  0        0        0.03724  0.44891  0        0.58140  2.00000  1.00000 -0.24009
 solnp--> Completed in 2 iterations
 
 Final Estimate of the Negative LLH:
--LLH: 1278.481
+-LLH: 1382.905
 Coefficient(s):
         Estimate  Std. Error   t value   Pr(>|t|)    
-mu     -0.145815    0.010319 -14.13068 < 2.22e-16 ***
-omega   0.053870    0.009044   5.95609 < 2.22e-16 ***
-alpha1  0.366235    0.031690  11.55686 < 2.22e-16 ***
-beta1   0.488903    0.053776   9.09155 < 2.22e-16 ***
-shape1 -0.220386    0.006427 -34.28959 < 2.22e-16 ***
+omega   0.037244    0.006825   5.45697 < 2.22e-16 ***
+alpha1  0.448906    0.051411   8.73178 < 2.22e-16 ***
+beta1   0.581404    0.049434  11.76116 < 2.22e-16 ***
+shape1 -0.240090    0.007250 -33.11814 < 2.22e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -352,12 +346,15 @@ Best Model:  arma(0, 0) + garch(1, 1)
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("gsSelect", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("gsSim")
 > ### * gsSim
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gsSim
 > ### Title: Simulation of ARMA-GARCH/APARCH process
 > ### Aliases: gsSim
@@ -371,12 +368,15 @@ Best Model:  arma(0, 0) + garch(1, 1)
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("gsSim", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("gsSpec")
 > ### * gsSpec
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gsSpec
 > ### Title: Specification of ARMA-GARCH/APARCH models with GEV or stable
 > ###   distributions
@@ -400,11 +400,13 @@ Best Model:  arma(0, 0) + garch(1, 1)
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("gsSpec", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > ### * <FOOTER>
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  9.365 0.09 9.521 0 0 
+Time elapsed:  5.046 0.053 5.114 0 0 
 > grDevices::dev.off()
 null device 
           1 

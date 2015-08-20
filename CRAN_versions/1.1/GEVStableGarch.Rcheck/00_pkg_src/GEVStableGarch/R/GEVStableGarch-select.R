@@ -29,7 +29,7 @@ gsSelect <-
     order.max = c(1,1,1,1),
     selection.criteria = c("AIC", "AICc", "BIC"),
     is.aparch = FALSE,
-    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "GAt", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"),
     ...)
@@ -89,7 +89,7 @@ gsSelect <-
             cond.dist, "' conditional distribution",sep = ""))
         cat("\n------------------------------------------------------------------------------------------\n")
         fit = gsFit (data = data, formula = formula, cond.dist = cond.dist, 
-                     algorithm = algorithm,...)
+                     algorithm = algorithm, include.mean = include.mean, ...)
         
         goodness.of.fit.current = fit@fit$ics[selection.criteria]
         if (goodness.of.fit.current < goodness.of.fit.min)

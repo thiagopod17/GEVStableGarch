@@ -1,5 +1,7 @@
 * installing *source* package ‘GEVStableGarch’ ...
 ** R
+** data
+*** moving datasets to lazyload DB
 ** inst
 ** preparing package for lazy loading
 ** help

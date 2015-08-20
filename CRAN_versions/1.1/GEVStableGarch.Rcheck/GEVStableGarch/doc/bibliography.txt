@@ -18,9 +18,17 @@ BEGIN
 =================================================
 
 
+    Bollerslev T., Ghysels, E. (1996) 
+    \emph{Journal of Business and Economic Statistics}.
+    Periodic Autoregressive Conditional Heteroscedasticity, 14(2), 139--151
+
     Brockwell, P.J., Davis, R.A. (1996).
     \emph{Introduction to Time Series and Forecasting}.
     Springer, New York.
+
+    Brooks C., Burke S.P., Persand G. (2001) 
+    \emph{International Journal of Forecasting}.
+    Benchmarks and the Accuracy of GARCH Model Estimation, 17(1), 45--57 
 
     Curto, J.D., Tavares, A.N., Tavares, G.N. (2008).
     \emph{Modelling Heavy Tails and Asymmetry Using ARCH-type Models with Stable Paretian Distributions}.
@@ -49,6 +57,10 @@ BEGIN
     Lambert, P., Laurent, S. (2001).
     \emph{Modelling Financial Time Series Using GARCH-type Models with a Skewed Student Distribution for the Innovations}.
     Institut de Statistique, Universite Catholique de Louvain, Discussion Paper 0125.
+
+    McCullough B. D., Renfro C. G. (1999)
+    \emph{Journal of Economic and Social Measurement}
+    Benchmarks and Software Standards: A Case Study of GARCH Procedures, 25 (2), 59--71
 
     Mittnik, S., Paolella, M.S. (2000).
     \emph{Conditional Density and Value-At-Risk Prediction of Asian Currency Exchange Rates}. 
@@ -95,54 +107,6 @@ BEGIN
     Ph.D. Thesis, Department of EES,
     Stanford University.
 
-
 =================================================
 END
 =================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\deqn{
-    k(\alpha) = \left\{
-    \begin{array}{rl}
-    \alpha & \text{if } \alpha < 1 \\
-    \alpha-2 & \text{if } \alpha > 1,
-    \end{array} \right.
-}
-
-and
-
-\deqn{
-    \tilde{\beta} = \left\{
-    \begin{array}{rl}
-    \frac{2}{\pi\alpha}\arctan(\beta\tan(\frac{\alpha\pi}{2})) & \text{if } 0 < \alpha < 1\\
-    \frac{2}{\pi(\alpha-2)}\arctan(\beta\tan(\tfrac{\pi(\alpha-2)}{2})) & \text{if } 1 < \alpha < 2.
-    \end{array} \right.}
-}
-
-Notice that this expression is only valid for the stable distribution in 1-parameterization, and thus
-cannot be used to the estimate models with stable distribution in 0 or 2 parameterizations.
-
-The stationarity restriction implemented inside \pkg{GEVStableGarch} package imposes the follow restriction
-
-\deqn{
-    \sum_{i=1}^p E(|Z| - \gamma_i Z)^\delta\alpha_i +\sum_{j=1}^q\beta_j < 1 - TOL.STATIONARITY
-}
-
-where the variable TOL.STATIONARITY is set to 0.001 by default. For numerical reasons, the value of this variable cannot be greater than 0.05. The estimation of the stationary model is done by using the \code{solnp} routine from \pkg{Rsolnp} package together with the evaluation of the previous expression by through function \code{gsMomentAparch}.
-
-

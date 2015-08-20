@@ -44,7 +44,7 @@ dskstd <-
     #   version just because it is widelly used in the GARCH context.
     #   Reference: Fernandez, C. and Steel, M. F. J. (1998). 
     #   On Bayesian modeling of fat tails and skewness, 
-    # J. Am. Statist. Assoc. 93, 359–371.
+    # J. Am. Statist. Assoc. 93, 359-371.
     
     # INPUT PARAMETERS:
     #  x - the points in which the function will be evaluated
