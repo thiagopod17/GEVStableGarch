@@ -8,4 +8,4 @@ R package for ARMA-GARCH or ARMA-APARCH estimation with GEV (Generalized Extreme
 
 # Dicas de Publicação no CRAN 
 
-- Veja um passo a passo que escrevi para orientar quem deseja publicar seus códigos no CRAN oficial do R [asdf](https://github.com/thiagopod17/GEVStableGarch/blob/master/Dicas%20para%20Publicac%CC%A7a%CC%83o%20Pacotes%20no%20CRAN.pdf)
+- Veja um passo a passo que escrevi para orientar quem deseja publicar seus códigos no CRAN oficial do R [AQUI](https://github.com/thiagopod17/GEVStableGarch/blob/master/Dicas%20para%20Publicac%CC%A7a%CC%83o%20Pacotes%20no%20CRAN.pdf)
