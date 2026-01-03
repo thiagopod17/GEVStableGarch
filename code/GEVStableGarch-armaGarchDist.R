@@ -39,14 +39,11 @@
 # This is bad for efficiency and we must find another reasonable way to define it
 
 
-.GSgarch.dstable <- function(x,alpha = 1.5, beta = 0, gamma = 1, 
-                             delta = 0, param = 1)
+.GSgarch.dstable = function (x, alpha = 1.5, beta = 0, gamma = 1, delta = 0) 
 {
-  return(stabledist::dstable(x, alpha, beta, gamma, 
-                             delta, pm = param))
+  # this is the same as using dstable with param = 0, S0 parametrization.
+  return(libstable4u::stable_pdf(x, c(alpha, beta, gamma, delta)))
 }
-
-
 
 # ------------------------------------------------------------------------------
 
@@ -54,7 +51,7 @@
 
 .armaGarchDist <- 
     function(z, hh, shape = 1.5, skew = 0, 
-    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm"), 
     TOLG = 1e-8) 
 {
     # Description:
@@ -94,23 +91,6 @@
         return(-sum(log(dstd(x = z/hh, nu = shape)/hh)))
     }
     
-    # skew t-student conditional (standardized version defined in Wurtz)
-    if(cond.dist == "sstd")
-    {
-        if(!(shape > 2) || !(skew > 0))
-            return(1e99)       
-        return(-sum(log(dsstd(x = z/hh, nu = shape, xi = skew)/hh)))        
-
-    }
-    
-    # skew t-student from Fernandez, C. and Steel, M. F. J. (1998)
-    if(cond.dist == "skstd")
-    {
-      if(!(shape > 2) || !(skew > 0))
-          return(1e99)     
-      return(-sum(log(dskstd(x = z/hh, nu = shape, xi = skew)/hh)))        
-    
-    }
     
     # GAt distribution
     if(cond.dist == "gat")
@@ -118,14 +98,6 @@
         if(!(shape[1] > 0) || !(shape[2] > 0) || !(skew > 0))
            return(1e99)    
         return(-sum(log(dgat(x = z/hh, nu = shape[1], d = shape[2], xi = skew)/hh)))        
-    }
-    
-    # GED conditional distribution.
-    if(cond.dist == "ged")
-    {
-      if(!(shape > 0))
-          return(1e99)
-      return(-sum(log(dged(x = z/hh, nu = shape)/hh)))
     }
     
     # GEV conditional distribution
@@ -157,22 +129,8 @@
     }
     
     # stable conditional distribution
-    if( any ( cond.dist == c("stableS0", "stableS1", "stableS2") ) )
+    if( any ( cond.dist == c("stableS0") ) )
     {
-        # Compute density with package 'stable' if it is available
-        if(getOption('.stableIsLoaded', default = FALSE) == TRUE)
-        {
-          .GSgarch.dstable <- function(x,alpha = 1.5, beta = 0, gamma = 1, 
-                                       delta = 0, param = 1)
-          {
-            return(stable::dstable.quick(x, alpha, beta, gamma, 
-                                         delta, param))
-          }
-        }
-      
-      
-      
-      
         # Return Big Values if we are out of parameter space
 
         if( !(shape > 1) || !(shape < 2) || !(abs(skew) < 1))
@@ -186,15 +144,7 @@
         
         if(cond.dist == "stableS0")
             result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
-                      beta = skew, param = 0)/hh))
-        
-        if(cond.dist == "stableS1")
-          result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
-                                        beta = skew, param = 1)/hh))
-        
-        if(cond.dist == "stableS2")
-          result = -sum(log(.GSgarch.dstable(x = z/hh, alpha = shape,
-                                        beta = skew, param = 2)/hh))
+                      beta = skew)/hh))
         
         # Result 
         return(result)

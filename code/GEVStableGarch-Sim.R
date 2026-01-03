@@ -111,18 +111,6 @@ gsSim <-
   
     if (spec@distribution == "norm")
         z = rnorm(n)
-  
-    if (spec@distribution == "std")
-        z = rstd(n, nu = model$shape)
-  
-	  if (spec@distribution == "sstd") 
-	      z = rsstd(n, nu = model$shape, xi = model$skew)
-  
-	  if (spec@distribution == "skstd") 
-	      z = rskstd(n, nu = model$shape, xi = model$skew)
-  
-	  if (spec@distribution == "ged") 
-	      z = rged(n, nu = model$shape)
 
 
     # Expand to whole Sample:    NAO ENTENDI PORQUE USAR A FUNCAO rev()???

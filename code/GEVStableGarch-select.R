@@ -29,7 +29,7 @@ gsSelect <-
     order.max = c(1,1,1,1),
     selection.criteria = c("AIC", "AICc", "BIC"),
     is.aparch = FALSE,
-    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
+    cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm"), 
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"),
     ...)
@@ -48,7 +48,7 @@ gsSelect <-
     #   nMAX, mMAX, pMAX, qMAX - maximum order to be estimated
     #   for the model ARMA(m,n)-GARCH/APARCH(p,q)
     #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd
+    #       gev, stable, norm
     #   algorithm - 
     #   APARCH - boolean, indicates whether the model is an APARCH model or not
     

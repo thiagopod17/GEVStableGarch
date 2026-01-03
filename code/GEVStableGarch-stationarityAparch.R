@@ -199,7 +199,7 @@
 
 
 gsMomentAparch <- function(
-    cond.dist = c("stableS1", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"),
+    cond.dist = c("stableS1", "gev", "gat", "norm"),
     shape = 1.5, 
     skew = 0,
     delta = 1,
@@ -220,18 +220,6 @@ gsMomentAparch <- function(
     
     if(cond.dist == "norm")
       kappa = .normMomentAparch (delta = delta, gm = gm)
-    
-    if(cond.dist == "std")
-      kappa = .stdMomentAparch(shape = shape, delta = delta, gm = gm)
-    
-    if(cond.dist == "sstd")
-      kappa = .sstdMomentAparch(shape = shape, skew = skew, delta = delta, gm = gm)
-    
-    if(cond.dist == "skstd")
-      kappa = .skstdMomentAparch(shape = shape, skew = skew, delta = delta, gm = gm)
-    
-    if(cond.dist == "ged")
-      kappa = .gedMomentAparch(shape = shape, delta = delta, gm = gm)
     
     # Return
     kappa

@@ -1,19 +1,37 @@
-# TASKS BY PRIORITY
-
-## build code 
-- OK. CREATE MM WITH HIGHER ORDER STRUCTURE FROM TOPIC FUNCTIONS OF PACKAGE. THEN, CREATE A MAP FROM ALL FUNCTIONS AVAILABLE, TO SEE WHAT IS REALLY NECESSARY, THERE IS A LOT OF DUPLICATED CODE.
-
-## testing 
-- tests after building package: this R file should be merged, I dont want to have manual testing. Same holds for the testsCasesFiles, they seem manual.
-- GEVStableGarch-armaDist.R: lots of replicated code, I wonder if is possible to make one code only setting a generic distribution. 
-
-## build package
-- advices or functions for building the package, maybe move to the other repository or to readme functions. They seem like instructions. 
 
 
+# Change log 
+
+- allows only S0 parametrization for stable (cleaner code), and replaced dependence from stabledist by libstable4u.
+- It allows exactly only stable, gev and gat distributions. Normal just for testing. 
+
+# Tasks by priority
+
+## Now
+- Put repo in an R package structure
+
+- Build minimum test set that should go into pipeline (see tests folder):
+    1) simulate and estimate using my package: model(m>=0,n>=0,p>=1,q>=0) + distributions (stableS0, GEV, GAT): test model combinations of (m,n,p,q) for m,n,q in [0,2] and p in [1,2] 
+    2) testing extreme cases: simulate arma(1,1)-garch(1,1) with normal innovations. Estimate the same model using normal innovations, stable (alpha should be close to 2) and GAT (nu should be close to infinty) 
+    1) garch(1,1) with normal dem2... with expected values
+    2) test models and distribution
+    2) simulate arma(1,1)-garch(1,1), fit and compare results. Do this for both stable, GEV and gat
+    3) simulate arma(1,1)-garch(1,1) with normal and estimate with fGarch and rugarch. Same for stable conditional with alpha close to 2, and GAT with d=2, theta=1 should be t-student with v degrees of freedom. Do the oposite direction, simulate with fGarch and rugarch and estimate with mine. 
 
 
-# Functions of package
+## Latter 
+- Remove getFormula
+- Remove Spec
+- My pdf Filtering Process for estimation (PDF DOC) is missing et = zt * ht in the equation
+- Error message for computing std using hessian, not informative. users need mathematical reasons to investigage better the output of the function. 
+- enforce stationarity using sqp.restriction algorithm must be tested with others datasets.
+
+
+
+
+
+
+# Functions in this package
 
  .armaDist               Calculates the likelihood function for a vector of points (z)
     #   according to the specified distribution.
@@ -38,68 +56,16 @@ Spec - specifies model and returns an instance of class GEVSTABLEGARCHSPEC
 
 stationarityAparch - compute a value that should be < 1 for the model to be stationary.
 
-
-
-
-
-
-
-# OLD TODO LIST, TAKE WHAT MAKES SENSE FROM HERE
-
-
-#   Things to do on Package now
-    - send package to CRAN
-    - organize my files on repository
-    - copy code from package to repository
-
-# Improvements 
-    - sqp.restriction algorithm must be tested with others datasets.
-
-# Naming: 
-      user functions: gsFit, gsSelect, gsMomentAparch
-      variables: cond.dist, arma.order, garch.llh
-      constans: TOLG, TOLSTABLE, ARMA.ORDER
-      internal functions: .getStart, .getFormula
-
-
-# Changes on function names:
-
-gsGarchDist    .armaGarchDist
-filter.Arma     .filterArma
-filter.Aparch   .filterAparch
-filter.Aparch.Forloop     .filterAparchForLoop
-filter1.garch11Fit
-gsGetOrder    .getOrder
-gsGetStart     .getStart
-changed variable name from 'gm' to 'gamma'
-
-
-
-
-
-
-
-
-
-
-
-# Advices for Debugging: 
-
-  - See the TOLG and TOLGSTABLE parameters in function gsGetStart. They were originally set to 
-    1e-7 and 2e-2.
-
-
-
-
+# Naming convention: 
+user functions: gsFit, gsSelect, gsMomentAparch
+variables: cond.dist, arma.order, garch.llh
+constans: TOLG, TOLSTABLE, ARMA.ORDER
+internal functions: .getStart, .getFormula
+.
 
 # Future modifications on package:
 
-    - Implement the ARMA dist function for every distribution. 
-    - Currently the code is working for ARMA(1,1) ARMA(p,1) ARMA(1,n) models with condtional normal. 
-    - Find A More Efficiet Way To Calculate The GEV Aparch Moment Instead Of Using The Integration function.
-    - Advices of professor Doctor Paolella.
-    - Prediction methods using the results of Brockwell for stable prediction.
-    - Advices professor Paolella. (email)
+- Prediction methods using the results of Brockwell for stable prediction. See paper from Parameter "Estimation of ARMA Models with GARCH/APARCH Errors An R and SPlus Software Implementation"
   
 
 

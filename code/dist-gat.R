@@ -33,10 +33,9 @@ dgat <-
     
     # Description:
     #   Compute the density for the 
-    #   so called t3-distribution (now called GAt) defined in Paolella (1997).
-    #   Reference: Paolella M 0886. Tail Estimation and Conditional Modeling 
-    #   of Heteroscedastic Time!Series. PhD thesis.
-    #   Institute of Statistics and Econometrics. Christian Albrechts University at Kiel
+    #   so called t3-distribution (now called GAt) defined in Paolella (1997). Tail Estimation and Conditional Modeling 
+    #   of Heteroscedastic Time Series. PhD thesis. Institute of Statistics and Econometrics. Christian Albrechts University at Kiel
+    #   See also Bertocchi et al. THE IMPACT OF DIFFERENT DISTRIBUTIONAL HYPOTHESES ON RETURNS IN ASSET ALLOCATION
     #   Parameters: mean in R; sd > 0; nu > 0; d > 0; xi > 0; 
     
     # FUNCTION:

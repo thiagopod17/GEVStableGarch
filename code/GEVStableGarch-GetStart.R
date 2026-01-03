@@ -26,7 +26,7 @@
 
 
 .getStart <- function(data,m,n,p,q, AR = FALSE, MA = FALSE,
-                      cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
+                      cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm"), 
                       TOLG = 1e-7, TOLSTABLE = 2e-2)
 {    
   
@@ -54,7 +54,7 @@
     #   with the Moving Average part included
     #   ARMAonly - Indicates whether we have a pure ARMA model
     #   cond.dist - name of the conditional distribution, one of
-    #       gev, stable, norm, std, sstd, ged
+    #       gev, stable, norm
     #   TOLSTABLE - boundary tolerance. Should be greater than GSstable.tol
     #   TOLG - pper and lower bounds tolerance. Should be greater than tol
     
@@ -85,7 +85,7 @@
     
     # Initial variable declaration
     cond.dist = match.arg(cond.dist)
-    cond.dist.list = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged")
+    cond.dist.list = c("stable", "gev", "gat", "norm")
     Mean <- mean(data)
     Var <- var(data)
     Dispersion <- mean(abs(data-Mean))
@@ -142,11 +142,7 @@
       "stableS2" = 0.1 * Dispersion,
       "gev" = 0.1 * Var,
       "gat" = 0.1 * Var,
-      "norm" = 0.1 * Var,
-      "std" = 0.1 * Var,
-      "sstd" = 0.1 * Var,
-      "skstd" = 0.1 * Var,
-      "ged" = 0.1 * Var)
+      "norm" = 0.1 * Var)
     
     alpha.start = list(
       "stableS0" = rep(0.1/p, p),
@@ -154,11 +150,7 @@
       "stableS2" = rep(0.1/p, p),
       "gev" = rep(0.05/p, p),
       "gat" = rep(0.1/p, p),
-      "norm" = rep(0.1/p, p),
-      "std" = rep(0.1/p, p),
-      "sstd" = rep(0.1/p, p),
-      "skstd" = rep(0.1/p, p),
-      "ged" = rep(0.1/p, p))
+      "norm" = rep(0.1/p, p))
     
     beta.start = list(
       "stableS0" = rep(0.8/q, q),
@@ -166,11 +158,7 @@
       "stableS2" = rep(0.8/q, q),
       "gev" = rep(0.7/q, q),
       "gat" = rep(0.8/q, q),
-      "norm" = rep(0.8/q, q),
-      "std" = rep(0.8/q, q),
-      "sstd" = rep(0.8/q, q),
-      "skstd" = rep(0.8/q, q),
-      "ged" = rep(0.8/q, q))
+      "norm" = rep(0.8/q, q))
     
     delta.start = list(
       "stableS0" = 1.05,
@@ -178,11 +166,7 @@
       "stableS2" = 1.05,
       "gev" = 2,
       "gat" = 2,
-      "norm" = 2,
-      "std" = 2,
-      "sstd" = 2,
-      "skstd" = 2,
-      "ged" = 2)
+      "norm" = 2)
     
     skew.start = list(
       "stableS0" = 0,
@@ -190,11 +174,7 @@
       "stableS2" = 0,
       "gev" = 1,
       "gat" = 1,
-      "norm" = 1,
-      "std" = 1,
-      "sstd" = 1,
-      "skstd" = 1,
-      "ged" = 1)
+      "norm" = 1)
     
     shape.start = list(
       "stableS0" = 1.9,
@@ -202,11 +182,7 @@
       "stableS2" = 1.9,
       "gev" = 0, # numerical tests showed that 0.01 is a good starting parameter.
       "gat" = c(2, 4),
-      "norm" = 1,
-      "std" = 4,
-      "sstd" = 4,
-      "skstd" = 4,
-      "ged" = 4)
+      "norm" = 1)
         
     # LOWER BOUNDS
     
@@ -223,11 +199,7 @@
       "stableS2" = 1,
       "gev" = TOLG,
       "gat" = TOLG,
-      "norm" = TOLG,
-      "std" = TOLG,
-      "sstd" = TOLG,
-      "skstd" = TOLG,
-      "ged" = TOLG)
+      "norm" = TOLG)
     
     skew.lower = list(
       "stableS0" = - 1 + TOLSTABLE,
@@ -235,11 +207,7 @@
       "stableS2" = - 1 + TOLSTABLE,
       "gev" = 0,
       "gat" = TOLG,
-      "norm" = 0,
-      "std" = 0,
-      "sstd" = TOLG,
-      "skstd" = TOLG,
-      "ged" = 0)
+      "norm" = 0)
     
     shape.lower = list(
       "stableS0" = 1 + TOLSTABLE,
@@ -247,11 +215,7 @@
       "stableS2" = 1 + TOLSTABLE,
       "gev" = - 0.5 + TOLG, # to ensure good MLE properties. See Jondeau et al. 
       "gat" = c ( TOLG, TOLG),
-      "norm" = 0,
-      "std" = 2 + TOLG,
-      "sstd" = 2 + TOLG,
-      "skstd" = 2 + TOLG, # to ensure finiteness of variance
-      "ged" = TOLG)
+      "norm" = 0)
        
     # UPPER BOUNDS
     
@@ -268,11 +232,7 @@
       "stableS2" = 2 - TOLSTABLE,
       "gev" = 100,
       "gat" = 100,
-      "norm" = 100,
-      "std" = 100,
-      "sstd" = 100,
-      "skstd" = 100,
-      "ged" = 100)
+      "norm" = 100)
     
     skew.upper = list(
       "stableS0" = 1 - TOLSTABLE,
@@ -280,11 +240,7 @@
       "stableS2" = 1 - TOLSTABLE,
       "gev" = 2,
       "gat" = 100,
-      "norm" = 2,
-      "std" = 2,
-      "sstd" = 100,
-      "skstd" = 100,
-      "ged" = 2)
+      "norm" = 2)
     
     shape.upper = list(
       "stableS0" = 2 - TOLSTABLE,
@@ -292,11 +248,7 @@
       "stableS2" = 2 - TOLSTABLE,
       "gev" = 0.5 - TOLG, # to ensure finiteness of the variance and mean. 
       "gat" = c ( 100, 100),
-      "norm" = 2,
-      "std" = 100,
-      "sstd" = 100,
-      "skstd" = 100,
-      "ged" = 100)    
+      "norm" = 2)    
 
     # CHECK IF THE STARTING MODELS IS STATIONARY ( ONLY FOR THE sqp.restriction ALGORITHM )
     if( ! any ( cond.dist == c("stableS0", "stableS2") ) ){

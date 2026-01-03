@@ -104,11 +104,7 @@ gsSpec <-
         "stableS2" = 0,
         "gev" = NULL,
         "gat" = 1,
-        "norm" = NULL,
-        "std" = NULL,
-        "sstd" = 0.9,
-        "skstd" = 1,
-        "ged" = NULL)
+        "norm" = NULL)
 
     # Shape Parameter Settings:
     shape = list(
@@ -117,11 +113,7 @@ gsSpec <-
         "stableS2" = 1.7,
         "gev" = 0.3,
         "gat" = c(3,1),
-        "norm" = NULL,
-        "std" = 4,
-        "sstd" = 4,
-        "skstd" = 4,
-        "ged" = 2)
+        "norm" = NULL)
 
     # Conditional distribution
     cond.dist = match.arg(cond.dist)

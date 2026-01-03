@@ -27,7 +27,7 @@
 
 .armaDist <- 
   function(z, sigma = 1, shape = 1.5, skew = 0, 
-           cond.dist = c("stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
+           cond.dist = c("stable", "gev", "gat", "norm"), 
            TOLG = 1e-8) 
   {
     # Description:
@@ -41,7 +41,7 @@
     #   z - vector of points to calculate the llh.
     #   h - the sclale parameter
     #   cond.dist - name of the conditional distribution, one of
-    #       "stable", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"
+    #       "stable", "gev", "gat", "norm" (for testing only)
     #   TOLG - general tolerance for arma-garch parameters. 
     #   In the beggining it was set to 1e-5
     
@@ -59,50 +59,6 @@
     if(cond.dist == "norm")
       return(-sum(log(dnorm(x = z, sd = sigma))))
     
-    # t-student conditional distribution.
-    if(cond.dist == "std")
-    {
-      if(!(shape > 2))
-        stop("Invalid shape in std distribution. shape > 2")
-      nu = shape
-      return(-sum(log(dstd(x = z/sigma, nu = nu)/sigma)))
-    }
-    
-    # skew t-student conditional (standardized version defined in Wurtz)
-    if(cond.dist == "sstd")
-    {
-      if(!(shape > 2) || !(skew > 0))
-      {
-        #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
-        return(1e99)
-      }
-      
-      gm = skew
-      xi = gm
-      nu = shape
-      
-      return(-sum(log(dsstd(x = z/sigma, nu = nu, xi = xi)/sigma)))        
-      
-      #         M1 = sqrt((shape-2)/pi)*gamma(shape/2)^(-1)*
-      #           gamma((shape-1)/2)
-      #         M2 = 1
-      #         return(-sum(log(dsstd(x = z/sigma, nu = nu, xi = xi, mean = (skew-1/skew)*M1,
-      #                sd = sqrt((M2-M1^2)*(skew^2+1/skew^2)+2*M1^2-M2))/sigma)))
-    }
-    
-    # skew t-student from Fernandez, C. and Steel, M. F. J. (1998)
-    if(cond.dist == "skstd")
-    {
-      if(!(shape > 2) || !(skew > 0))
-      {
-        #stop("Invalid shape or skew in skewt parameters. shape > 2 and skew > 0")
-        return(1e99)
-      }
-      
-      return(-sum(log(dskstd(x = z/sigma, nu = shape, xi = skew)/sigma)))        
-      
-    }
-    
     # GAt distribution
     if(cond.dist == "gat")
     {
@@ -116,15 +72,6 @@
       xi = skew
       
       return(-sum(log(dgat(x = z/sigma, nu = nu, d = d, xi = xi)/sigma)))        
-    }
-    
-    # GED conditional distribution.
-    if(cond.dist == "ged")
-    {
-      if(!(shape > 0))
-        stop("Invalid shape in std distribution. shape > 0")
-      nu = shape
-      return(-sum(log(dged(x = z/sigma, nu = nu)/sigma)))
     }
     
     # GEV conditional distribution
