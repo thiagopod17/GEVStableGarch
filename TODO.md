@@ -8,8 +8,6 @@
 # Tasks by priority
 
 ## Now
-- Put repo in an R package structure
-
 - Build minimum test set that should go into pipeline (see tests folder):
     1) simulate and estimate using my package: model(m>=0,n>=0,p>=1,q>=0) + distributions (stableS0, GEV, GAT): test model combinations of (m,n,p,q) for m,n,q in [0,2] and p in [1,2] 
     2) testing extreme cases: simulate arma(1,1)-garch(1,1) with normal innovations. Estimate the same model using normal innovations, stable (alpha should be close to 2) and GAT (nu should be close to infinty) 

@@ -25,18 +25,20 @@
 # checking the package with R CMD using package testthat.
 ################################################################################
 
-# Required packages
-library(testthat)
-library(fGarch)
-library(GEVStableGarch)
 library(Rsolnp)
 library(stable)
 library(stabledist)
 library(skewt)
 
+
+# Required packages
+library(testthat)
+
+
+
 # Create file to save the result of the test
-log.file.directory = '/Users/thiago/dropbox/Pappers/GEVStableGarch/GEVStableGarch/GEVStableGarch-unitTest-results'
-log.file.name = format(Sys.time(), "DATE-%m-%d-%y---TIME-%Hh%Mm%Ssec")
+log.file.directory = '/Users/thiago/downloads'
+log.file.name = format(Sys.time(), "DATE-%m-%d-%y---TIME-%Hh%Mm%Ssec.md")
 log.file.adress = paste(log.file.directory, "/", log.file.name, sep = '')
 
 write.log.function = function(x) {
