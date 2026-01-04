@@ -30,7 +30,7 @@ function(
     cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm"), 
     include.mean = TRUE, 
     algorithm = c("sqp", "sqp.restriction", "nlminb", "nlminb+nm"),
-    control = NULL,
+    control = list(trace = FALSE),
     tolerance = NULL,
     title = NULL,
     description = NULL)
@@ -522,16 +522,16 @@ function(
             dimnames(out$matcoef) = list(names(out$tval), 
                                     c(" Estimate"," Std. Error", " t value", "Pr(>|t|)"))
         }
-        cat("\nFinal Estimate of the Negative LLH:\n")
-        cat("-LLH:",out$llh)
+        #cat("\nFinal Estimate of the Negative LLH:\n")
+        #cat("-LLH:",out$llh)
 
         if(out$convergence == 0)
             messages$optimization.algorithm = "Algorithm achieved convergence"
         else 
             messages$optimization.algorithm = "Algorithm did not achieved convergence"
 
-        cat("\nCoefficient(s):\n")
-        printCoefmat(round(out$matcoef,digits=6), digits = 6, signif.stars = TRUE)
+        #cat("\nCoefficient(s):\n")
+        #printCoefmat(round(out$matcoef,digits=6), digits = 6, signif.stars = TRUE)
     }
 
     out$order <- c(formula$formula.order[1],formula$formula.order[2],

@@ -49,7 +49,6 @@ test_that("GARCH(1,1) with GEV simulation and estimation", {
     data = sim.gev, formula = ~garch(1,1),
     cond.dist = "gev", include.mean = TRUE,
     algorithm = "sqp")@fit$par
-  print(cbind(fit,true))
   expect_equal(fit["mu"],     true["mu"],     tolerance = 0.01)
   expect_equal(fit["omega"],  true["omega"],  tolerance = 0.01)
   expect_equal(fit["alpha1"], true["alpha1"], tolerance = 0.01)
@@ -78,7 +77,6 @@ test_that("GARCH(1,1) with GAT simulation and estimation", {
     data = sim.gat, formula = ~garch(1,1),
     cond.dist = "gat", include.mean = TRUE,
     algorithm = "sqp")@fit$par
-  print(cbind(fit,true))
   expect_equal(fit["mu"],     true["mu"],     tolerance = 0.01)
   expect_equal(fit["omega"],  true["omega"],  tolerance = 0.01)
   expect_equal(fit["alpha1"], true["alpha1"], tolerance = 0.01)

@@ -1,4 +1,7 @@
+# USING DEVTOOLS
 
+devtools::load_all() load your package (when run inside its folder)
+devtools::test() to run all tests 
 
 # Change log 
 
