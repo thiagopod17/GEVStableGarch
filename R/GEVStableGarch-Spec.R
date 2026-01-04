@@ -40,7 +40,7 @@
 
 gsSpec <-
     function (model = list(), presample = NULL,
-              cond.dist = c("stableS0", "stableS1", "stableS2", "gev", "gat", "norm", "std", "sstd", "skstd", "ged"), 
+              cond.dist = c("stableS0", "gev", "gat", "norm"), 
               rseed = NULL)
 {
       

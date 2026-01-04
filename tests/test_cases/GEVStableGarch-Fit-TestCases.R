@@ -120,20 +120,19 @@ library(fGarch)
 data(dem2gbp)
 x = dem2gbp[, 1]
 library(Rsolnp)
-library(skewt)
 # garch(1,1)-norm-intercept
-fit1 <- garchFit(data = x, formula = ~garch(1,1),
+fgarch_garch11_norm <- garchFit(data = x, formula = ~garch(1,1),
                  cond.dist = "norm", include.mean = TRUE,
-                 algorithm = "nlminb+nm")
-model1 <- gsFit(data = x , formula = ~garch(1,1),
+                 algorithm = "nlminb+nm")@fit$params$params
+gevstablegarch_garch11_norm <- gsFit(data = x , formula = ~garch(1,1),
                       cond.dist = "norm", include.mean = TRUE, 
-                      algorithm = "sqp.restriction")
-fit1@fit$par-model1@fit$par
-fit1@fit$llh
-model1@fit$llh
-model1@fit$llh
-fit1@fit$ics*length(x)
-model1@fit$ics
+                      algorithm = "sqp.restriction")@fit$par
+fgarch_garch11_norm["mu"]
+gevstablegarch_garch11_norm["mu"]
+
+
+
+
 
 # garch(1,1)-std-intercept
 fit1 <- garchFit(data = x, formula = ~garch(1,1),

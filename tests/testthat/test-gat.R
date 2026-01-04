@@ -72,55 +72,21 @@ test_that("Distribution and Density property: integral( pgat, a, b) = pgat(b) - 
 
 
 
-test_that("Expectation via Monte Carlo matches numerical integration", {
-  
+test_that("Using random function to compute expectation and comparing with integral", {
   set.seed(123)
   
-  # Parameters
-  a  <- -Inf
-  b  <- Inf
-  mean <- 0.3
-  sd   <- 2
-  nu   <- 1
-  d    <- 2
-  xi   <- 1
+  a <- -Inf; b <- Inf
+  mean <- 0.3; sd <- 2; nu <- 1; d <- 2; xi <- 1
   
-  # Numerical integration for E[X]
-  integral_mean <- integrate(
-    function(x) {
-      x * dgat(
-        x,
-        mean = mean,
-        sd   = sd,
-        nu   = nu,
-        d    = d,
-        xi   = xi
-      )
-    },
-    lower = a,
-    upper = b
-  )$value
+  integral_mean <- integrate(function(x) x * dgat(x, mean = mean, sd = sd, nu = nu, d = d, xi = xi),
+                             lower = a, upper = b)$value
   
-  # Monte Carlo approximation
   n <- 1e5
-  samples <- rgat(
-    n,
-    mean = mean,
-    sd   = sd,
-    nu   = nu,
-    d    = d,
-    xi   = xi
-  )
+  mc_mean <- mean(rgat(n, mean = mean, sd = sd, nu = nu, d = d, xi = xi))
   
-  mc_mean <- mean(samples)
-  
-  # Expect close agreement
-  expect_equal(
-    mc_mean,
-    integral_mean,
-    tolerance = 0.05
-  )
+  expect_equal(mc_mean, integral_mean, tolerance = 0.05)
 })
+
 
 
 

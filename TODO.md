@@ -8,6 +8,7 @@
 # Tasks by priority
 
 ## Now
+- Make testthat for garch(1,1) stable
 - Build minimum test set that should go into pipeline (see tests folder):
     1) simulate and estimate using my package: model(m>=0,n>=0,p>=1,q>=0) + distributions (stableS0, GEV, GAT): test model combinations of (m,n,p,q) for m,n,q in [0,2] and p in [1,2] 
     2) testing extreme cases: simulate arma(1,1)-garch(1,1) with normal innovations. Estimate the same model using normal innovations, stable (alpha should be close to 2) and GAT (nu should be close to infinty) 
@@ -20,6 +21,8 @@
 ## Latter 
 - Remove getFormula
 - Remove Spec
+- Simulation with libstable4u 
+- Printing and computing hessian mixed inside gsFit function. gsFit is super big function. 
 - My pdf Filtering Process for estimation (PDF DOC) is missing et = zt * ht in the equation
 - Error message for computing std using hessian, not informative. users need mathematical reasons to investigage better the output of the function. 
 - enforce stationarity using sqp.restriction algorithm must be tested with others datasets.

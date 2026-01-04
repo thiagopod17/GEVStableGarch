@@ -30,11 +30,7 @@ importFrom("timeSeries", "timeSeries")
 ## functions
 ################################################
 
-export(dskstd,
-       pskstd,
-       qskstd,
-       rskstd,
-       dgat,
+export(dgat,
        pgat,
        qgat,
        rgat,
@@ -54,9 +50,6 @@ export(dskstd,
        gsMomentAparch,
        .stationarityAparch,
        .normMomentAparch,
-       .stdMomentAparch,
-       .skstdMomentAparch,
-       .gedMomentAparch,
        .gatMomentAparch,
        .stableS1MomentAparch,
        .stableS1SymmetricMomentGarch,
