@@ -217,11 +217,6 @@ function(
         skew <- parm[3+m+n+2*p+q+1]
         shape <- parm[(4+m+n+2*p+q+1):(4+m+n+2*p+q+lengthShape)]
         
-        
-        # Configure 'shape' for the 'GAt' distribution
-        #if(cond.dist == "gat")
-        #    shape <- parm[4+m+n+2*p+q+1,4+m+n+2*p+q+1+1]
-        
         # Configuring delta and gamma for Garch estimation
         if( !APARCH) 
         { 

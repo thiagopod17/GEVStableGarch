@@ -1,53 +1,72 @@
-
-# Copyrights (C) 2014 Thiago do Rego Sousa <thiagoestatistico@gmail.com>
-
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
-#
-# You should have received a copy of the GNU Library General
-# Public License along with this library; if not, write to the
-# Free Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA  02111-1307  USA
-
-
-################################################################################
-# FUNCTION:              t3 (now called GAt) distribution proposed in Paolella (1997)
-#  pgat                   Probability function for the GAt
-#  dgat                   Density for the GAt-distribution 
-#  qgat                   Quantile function for the GAt
-#  rgat                   Random Number Generator for the GAt
-################################################################################
-
-
+#' Generalized Asymmetric t (GAT) Distribution
+#'
+#' Functions to compute the density, distribution function, quantile function,
+#' and to generate random variates for the Generalized Asymmetric t (GAT)
+#' distribution.
+#'
+#' This distribution corresponds to the \code{t3} distribution described in
+#' Paolella (1997) and Mittnik and Paolella (2000). The GAT family includes
+#' the Student's t, Laplace, Cauchy, and normal distributions as special cases.
+#' In particular, as \eqn{\nu \to \infty} the distribution approaches normality.
+#'
+#' @name GAT
+#' @rdname GAT
+#' @aliases gat dgat pgat qgat rgat
+#'
+#' @param x Numeric vector of values for calculating density. 
+#' @param q Numeric vector of quantiles.
+#' @param p Numeric vector of probabilities.
+#' @param n Number of observations for random generation.
+#' @param mean Location parameter.
+#' @param sd Scale parameter (must be > 0).
+#' @param nu Tail (shape) parameter (must be > 0).
+#' @param d Second shape parameter (must be > 0).
+#' @param xi Asymmetry parameter (must be > 0; \eqn{\xi = 1} gives symmetry).
+#' @param log Logical; if \code{TRUE}, densities are returned on the log scale.
+#'
+#' @return
+#' \item{dgat}{density values}
+#' \item{pgat}{distribution function values}
+#' \item{qgat}{quantile function values}
+#' \item{rgat}{random variates}
+#'
+#' @references
+#' Mittnik, S., Paolella, M. S. (2000).
+#' Prediction of Financial Downside-Risk with Heavy-Tailed Conditional
+#' Distributions.
+#'
+#' Paolella, M. (1997).
+#' Tail Estimation and Conditional Modeling of Heteroskedastic Time-Series.
+#' PhD Thesis, Institute of Statistics and Econometrics,
+#' Christian Albrechts University of Kiel.
+#' 
+#' Bertocchi, M., Giacometti, R., Ortobelli, S., & Rachev, S. T. (2005).
+#' The impact of different distributional hypothesis on returns in asset allocation.
+#' \emph{Finance Letters}, 3(1), 17-27.
+#'
+#' @author Thiago do Rego Sousa
+#'
+#' @examples
+#' par(mfrow = c(2, 2))
+#' set.seed(1000)
+#' r <- rgat(n = 1000)
+#' plot(r, type = "l", main = "GAt Random Values")
+#'
+#' hist(r, probability = TRUE, border = "white")
+#' x <- seq(min(r), max(r), length = 201)
+#' lines(x, dgat(x), lwd = 2)
+#'
+#' plot(sort(r), (1:1000)/1000, main = "Probability", ylab = "Probability")
+#' lines(x, pgat(x), lwd = 2)
+#'
+#' round(qgat(pgat(q = seq(-10, 10, by = 0.5))), 6)
+#'
+#' @export
 dgat <- 
   function(x, mean = 0, sd = 1, nu = 2, d = 3, xi = 1, log = FALSE)
   {   
-    # A function implemented by Thiago Sousa
-    
-    # Description:
-    #   Compute the density for the 
-    #   so called t3-distribution (now called GAt) defined in Paolella (1997). Tail Estimation and Conditional Modeling 
-    #   of Heteroscedastic Time Series. PhD thesis. Institute of Statistics and Econometrics. Christian Albrechts University at Kiel
-    #   See also Bertocchi et al. THE IMPACT OF DIFFERENT DISTRIBUTIONAL HYPOTHESES ON RETURNS IN ASSET ALLOCATION
-    #   Parameters: mean in R; sd > 0; nu > 0; d > 0; xi > 0; 
-    
-    # FUNCTION:
-    
-    # Params:
-    if (length(mean) == 5) {
-      xi = mean[5]
-      d  = mean[4]
-      nu = mean[3]
-      sd = mean[2]
-      mean = mean[1]
-    }    
+
+  
     
     # Error treatment of input parameters
     if(sd <= 0  || nu <= 0 || xi <= 0 || d <= 0)
@@ -85,22 +104,10 @@ dgat <-
   }
 
 
-
-
-
-# ------------------------------------------------------------------------------
-
+#' @export
 pgat <- 
   function(q, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)
   {   
-    # A function imlemented by Thiago Sousa
-    
-    # Description:
-    #   Compute the distribution for the 
-    #   so called t3-distribution (now called GAt)
-    #   Parameters: mean in R; sd > 0; nu > 0; d > 0; xi > 0; 
-    
-    # FUNCTION:
     
     # Params:
     if (length(mean) == 5) {
@@ -153,21 +160,10 @@ pgat <-
   }
 
 
-#------------------------------------------------------------------------------
-
-  
+#' @export
 qgat <- 
   function(p, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
-    
-    # Description:
-    #   Compute the quantiles for the  
-    #   generalized error distribution using the 
-    #   formula for the distribution function and
-    #   the quantile function of the Beta Distribution
-    #   already available in R
-    
-    # FUNCTION:
     
     # Define auxiliary functions
     Lp <- function (p = p, nu = nu, d = d, xi = xi)
@@ -208,23 +204,10 @@ qgat <-
   }
 
 
-
-
-
-
-
-# ------------------------------------------------------------------------------
-
-
+#' @export
 rgat <-  
   function(n, mean = 0, sd = 1, nu = 2, d = 3, xi = 1)  
   {   
-    
-    # Description:
-    #   Generate GAt Random values
-    #   using the inverse of the distribution function.
-    
-    # FUNCTION:
     
     randomUnif = runif(n = n, min = 0, max = 1)
     result = qgat(p = randomUnif, mean = mean, sd = sd, nu = nu, d = d, xi = xi)
@@ -234,5 +217,71 @@ rgat <-
   }
 
 
-################################################################################
+gat.valid.pars = function(mean, sd, nu , d, xi){
+  if(!(xi > 0) || !(d > 0) || !(nu > 0) || !(sd > 0) )
+    return(FALSE)
+  return(TRUE)
+}
+
+
+#' Estimate GAT parameters
+#'
+#' Functions to estimate all parameters of the GAT distribution from a vector
+#' of iid observations. 
+#'
+#' It optimizes the log-likelihood based on dgat data
+#' @name gat.fit
+#' @rdname gat.fit
+#' @param x Numeric vector of observations for estimating parameters.
+#' @param start (optional) starting values of parameters as c(mean,sd,nu,d,xi) 
+#' for the optimization algorithm 
+#' @param lower.bound (optional) lower bounds for the optimization algorithm 
+#' @param upper.bound (optional) lower bounds for the optimization algorithm 
+#'
+#' @return
+#' An object with the optimization output, including estimated parameters,
+#'   convergence status, objective value, and additional diagnostic information. The
+#'   optimization is performed using \code{\link[Rsolnp]{solnp}}.
+#' @author Thiago do Rego Sousa
+#'
+#' @examples
+#' # simulate random values from GAT distribution
+#' x = rgat(n = 1000, mean = 2, sd = 1, nu = 2, d = 1, xi = 3)
+#' # estimate the parameters using the observations x
+#' gat.fit(x)$pars
+#'
+#' @export
+gat.fit <- function(x, start, lower.bound, upper.bound, control = NULL)  {   
+  
+    if(missing(start)){
+      start = c(median(x),mad(x),1,1,1)
+    }
+    if(missing(lower.bound)){
+      lower.bound = c(median(x) - 2*mad(x), 0.01, 0.01, 0.01, 0.01)
+    }
+    if(missing(upper.bound)){
+      upper.bound = c(median(x) + 2*mad(x), 10, 10, 10, 10)
+    }
+    
+    llh = function(pars){
+      
+      mean = pars[1]
+      sd = pars[2]
+      nu = pars[3]
+      d  = pars[4]
+      xi = pars[5]
+
+      if(gat.valid.pars(mean,sd, nu , d, xi))   
+        return(-sum(log(dgat(x = x, mean = mean, sd = sd, nu = nu, d = d, xi = xi)))) 
+      else
+        print('here')
+        return(1e99)
+    }
+    
+    fit <- solnp(pars = start, fun = llh, 
+                  LB = lower.bound, UB = upper.bound, control = control)
+    
+    # Return Value:
+    return(fit)
+}
 
